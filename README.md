@@ -1,6 +1,6 @@
 # Snapcast client for Arduino ESP32
 
-### Synchronous Multiroom audio streaming client for [Snapcast](https://github.com/badaix/snapcast) ported to ESP32
+### [Snapcast](https://github.com/badaix/snapcast) Audio Streaming Client for ESP32
 
 ## Feature list
 
