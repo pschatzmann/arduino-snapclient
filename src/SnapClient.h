@@ -9,6 +9,7 @@
 #include "WiFi.h"
 
 #include <string.h>
+#include <sys/time.h>
 
 extern "C" {
 
@@ -32,14 +33,7 @@ extern "C" {
 // Web socket server 
 #include "components/websocket_if/include/websocket_if.h"
 #include "components/websocket/include/websocket_server.h"
-
-// Opus decoder is implemented as a subcomponet from master git repo
-#include <sys/time.h>
-
-//#include "driver/i2s.h"
 #include "components/dsp_processor/include/dsp_processor.h"
-//#include "opus.h"
-#include "components/ota_server/include/ota_server.h"
 #include "components/lightsnapcast/include/snapcast.h"
 #include "opus.h"
 
@@ -69,6 +63,10 @@ class SnapClient {
       this->out = &output;
     }
 
+    ~SnapClient(){
+      if (buff!=nullptr) delete(buff);
+    }
+
     AudioStream &output() {
       return *out;
     }
@@ -84,6 +82,15 @@ class SnapClient {
       strcpy(mac_address, WiFi.macAddress().c_str());
       ESP_LOGI(TAG, "mac: %s", mac_address);
 
+#ifdef CONFIG_USE_PSRAM
+      if (ESP.getPsramSize()>0) heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
+#endif
+
+      // allocate buff
+      if (buff==nullptr){
+        buff = new char[CONFIG_SNAPCAST_BUFF_LEN];
+      }
+      assert(buff!=nullptr);
 
       esp_err_t ret = nvs_flash_init();
       if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
@@ -92,7 +99,6 @@ class SnapClient {
         ret = nvs_flash_init();
       }
       ESP_ERROR_CHECK(ret);
-
 
       // setup dsp
       dsp_setup_flow(500, 48000);
@@ -109,7 +115,6 @@ class SnapClient {
       
       flow_queue = xQueueCreate(10, sizeof(uint32_t));
       assert(flow_queue!=NULL);
-      xTaskCreate(&ota_server_task, "ota_server_task", 4096, NULL, 15, NULL);
       
       xTaskCreatePinnedToCore(&http_get_task, "http_get_task", 3 * 4096, NULL, 5,
                               &t_http_get_task, 1);
@@ -118,7 +123,7 @@ class SnapClient {
 
   protected:
     AudioStream *out = nullptr;
-    char buff[CONFIG_SNAPCAST_BUFF_LEN];
+    char* buff = nullptr; //[CONFIG_SNAPCAST_BUFF_LEN];
     unsigned int addr;
     uint32_t port = CONFIG_SNAPCAST_SERVER_PORT;
     const char *TAG = "SNAPCAST";

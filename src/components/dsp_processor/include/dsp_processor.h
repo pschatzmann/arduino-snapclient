@@ -1,6 +1,10 @@
 #ifndef _DSP_PROCESSOR_H_
 #define _DSP_PROCESSOR_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum dspFlows {
   dspfStereo,
   dspfBiamp,
@@ -47,5 +51,9 @@ typedef struct pnode {
 
 void dsp_setup_flow(double freq, uint32_t samplerate);
 void dsp_set_xoverfreq(uint8_t, uint8_t, uint32_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _DSP_PROCESSOR_H_  */

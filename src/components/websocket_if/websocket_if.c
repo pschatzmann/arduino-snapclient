@@ -143,7 +143,6 @@ void server_task(void* pvParameters) {
     ESP_LOGI(TAG,"new client");
     if(err == ERR_OK) {
       xQueueSendToBack(client_queue,&newconn,portMAX_DELAY);
-      //http_serve(newconn);
     }
   } while(err == ERR_OK);
   netconn_close(conn);

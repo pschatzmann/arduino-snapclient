@@ -19,3 +19,8 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 - [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
 - [LibOpus](https://github.com/pschatzmann/arduino-libopus)
 
+
+## Configuration
+
+Configuration settings can be found in [config.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/config.h)
+Please note that you will need a processor with PSRAM to decode opus and PSRAM must be enabled!
