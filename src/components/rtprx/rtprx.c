@@ -35,7 +35,7 @@ static bool rtpRxState = 0;
 void rtp_rx_start() {
   if (rtpRxState == 0) {
     setup_rtp_i2s();
-    xTaskCreate(rtp_rx_task, "RTPRx", 12 * 1024, NULL, 0, NULL);
+    xTaskCreate(rtp_rx_task, "RTPRx", CONFIG_TASK_STACK_DSP_RTPRx, NULL, 0, NULL);
     rtpRxState = 1;
   }
 }
@@ -91,7 +91,7 @@ void rtp_rx_task(void *pvParameters) {
         size_t bWritten;
         // for (int i = 0; i;i++ )
         int ret = audio_write_expand((char *)audio, 960 * 2 * sizeof(int16_t),
-                                   16, 32, &bWritten, 100);
+                                   16, 32, &bWritten);
         printf("bWritten : %d  ret : %d \n ", bWritten, ret);
 
         // opus_pkg = NULL;
@@ -122,7 +122,7 @@ void rtp_rx_task(void *pvParameters) {
 
       size_t bWritten;
       int ret = audio_write_expand((char *)audio, size * 2 * sizeof(int16_t),
-                                 16, 32, &bWritten, 100);
+                                 16, 32, &bWritten);
       if (ret != 0)
         printf("Error I2S written: %d %d %d \n", ret,
                size * 2 * sizeof(int16_t), bWritten);

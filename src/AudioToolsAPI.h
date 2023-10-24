@@ -13,8 +13,8 @@ extern "C" {
 
 bool audio_begin(uint32_t sample_rate, uint8_t bits );
 void audio_end();
-bool audio_write(const void *src, size_t size, size_t *bytes_written, int ticks_to_wait);
-bool audio_write_expand(const void *src, size_t size, size_t src_bits, size_t aim_bits, size_t *bytes_written, int ticks_to_wait);
+bool audio_write(const void *src, size_t size, size_t *bytes_written);
+bool audio_write_expand(const void *src, size_t size, size_t src_bits, size_t aim_bits, size_t *bytes_written);
 
 #ifdef __cplusplus
 }

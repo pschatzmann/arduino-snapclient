@@ -40,7 +40,7 @@ extern enum dspFlows dspFlow;
 enum audio_sources { SNAPCAST, RTPRX, BLUETOOTH, SIGNALGENERATOR };
 static const char TAG[] = "PROT";
 static uint8_t audio_source ;
-extern uint8_t muteCH[4];
+//extern uint8_t muteCH[4];
 
 void protocolHandlerTask(void *pvParameter)
 { audio_source = 1;
@@ -168,7 +168,7 @@ void protocolHandlerTask(void *pvParameter)
 
 
                    case 0: // Bypass 0 or 1 or 2 
-                           dspFlow = (int) *(msg+3);
+                           //dspFlow = (int) *(msg+3);
                            break;
                    case 1: // Change Xover frequency
                            //dsp_set_xoverfreq(*(msg+3),*(msg+4));
@@ -176,8 +176,11 @@ void protocolHandlerTask(void *pvParameter)
                    case 99: { uint8_t ch = *(msg+3);
                               uint8_t state = *(msg+4);
                               printf("Mute %d %d\n",ch,state);
-                              if ( (ch<=1) & (state<=1) )
-                              { muteCH[ch] = state;
+                              if ( (ch<=1) & (state<=1) ){ 
+                                //muteCH[ch] = state;
+                                if (state){
+                                  
+                                }
                               }
                             }
                             break;

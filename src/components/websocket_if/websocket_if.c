@@ -19,8 +19,8 @@ int websocket_if_start(void)
   if (ws_res == 0) 
   { printf("Websocket error\n"); 
   } 
-  xTaskCreate(&server_task,"server_task",8*1024,NULL,6,NULL);
-  xTaskCreate(&server_handle_task,"server_handle_task",8*1024,NULL,9,NULL);
+  xTaskCreate(&server_task,"SERVER", CONFIG_TASK_STACK_SERVER, NULL,6,NULL);
+  xTaskCreate(&server_handle_task,"SERVER_HANDLE", CONFIG_TASK_STACK_SERVER_HANDLE, NULL,9,NULL);
   return 1;
 }
 

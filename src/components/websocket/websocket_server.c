@@ -26,13 +26,13 @@ This program is free software: you can redistribute it and/or modify
 
 static SemaphoreHandle_t xwebsocket_mutex; // to lock the client array
 static QueueHandle_t xwebsocket_queue; // to hold the clients that send messages
-static ws_client_t clients[WEBSOCKET_SERVER_MAX_CLIENTS]; // holds list of clients
+static ws_client_t clients[CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS]; // holds list of clients
 static TaskHandle_t xtask; // the task itself
 
 static void background_callback(struct netconn* conn, enum netconn_evt evt,u16_t len) {
   switch(evt) {
     case NETCONN_EVT_RCVPLUS:
-      xQueueSendToBack(xwebsocket_queue,&conn,WEBSOCKET_SERVER_QUEUE_TIMEOUT);
+      xQueueSendToBack(xwebsocket_queue, &conn, CONFIG_WEBSOCKET_SERVER_QUEUE_TIMEOUT);
       break;
     default:
       break;
@@ -84,10 +84,10 @@ static void ws_server_task(void* pvParameters) {
   struct netconn* conn;
 
   xwebsocket_mutex = xSemaphoreCreateMutex();
-  xwebsocket_queue = xQueueCreate(WEBSOCKET_SERVER_QUEUE_SIZE, sizeof(struct netconn*));
+  xwebsocket_queue = xQueueCreate(CONFIG_WEBSOCKET_SERVER_QUEUE_SIZE, sizeof(struct netconn*));
 
   // initialize all clients
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     clients[i].conn = NULL;
     clients[i].url  = NULL;
     clients[i].ping = 0;
@@ -103,7 +103,7 @@ static void ws_server_task(void* pvParameters) {
     if(!conn) continue; // if the connection was NULL, ignore it
 
     xSemaphoreTake(xwebsocket_mutex,portMAX_DELAY); // take access
-    for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+    for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
       if(clients[i].conn == conn) {
         handle_read(i);
         break;
@@ -116,20 +116,20 @@ static void ws_server_task(void* pvParameters) {
 
 int ws_server_start() {
   if(xtask) return 0;
-  #if WEBSOCKET_SERVER_PINNED
+  #if CONFIG_WEBSOCKET_SERVER_PINNED
   xTaskCreatePinnedToCore(&ws_server_task,
-                          "ws_server_task",
-                          WEBSOCKET_SERVER_TASK_STACK_DEPTH,
+                          "WS_SERVER",
+                          CONFIG_TASK_STACK_WS_SERVER,
                           NULL,
-                          WEBSOCKET_SERVER_TASK_PRIORITY,
+                          CONFIG_WEBSOCKET_SERVER_TASK_PRIORITY,
                           &xtask,
-                          WEBSOCKET_SERVER_PINNED_CORE);
+                          CONFIG_WEBSOCKET_SERVER_PINNED_CORE);
   #else
   xTaskCreate(&ws_server_task,
-              "ws_server_task",
-              WEBSOCKET_SERVER_TASK_STACK_DEPTH,
+              "WS_SERVER",
+              CONFIG_TASK_STACK_WS_SERVER,
               NULL,
-              WEBSOCKET_SERVER_TASK_PRIORITY,
+              CONFIG_WEBSOCKET_SERVER_TASK_PRIORITY,
               &xtask);
   #endif
   return 1;
@@ -200,7 +200,7 @@ int ws_server_add_client_protocol(struct netconn* conn,
   conn->callback = background_callback;
   netconn_write(conn,handshake,strlen(handshake),NETCONN_COPY);
 
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(clients[i].conn) continue;
     clients[i] = ws_connect_client(conn,url,NULL,callback);
     callback(i,WEBSOCKET_CONNECT,NULL,0);
@@ -220,7 +220,7 @@ int ws_server_len_url(char* url) {
   int ret;
   ret = 0;
   xSemaphoreTake(xwebsocket_mutex,portMAX_DELAY);
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(clients[i].url && strcmp(url,clients[i].url)) ret++;
   }
   xSemaphoreGive(xwebsocket_mutex);
@@ -244,7 +244,7 @@ int ws_server_len_all() {
   int ret;
   ret = 0;
   xSemaphoreTake(xwebsocket_mutex,portMAX_DELAY);
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(clients[i].conn) ret++;
   }
   xSemaphoreGive(xwebsocket_mutex);
@@ -266,7 +266,7 @@ int ws_server_remove_client(int num) {
 int ws_server_remove_clients(char* url) {
   int ret = 0;
   xSemaphoreTake(xwebsocket_mutex,portMAX_DELAY);
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i]) && strcmp(url,clients[i].url)) {
       clients[i].scallback(i,WEBSOCKET_DISCONNECT_INTERNAL,NULL,0);
       ws_disconnect_client(&clients[i], 0);
@@ -280,7 +280,7 @@ int ws_server_remove_clients(char* url) {
 int ws_server_remove_all() {
   int ret = 0;
   xSemaphoreTake(xwebsocket_mutex,portMAX_DELAY);
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i])) {
       clients[i].scallback(i,WEBSOCKET_DISCONNECT_INTERNAL,NULL,0);
       ws_disconnect_client(&clients[i], 0);
@@ -369,7 +369,7 @@ int ws_server_send_bin_client_from_callback(int num,char* msg,uint64_t len) {
 int ws_server_send_text_clients_from_callback(char* url,char* msg,uint64_t len) {
   int ret = 0;
   int err;
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i]) && strcmp(clients[i].url,url)) {
       err = ws_send(&clients[i],WEBSOCKET_OPCODE_TEXT,msg,len,0);
       if(!err) ret += 1;
@@ -385,7 +385,7 @@ int ws_server_send_text_clients_from_callback(char* url,char* msg,uint64_t len) 
 int ws_server_send_bin_clients_from_callback(char* url,char* msg,uint64_t len) {
   int ret = 0;
   int err;
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i]) && strcmp(clients[i].url,url)) {
       err = ws_send(&clients[i],WEBSOCKET_OPCODE_BIN,msg,len,0);
       if(!err) ret += 1;
@@ -401,7 +401,7 @@ int ws_server_send_bin_clients_from_callback(char* url,char* msg,uint64_t len) {
 int ws_server_send_text_all_from_callback(char* msg,uint64_t len) {
   int ret = 0;
   int err;
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i])) {
       err = ws_send(&clients[i],WEBSOCKET_OPCODE_TEXT,msg,len,0);
       if(!err) ret += 1;
@@ -417,7 +417,7 @@ int ws_server_send_text_all_from_callback(char* msg,uint64_t len) {
 int ws_server_send_bin_all_from_callback(char* msg,uint64_t len) {
   int ret = 0;
   int err;
-  for(int i=0;i<WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
+  for(int i=0;i<CONFIG_WEBSOCKET_SERVER_MAX_CLIENTS;i++) {
     if(ws_is_connected(clients[i])) {
       err = ws_send(&clients[i],WEBSOCKET_OPCODE_BIN,msg,len,0);
       if(!err) ret += 1;

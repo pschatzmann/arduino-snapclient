@@ -1,23 +1,24 @@
 
 #include "Arduino.h" // for ESP.getPsramSize()
+#include "SnapClient.h"
 #include "config.h"
 #include <stdint.h>
 #include <sys/time.h>
 
 #include "AudioToolsAPI.h"
-#include "dsps_biquad.h"
-#include "dsps_biquad_gen.h"
+//#include "dsps_biquad.h"
+//#include "dsps_biquad_gen.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/ringbuf.h"
 #include "freertos/task.h"
 #include "include/dsp_processor.h"
 
-#ifdef CONFIG_USE_BIQUAD_ASM
-#define BIQUAD dsps_biquad_f32_ae32
-#else
-#define BIQUAD dsps_biquad_f32
-#endif
+// #ifdef CONFIG_USE_BIQUAD_ASM
+// #define BIQUAD dsps_biquad_f32_ae32
+// #else
+// #define BIQUAD dsps_biquad_f32
+// #endif
 
 uint32_t bits_per_sample = CONFIG_BITS_PER_SAMPLE;
 
@@ -32,9 +33,9 @@ extern struct timeval tdif;
 extern uint32_t buffer_ms;
 extern uint8_t muteCH[4];
 
-uint8_t dspFlow = dspfStereo; // dspfStereo; //dspfBassBoost; //dspfStereo;
+// uint8_t dspFlow = dspfStereo; // dspfStereo; //dspfBassBoost; //dspfStereo;
 
-ptype_t bq[8];
+// ptype_t bq[8];
 
 void setup_dsp_i2s(uint32_t sample_rate, bool slave_i2s) {
   audio_begin(sample_rate, 16);
@@ -48,23 +49,23 @@ static void dsp_i2s_task_handler(void *arg) {
   uint8_t *audio = NULL;
   uint8_t *drainPtr = NULL;
   uint8_t *timestampSize = NULL;
-  float sbuffer0[1024];
-  float sbuffer1[1024];
-  float sbuffer2[1024];
-  float sbufout0[1024];
-  float sbufout1[1024];
-  float sbufout2[1024];
-  float sbuftmp0[1024];
+  // float sbuffer0[1024];
+  // float sbuffer1[1024];
+  // float sbuffer2[1024];
+  // float sbufout0[1024];
+  // float sbufout1[1024];
+  // float sbufout2[1024];
+  // float sbuftmp0[1024];
 
-  uint8_t dsp_audio[4 * 1024];
-  uint8_t dsp_audio1[4 * 1024];
+  // uint8_t dsp_audio[4 * 1024];
+  // uint8_t dsp_audio1[4 * 1024];
   size_t n_byte_read = 0;
   size_t chunk_size = 0;
   size_t bytes_written = 0;
-  muteCH[0] = 0;
-  muteCH[1] = 0;
-  muteCH[2] = 0;
-  muteCH[3] = 0;
+  // muteCH[0] = 0;
+  // muteCH[1] = 0;
+  // muteCH[2] = 0;
+  // muteCH[3] = 0;
   int32_t age = 0;
   int32_t agesec;
   int32_t ageusec;
@@ -118,6 +119,8 @@ static void dsp_i2s_task_handler(void *arg) {
         s_ringbuf_i2s, &n_byte_read, (portTickType)40, 3 * 4);
     if (timestampSize == NULL) {
       ESP_LOGI(TAG, "Wait: no data in buffer %d %d", cnt, n_byte_read);
+      // write silence to avoid noise
+      selfSnapClient->writeSilence();
       continue;
     }
 
@@ -229,176 +232,175 @@ static void dsp_i2s_task_handler(void *arg) {
       }
     }
 
-    {
+    // {
       int16_t len = chunk_size / 4;
       if (cnt % 100 == 2) {
         ESP_LOGI(TAG, "Chunk :%d %d ms", chunk_size, age);
       }
 
-      for (uint16_t i = 0; i < len; i++) {
-        sbuffer0[i] =
-            dynamic_vol * 0.5 *
-            ((float)((int16_t)(audio[i * 4 + 1] << 8) + audio[i * 4 + 0])) /
-            32768;
-        sbuffer1[i] =
-            dynamic_vol * 0.5 *
-            ((float)((int16_t)(audio[i * 4 + 3] << 8) + audio[i * 4 + 2])) /
-            32768;
-        sbuffer2[i] = ((sbuffer0[i] / 2) + (sbuffer1[i] / 2));
-      }
-      switch (dspFlow) {
-      case dspfStereo: { // if (cnt%120==0)
+      // for (uint16_t i = 0; i < len; i++) {
+      //   sbuffer0[i] =
+      //       dynamic_vol * 0.5 *
+      //       ((float)((int16_t)(audio[i * 4 + 1] << 8) + audio[i * 4 + 0])) /
+      //       32768;
+      //   sbuffer1[i] =
+      //       dynamic_vol * 0.5 *
+      //       ((float)((int16_t)(audio[i * 4 + 3] << 8) + audio[i * 4 + 2])) /
+      //       32768;
+      //   sbuffer2[i] = ((sbuffer0[i] / 2) + (sbuffer1[i] / 2));
+      // }
+      // switch (dspFlow) {
+      // case dspfStereo: { // if (cnt%120==0)
         //{ ESP_LOGI(TAG, "In dspf Stero :%d",chunk_size);
         // ws_server_send_bin_client(0,(char*)audio, 240);
         // printf("%d %d \n",byteWritten, i2s_evt.size );
         //}
-        for (uint16_t i = 0; i < len; i++) {
-          audio[i * 4 + 0] = (muteCH[0] == 1) ? 0 : audio[i * 4 + 0];
-          audio[i * 4 + 1] = (muteCH[0] == 1) ? 0 : audio[i * 4 + 1];
-          audio[i * 4 + 2] = (muteCH[1] == 1) ? 0 : audio[i * 4 + 2];
-          audio[i * 4 + 3] = (muteCH[1] == 1) ? 0 : audio[i * 4 + 3];
-        }
+        // for (uint16_t i = 0; i < len; i++) {
+        //   audio[i * 4 + 0] = (muteCH[0] == 1) ? 0 : audio[i * 4 + 0];
+        //   audio[i * 4 + 1] = (muteCH[0] == 1) ? 0 : audio[i * 4 + 1];
+        //   audio[i * 4 + 2] = (muteCH[1] == 1) ? 0 : audio[i * 4 + 2];
+        //   audio[i * 4 + 3] = (muteCH[1] == 1) ? 0 : audio[i * 4 + 3];
+        // }
         if (bits_per_sample == 16) {
-          audio_write((char *)audio, chunk_size, &bytes_written, portMAX_DELAY);
+          audio_write((char *)audio, chunk_size, &bytes_written);
         } else {
-          audio_write_expand((char *)audio, chunk_size, 16, 32, &bytes_written,
-                             portMAX_DELAY);
+          audio_write_expand((char *)audio, chunk_size, 16, 32, &bytes_written);
         }
-      } break;
-      case dspfBassBoost: { // CH0 low shelf 6dB @ 400Hz
-        BIQUAD(sbuffer0, sbufout0, len, bq[6].coeffs, bq[6].w);
-        BIQUAD(sbuffer1, sbufout1, len, bq[7].coeffs, bq[7].w);
-        int16_t valint[2];
-        for (uint16_t i = 0; i < len; i++) {
-          valint[0] =
-              (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
-          valint[1] =
-              (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
-          dsp_audio[i * 4 + 0] = (valint[0] & 0xff);
-          dsp_audio[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
-          dsp_audio[i * 4 + 2] = (valint[1] & 0xff);
-          dsp_audio[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
-        }
-        if (bits_per_sample == 16) {
-          ((char *)dsp_audio, chunk_size, &bytes_written, portMAX_DELAY);
-        } else {
-          audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
-                             &bytes_written, portMAX_DELAY);
-        }
+      // } break;
+      // case dspfBassBoost: { // CH0 low shelf 6dB @ 400Hz
+      //   BIQUAD(sbuffer0, sbufout0, len, bq[6].coeffs, bq[6].w);
+      //   BIQUAD(sbuffer1, sbufout1, len, bq[7].coeffs, bq[7].w);
+      //   int16_t valint[2];
+      //   for (uint16_t i = 0; i < len; i++) {
+      //     valint[0] =
+      //         (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
+      //     valint[1] =
+      //         (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
+      //     dsp_audio[i * 4 + 0] = (valint[0] & 0xff);
+      //     dsp_audio[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
+      //     dsp_audio[i * 4 + 2] = (valint[1] & 0xff);
+      //     dsp_audio[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
+      //   }
+      //   if (bits_per_sample == 16) {
+      //     ((char *)dsp_audio, chunk_size, &bytes_written, portMAX_DELAY);
+      //   } else {
+      //     audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
+      //                        &bytes_written, portMAX_DELAY);
+      //   }
 
-      } break;
-      case dspfBiamp: {
-        if (cnt % 120 == 0) {
-          ESP_LOGI(TAG, "In dspf biamp :%d", chunk_size);
-          // ws_server_send_bin_client(0,(char*)audio, 240);
-          // printf("%d %d \n",byteWritten, i2s_evt.size );
-        }
-        // Process audio ch0 LOW PASS FILTER
-        BIQUAD(sbuffer0, sbuftmp0, len, bq[0].coeffs, bq[0].w);
-        BIQUAD(sbuftmp0, sbufout0, len, bq[1].coeffs, bq[1].w);
+      // } break;
+      // case dspfBiamp: {
+      //   if (cnt % 120 == 0) {
+      //     ESP_LOGI(TAG, "In dspf biamp :%d", chunk_size);
+      //     // ws_server_send_bin_client(0,(char*)audio, 240);
+      //     // printf("%d %d \n",byteWritten, i2s_evt.size );
+      //   }
+      //   // Process audio ch0 LOW PASS FILTER
+      //   BIQUAD(sbuffer0, sbuftmp0, len, bq[0].coeffs, bq[0].w);
+      //   BIQUAD(sbuftmp0, sbufout0, len, bq[1].coeffs, bq[1].w);
 
-        // Process audio ch1 HIGH PASS FILTER
-        BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
-        BIQUAD(sbuftmp0, sbufout1, len, bq[3].coeffs, bq[3].w);
+      //   // Process audio ch1 HIGH PASS FILTER
+      //   BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
+      //   BIQUAD(sbuftmp0, sbufout1, len, bq[3].coeffs, bq[3].w);
 
-        int16_t valint[2];
-        for (uint16_t i = 0; i < len; i++) {
-          valint[0] =
-              (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
-          valint[1] =
-              (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
-          dsp_audio[i * 4 + 0] = (valint[0] & 0xff);
-          dsp_audio[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
-          dsp_audio[i * 4 + 2] = (valint[1] & 0xff);
-          dsp_audio[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
-        }
-        if (bits_per_sample == 16) {
-          audio_write((char *)dsp_audio, chunk_size, &bytes_written,
-                      portMAX_DELAY);
-        } else {
-          audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
-                             &bytes_written, portMAX_DELAY);
-        }
-      } break;
+      //   int16_t valint[2];
+      //   for (uint16_t i = 0; i < len; i++) {
+      //     valint[0] =
+      //         (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
+      //     valint[1] =
+      //         (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
+      //     dsp_audio[i * 4 + 0] = (valint[0] & 0xff);
+      //     dsp_audio[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
+      //     dsp_audio[i * 4 + 2] = (valint[1] & 0xff);
+      //     dsp_audio[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
+      //   }
+      //   if (bits_per_sample == 16) {
+      //     audio_write((char *)dsp_audio, chunk_size, &bytes_written,
+      //                 portMAX_DELAY);
+      //   } else {
+      //     audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
+      //                        &bytes_written, portMAX_DELAY);
+      //   }
+      // } break;
 
-      case dspf2DOT1: { // Process audio L + R LOW PASS FILTER
-        BIQUAD(sbuffer2, sbuftmp0, len, bq[0].coeffs, bq[0].w);
-        BIQUAD(sbuftmp0, sbufout2, len, bq[1].coeffs, bq[1].w);
+      // case dspf2DOT1: { // Process audio L + R LOW PASS FILTER
+      //   BIQUAD(sbuffer2, sbuftmp0, len, bq[0].coeffs, bq[0].w);
+      //   BIQUAD(sbuftmp0, sbufout2, len, bq[1].coeffs, bq[1].w);
 
-        // Process audio L HIGH PASS FILTER
-        BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
-        BIQUAD(sbuftmp0, sbufout0, len, bq[3].coeffs, bq[3].w);
+      //   // Process audio L HIGH PASS FILTER
+      //   BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
+      //   BIQUAD(sbuftmp0, sbufout0, len, bq[3].coeffs, bq[3].w);
 
-        // Process audio R HIGH PASS FILTER
-        BIQUAD(sbuffer1, sbuftmp0, len, bq[4].coeffs, bq[4].w);
-        BIQUAD(sbuftmp0, sbufout1, len, bq[5].coeffs, bq[5].w);
+      //   // Process audio R HIGH PASS FILTER
+      //   BIQUAD(sbuffer1, sbuftmp0, len, bq[4].coeffs, bq[4].w);
+      //   BIQUAD(sbuftmp0, sbufout1, len, bq[5].coeffs, bq[5].w);
 
-        int16_t valint[5];
-        for (uint16_t i = 0; i < len; i++) {
-          valint[0] =
-              (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
-          valint[1] =
-              (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
-          valint[2] =
-              (muteCH[2] == 1) ? (int16_t)0 : (int16_t)(sbufout2[i] * 32768);
-          dsp_audio[i * 4 + 0] = (valint[2] & 0xff);
-          dsp_audio[i * 4 + 1] = ((valint[2] & 0xff00) >> 8);
-          dsp_audio[i * 4 + 2] = 0;
-          dsp_audio[i * 4 + 3] = 0;
+      //   int16_t valint[5];
+      //   for (uint16_t i = 0; i < len; i++) {
+      //     valint[0] =
+      //         (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * 32768);
+      //     valint[1] =
+      //         (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * 32768);
+      //     valint[2] =
+      //         (muteCH[2] == 1) ? (int16_t)0 : (int16_t)(sbufout2[i] * 32768);
+      //     dsp_audio[i * 4 + 0] = (valint[2] & 0xff);
+      //     dsp_audio[i * 4 + 1] = ((valint[2] & 0xff00) >> 8);
+      //     dsp_audio[i * 4 + 2] = 0;
+      //     dsp_audio[i * 4 + 3] = 0;
 
-          dsp_audio1[i * 4 + 0] = (valint[0] & 0xff);
-          dsp_audio1[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
-          dsp_audio1[i * 4 + 2] = (valint[1] & 0xff);
-          dsp_audio1[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
-        }
-        audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
-                           &bytes_written, portMAX_DELAY);
-        // audio_write_expand(1, (char *)dsp_audio1, chunk_size, 16, 32,
-        //                  &bytes_written, portMAX_DELAY);
-      } break;
-      case dspfFunkyHonda: { // Process audio L + R LOW PASS FILTER
-        BIQUAD(sbuffer2, sbuftmp0, len, bq[0].coeffs, bq[0].w);
-        BIQUAD(sbuftmp0, sbufout2, len, bq[1].coeffs, bq[1].w);
+      //     dsp_audio1[i * 4 + 0] = (valint[0] & 0xff);
+      //     dsp_audio1[i * 4 + 1] = ((valint[0] & 0xff00) >> 8);
+      //     dsp_audio1[i * 4 + 2] = (valint[1] & 0xff);
+      //     dsp_audio1[i * 4 + 3] = ((valint[1] & 0xff00) >> 8);
+      //   }
+      //   audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
+      //                      &bytes_written, portMAX_DELAY);
+      //   // audio_write_expand(1, (char *)dsp_audio1, chunk_size, 16, 32,
+      //   //                  &bytes_written, portMAX_DELAY);
+      // } break;
+      // case dspfFunkyHonda: { // Process audio L + R LOW PASS FILTER
+      //   BIQUAD(sbuffer2, sbuftmp0, len, bq[0].coeffs, bq[0].w);
+      //   BIQUAD(sbuftmp0, sbufout2, len, bq[1].coeffs, bq[1].w);
 
-        // Process audio L HIGH PASS FILTER
-        BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
-        BIQUAD(sbuftmp0, sbufout0, len, bq[3].coeffs, bq[3].w);
+      //   // Process audio L HIGH PASS FILTER
+      //   BIQUAD(sbuffer0, sbuftmp0, len, bq[2].coeffs, bq[2].w);
+      //   BIQUAD(sbuftmp0, sbufout0, len, bq[3].coeffs, bq[3].w);
 
-        // Process audio R HIGH PASS FILTER
-        BIQUAD(sbuffer1, sbuftmp0, len, bq[4].coeffs, bq[4].w);
-        BIQUAD(sbuftmp0, sbufout1, len, bq[5].coeffs, bq[5].w);
+      //   // Process audio R HIGH PASS FILTER
+      //   BIQUAD(sbuffer1, sbuftmp0, len, bq[4].coeffs, bq[4].w);
+      //   BIQUAD(sbuftmp0, sbufout1, len, bq[5].coeffs, bq[5].w);
 
-        uint16_t scale = 16384; // 32768
-        int16_t valint[5];
-        for (uint16_t i = 0; i < len; i++) {
-          valint[0] =
-              (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * scale);
-          valint[1] =
-              (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * scale);
-          valint[2] =
-              (muteCH[2] == 1) ? (int16_t)0 : (int16_t)(sbufout2[i] * scale);
-          valint[3] = valint[0] + valint[2];
-          valint[4] = -valint[2];
-          valint[5] = -valint[1] - valint[2];
-          dsp_audio[i * 4 + 0] = (valint[3] & 0xff);
-          dsp_audio[i * 4 + 1] = ((valint[3] & 0xff00) >> 8);
-          dsp_audio[i * 4 + 2] = (valint[2] & 0xff);
-          dsp_audio[i * 4 + 3] = ((valint[2] & 0xff00) >> 8);
+      //   uint16_t scale = 16384; // 32768
+      //   int16_t valint[5];
+      //   for (uint16_t i = 0; i < len; i++) {
+      //     valint[0] =
+      //         (muteCH[0] == 1) ? (int16_t)0 : (int16_t)(sbufout0[i] * scale);
+      //     valint[1] =
+      //         (muteCH[1] == 1) ? (int16_t)0 : (int16_t)(sbufout1[i] * scale);
+      //     valint[2] =
+      //         (muteCH[2] == 1) ? (int16_t)0 : (int16_t)(sbufout2[i] * scale);
+      //     valint[3] = valint[0] + valint[2];
+      //     valint[4] = -valint[2];
+      //     valint[5] = -valint[1] - valint[2];
+      //     dsp_audio[i * 4 + 0] = (valint[3] & 0xff);
+      //     dsp_audio[i * 4 + 1] = ((valint[3] & 0xff00) >> 8);
+      //     dsp_audio[i * 4 + 2] = (valint[2] & 0xff);
+      //     dsp_audio[i * 4 + 3] = ((valint[2] & 0xff00) >> 8);
 
-          dsp_audio1[i * 4 + 0] = (valint[4] & 0xff);
-          dsp_audio1[i * 4 + 1] = ((valint[4] & 0xff00) >> 8);
-          dsp_audio1[i * 4 + 2] = (valint[5] & 0xff);
-          dsp_audio1[i * 4 + 3] = ((valint[5] & 0xff00) >> 8);
-        }
-        audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
-                           &bytes_written, portMAX_DELAY);
-      } break;
-      default:
-        break;
-      }
+      //     dsp_audio1[i * 4 + 0] = (valint[4] & 0xff);
+      //     dsp_audio1[i * 4 + 1] = ((valint[4] & 0xff00) >> 8);
+      //     dsp_audio1[i * 4 + 2] = (valint[5] & 0xff);
+      //     dsp_audio1[i * 4 + 3] = ((valint[5] & 0xff00) >> 8);
+      //   }
+      //   audio_write_expand((char *)dsp_audio, chunk_size, 16, 32,
+      //                      &bytes_written, portMAX_DELAY);
+      // } break;
+      // default:
+      //   break;
+      // }
 
       vRingbufferReturnItem(s_ringbuf_i2s, (void *)audio);
-    }
+    // }
   }
 }
 // buffer size must hold 400ms-1000ms  // for 2ch16b48000 that is 76800 -
@@ -448,7 +450,7 @@ void dsp_i2s_task_init(uint32_t sample_rate, bool slave) {
     return;
   }
   printf("Ringbuffer ok\n");
-  xTaskCreatePinnedToCore(dsp_i2s_task_handler, "DSP_I2S", 48 * 1024, NULL, 5,
+  xTaskCreatePinnedToCore(dsp_i2s_task_handler, "DSP_I2S", CONFIG_TASK_STACK_DSP_I2S, NULL, 5,
                           &s_dsp_i2s_task_handle, 0);
 }
 
@@ -469,83 +471,83 @@ size_t write_ringbuf(const uint8_t *data, size_t size) {
   return (done) ? size : 0;
 }
 
-// ESP32 DSP processor
-//======================================================
-// Each time a buffer of audio is passed to the DSP - samples are
-// processed according to a dynamic list of audio processing nodes.
+// // ESP32 DSP processor
+// //======================================================
+// // Each time a buffer of audio is passed to the DSP - samples are
+// // processed according to a dynamic list of audio processing nodes.
 
-// Each audio processor node consist of a data struct holding the
-// required weights and states for processing an automomous processing
-// function. The high level parameters is maintained in the structure
-// as well
+// // Each audio processor node consist of a data struct holding the
+// // required weights and states for processing an automomous processing
+// // function. The high level parameters is maintained in the structure
+// // as well
 
-// Release - Prove off concept
-// ----------------------------------------
-// Fixed 2x2 biquad flow Xover for biAmp systems
-// Interface for cross over frequency and level
+// // Release - Prove off concept
+// // ----------------------------------------
+// // Fixed 2x2 biquad flow Xover for biAmp systems
+// // Interface for cross over frequency and level
 
-void dsp_setup_flow(double freq, uint32_t samplerate) {
-  float f = freq / samplerate / 2.0;
+// void dsp_setup_flow(double freq, uint32_t samplerate) {
+//   float f = freq / samplerate / 2.0;
 
-  bq[0] = (ptype_t){LPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[1] = (ptype_t){LPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[2] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[3] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[4] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[5] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[6] = (ptype_t){LOWSHELF, f, 6, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
-  bq[7] = (ptype_t){LOWSHELF, f, 6, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[0] = (ptype_t){LPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[1] = (ptype_t){LPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[2] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[3] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[4] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[5] = (ptype_t){HPF, f, 0, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[6] = (ptype_t){LOWSHELF, f, 6, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
+//   bq[7] = (ptype_t){LOWSHELF, f, 6, 0.707, NULL, NULL, {0, 0, 0, 0, 0}, {0, 0}};
 
-  // pnode_t *aflow = new pnode_t;
-  // if (aflow == NULL) {
-  //   printf("Could not create node");
-  // }
+//   // pnode_t *aflow = new pnode_t;
+//   // if (aflow == NULL) {
+//   //   printf("Could not create node");
+//   // }
 
-  for (uint8_t n = 0; n <= 7; n++) {
-    switch (bq[n].filtertype) {
-    case LOWSHELF:
-      dsps_biquad_gen_lowShelf_f32(bq[n].coeffs, bq[n].freq, bq[n].gain,
-                                   bq[n].q);
-      break;
-    case LPF:
-      dsps_biquad_gen_lpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
-      break;
-    case HPF:
-      dsps_biquad_gen_hpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
-      break;
-    default:
-      break;
-    }
-    for (uint8_t i = 0; i <= 4; i++) {
-      printf("%.6f ", bq[n].coeffs[i]);
-    }
-    printf("\n");
-  }
-}
+//   for (uint8_t n = 0; n <= 7; n++) {
+//     switch (bq[n].filtertype) {
+//     case LOWSHELF:
+//       dsps_biquad_gen_lowShelf_f32(bq[n].coeffs, bq[n].freq, bq[n].gain,
+//                                    bq[n].q);
+//       break;
+//     case LPF:
+//       dsps_biquad_gen_lpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
+//       break;
+//     case HPF:
+//       dsps_biquad_gen_hpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
+//       break;
+//     default:
+//       break;
+//     }
+//     for (uint8_t i = 0; i <= 4; i++) {
+//       printf("%.6f ", bq[n].coeffs[i]);
+//     }
+//     printf("\n");
+//   }
+// }
 
-void dsp_set_xoverfreq(uint8_t freqh, uint8_t freql, uint32_t samplerate) {
-  float freq = freqh * 256 + freql;
-  printf("%f\n", freq);
-  float f = freq / samplerate / 2.;
-  for (int8_t n = 0; n <= 5; n++) {
-    bq[n].freq = f;
-    switch (bq[n].filtertype) {
-    case LPF:
-      for (uint8_t i = 0; i <= 4; i++) {
-        printf("%.6f ", bq[n].coeffs[i]);
-      }
-      printf("\n");
-      dsps_biquad_gen_lpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
-      for (uint8_t i = 0; i <= 4; i++) {
-        printf("%.6f ", bq[n].coeffs[i]);
-      }
-      printf("%f \n", bq[n].freq);
-      break;
-    case HPF:
-      dsps_biquad_gen_hpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
-      break;
-    default:
-      break;
-    }
-  }
-}
+// void dsp_set_xoverfreq(uint8_t freqh, uint8_t freql, uint32_t samplerate) {
+//   float freq = freqh * 256 + freql;
+//   printf("%f\n", freq);
+//   float f = freq / samplerate / 2.;
+//   for (int8_t n = 0; n <= 5; n++) {
+//     bq[n].freq = f;
+//     switch (bq[n].filtertype) {
+//     case LPF:
+//       for (uint8_t i = 0; i <= 4; i++) {
+//         printf("%.6f ", bq[n].coeffs[i]);
+//       }
+//       printf("\n");
+//       dsps_biquad_gen_lpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
+//       for (uint8_t i = 0; i <= 4; i++) {
+//         printf("%.6f ", bq[n].coeffs[i]);
+//       }
+//       printf("%f \n", bq[n].freq);
+//       break;
+//     case HPF:
+//       dsps_biquad_gen_hpf_f32(bq[n].coeffs, bq[n].freq, bq[n].q);
+//       break;
+//     default:
+//       break;
+//     }
+//   }
+// }
