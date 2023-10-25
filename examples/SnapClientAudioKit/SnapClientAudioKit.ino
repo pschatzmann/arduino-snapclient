@@ -19,6 +19,9 @@ void setup() {
   Serial.println();
   Serial.println(WiFi.localIP());
 
+  // use full volume of kit - volume control done by client
+  out.setVolume(1.0);
+
   // start snap client
   client.begin();
 }
