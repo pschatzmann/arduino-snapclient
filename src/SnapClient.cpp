@@ -475,21 +475,3 @@ void SnapClient::local_http_get_task(void *pvParameters) {
   }
 }
 
-void SnapClient::timeravg(struct timeval *tavg, struct timeval *tdif) {
-  ESP_LOGI("TAVG", "Time input : % 11lld.%06d", (int64_t)(tdif)->tv_sec,
-           (int32_t)(tdif)->tv_usec);
-  if (avgptr < 31) {
-    avgptr = avgptr + 1;
-  } else {
-    avgsync = 1;
-    avgptr = 0;
-  }
-  avg[avgptr] = (uint32_t)(tdif)->tv_usec;
-  uint32_t avgsum = 0;
-  for (int i = 0; i < 32; i++) {
-    avgsum = avgsum + avg[i];
-  }
-  uint32_t avg_32 = (avgsync == 0) ? avgsum / avgptr : avgsum / 32;
-  tavg->tv_usec = avg_32;
-  // ESP_LOGI("TAVG","Time avg :               %06d  %d ",avg_32, avgsync);
-}
