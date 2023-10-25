@@ -33,7 +33,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
   OpusDecoder *decoder = NULL;
   // 960*2: 20ms, 960*1: 10ms
   int16_t *audio = (int16_t *)malloc(960 * 2 * sizeof(int16_t));
-  int16_t pcm_size = 120;
+  int16_t pcm_size = 900; //120;
   uint16_t channels;
   uint32_t cnt = 0;
   int chunk_res;
@@ -49,7 +49,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
               &(servaddr.sin_addr.s_addr));
     servaddr.sin_port = htons(CONFIG_SNAPCAST_SERVER_PORT);
 
-#ifdef CONFIG_SNAPCLIENT_USE_MDNS
+#if CONFIG_SNAPCLIENT_USE_MDNS
     // Find snapcast server using mDNS
     // Connect to first snapcast server found
     ESP_LOGI(TAG, "Enable mdns");
@@ -111,7 +111,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
         SNAPCAST_MESSAGE_HELLO,    // type
         0x0,                       // id
         0x0,                       // refersTo
-        {now.tv_sec, now.tv_usec}, // sent
+        {(int32_t)now.tv_sec, now.tv_usec}, // sent
         {0x0, 0x0},                // received
         0x0,                       // size
     };
@@ -252,6 +252,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
 
         codec_header_message_free(&codec_header_message);
         received_header = true;
+        LOGI("Free Heap: %d / Free PSRAM: %d", ESP.getFreeHeap(), ESP.getFreePsram());
 
         break;
 
@@ -277,7 +278,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
                                            size, (opus_int16 *)audio,
                                            pcm_size / channels, 0)) ==
                  OPUS_BUFFER_TOO_SMALL) {
-            pcm_size = pcm_size * 2;
+            pcm_size = pcm_size += 120; //pcm_size * 2;
             ESP_LOGI(TAG,
                      "OPUS encoding buffer too small, resizing to %d "
                      "samples per channel",
@@ -362,17 +363,20 @@ void SnapClient::local_http_get_task(void *pvParameters) {
         ESP_LOGI(TAG, "Latency:        %d", server_settings_message.latency);
         ESP_LOGI(TAG, "Mute:           %d", server_settings_message.muted);
         ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
-        muteCH[0] = server_settings_message.muted;
-        muteCH[1] = server_settings_message.muted;
-        muteCH[2] = server_settings_message.muted;
-        muteCH[3] = server_settings_message.muted;
+        // muteCH[0] = server_settings_message.muted;
+        // muteCH[1] = server_settings_message.muted;
+        // muteCH[2] = server_settings_message.muted;
+        // muteCH[3] = server_settings_message.muted;
+
+        // set volume
+        selfSnapClient->setMute(server_settings_message.muted);
+        selfSnapClient->setVolume(server_settings_message.volume);
+
         if (server_settings_message.muted != client_state_muted) {
           client_state_muted = server_settings_message.muted;
           xQueueSend(flow_queue, &client_state_muted, 10);
         }
-        // Volume setting using ADF HAL abstraction TODO
-        // audio_hal_set_volume(board_handle->audio_hal,
-        //                     server_settings_message.volume);
+
         break;
 
       case SNAPCAST_MESSAGE_TIME:
