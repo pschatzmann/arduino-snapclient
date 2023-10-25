@@ -179,8 +179,6 @@ class SnapClient {
 
     void local_http_get_task(void *pvParameters);
 
-    void timeravg(struct timeval *tavg,struct timeval *tdif);
-
     bool snap_audio_begin(uint32_t sample_rate, uint8_t bits){
         AudioInfo info;
         info.sample_rate = sample_rate;
