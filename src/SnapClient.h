@@ -121,6 +121,13 @@ class SnapClient {
     #if CONFIG_SNAPCLIENT_SNTP_ENABLE
       set_time_from_sntp();
     #endif
+
+      // allow amplification
+      auto vol_cfg = vol_stream.defaultConfig();
+      vol_cfg.allow_boost = true;
+      vol_cfg.channels = 2;
+      vol_cfg.bits_per_sample = 16;
+      vol_stream.begin(vol_cfg);
       
       flow_queue = xQueueCreate(10, sizeof(uint32_t));
       assert(flow_queue!=NULL);
@@ -132,8 +139,9 @@ class SnapClient {
 
     /// Adjust the volume
     void setVolume(float vol){
-      this->vol = vol;
-      vol_stream.setVolume(vol);
+      this->vol = vol / 100.0;
+      ESP_LOGI(TAG, "Volume: %f", this->vol);
+      vol_stream.setVolume(this->vol * vol_factor);
     }
 
     /// provides the actual volume
@@ -158,11 +166,17 @@ class SnapClient {
       }
     }
 
+    /// Adjust volume by factor e.g. 1.5
+    void setVolumeFactor(float fact){
+      vol_factor = fact;
+    }
+
   protected:
     AudioOutput *out = nullptr;
     VolumeStream vol_stream;
     AdapterAudioStreamToAudioOutput output_adapter;
     float vol = 1.0;
+    float vol_factor = 1.0;
     bool is_mute = false;
     char* buff = nullptr; //[CONFG_SNAPCAST_BUFF_LEN];
     unsigned int addr;
