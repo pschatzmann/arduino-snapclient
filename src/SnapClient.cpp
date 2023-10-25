@@ -49,7 +49,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
               &(servaddr.sin_addr.s_addr));
     servaddr.sin_port = htons(CONFIG_SNAPCAST_SERVER_PORT);
 
-#ifdef CONFIG_SNAPCLIENT_USE_MDNS
+#if CONFIG_SNAPCLIENT_USE_MDNS
     // Find snapcast server using mDNS
     // Connect to first snapcast server found
     ESP_LOGI(TAG, "Enable mdns");
@@ -111,7 +111,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
         SNAPCAST_MESSAGE_HELLO,    // type
         0x0,                       // id
         0x0,                       // refersTo
-        {now.tv_sec, now.tv_usec}, // sent
+        {(int32_t)now.tv_sec, now.tv_usec}, // sent
         {0x0, 0x0},                // received
         0x0,                       // size
     };
@@ -252,6 +252,7 @@ void SnapClient::local_http_get_task(void *pvParameters) {
 
         codec_header_message_free(&codec_header_message);
         received_header = true;
+        LOGI("Free Heap: %d / Free PSRAM: %d", ESP.getFreeHeap(), ESP.getFreePsram());
 
         break;
 

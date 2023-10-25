@@ -31,7 +31,6 @@ extern "C" {
 #include "components/net_functions/include/net_functions.h"
 
 // Web socket server 
-#include "components/websocket_if/include/websocket_if.h"
 #include "components/websocket/include/websocket_server.h"
 #include "components/dsp_processor/include/dsp_processor.h"
 #include "components/lightsnapcast/include/snapcast.h"
@@ -92,7 +91,7 @@ class SnapClient {
       strcpy(mac_address, WiFi.macAddress().c_str());
       ESP_LOGI(TAG, "mac: %s", mac_address);
 
-#ifdef CONFIG_USE_PSRAM
+#if CONFIG_USE_PSRAM
       if (ESP.getPsramSize()>0) heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
 #endif
 
@@ -115,11 +114,11 @@ class SnapClient {
     
       // Enable websocket server  
       ESP_LOGI(TAG, "Setup ws server");
-      websocket_if_start();
+      //websocket_if_start();
     
       net_mdns_register("snapclient");
 
-    #ifdef CONFIG_SNAPCLIENT_SNTP_ENABLE
+    #if CONFIG_SNAPCLIENT_SNTP_ENABLE
       set_time_from_sntp();
     #endif
       
