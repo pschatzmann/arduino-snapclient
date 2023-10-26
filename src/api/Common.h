@@ -13,7 +13,6 @@ enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 
 struct SnapCtxDef {
   uint32_t buffer_ms =  400;
-  const char *mac_address = "";
   struct timeval tdif, tavg;
 };
 

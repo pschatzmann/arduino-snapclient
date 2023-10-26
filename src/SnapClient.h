@@ -45,8 +45,9 @@ public:
     ESP_LOGI(TAG, "Connected to AP");
 
     // Get MAC address for WiFi station
-    ctx.mac_address = WiFi.macAddress().c_str();
-    ESP_LOGI(TAG, "mac: %s", ctx.mac_address);
+    const char* adr = WiFi.macAddress().c_str();
+    SnapGetHttp::instance().setMacAddress(adr);
+    ESP_LOGI(TAG, "mac: %s", adr);
 
 #if CONFIG_NVS_FLASH
     esp_err_t ret = nvs_flash_init();

@@ -58,6 +58,10 @@ public:
     server_port = port;
   }
 
+  void setMacAddress(const char* adr){
+    mac_address = adr;
+  }
+
   /// FreeRTOS Task Handler
   static void http_get_task(void *pvParameters) {
     SnapGetHttp::instance().http_get_local_task(pvParameters);
@@ -86,6 +90,7 @@ protected:
   bool received_header = false;
   bool output_start = true;
   bool output_started = false;
+  const char* mac_address = nullptr;
 
   SnapGetHttp() { server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST); }
 
@@ -211,14 +216,14 @@ protected:
     base_message = base_message_init;
 
     hello_message_t hello_message = {
-        (char *)ctx.mac_address,
+        (char *)mac_address,
         (char *)CONFIG_SNAPCAST_CLIENT_NAME, // hostname
         (char *)"0.0.2",                     // client version
         (char *)"libsnapcast",               // client name
         (char *)"esp32",                     // os name
         (char *)"xtensa",                    // arch
         1,                                   // instance
-        (char *)ctx.mac_address,             // id
+        (char *)mac_address,             // id
         2,                                   // protocol version
     };
 
