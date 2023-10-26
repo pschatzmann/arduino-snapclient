@@ -12,19 +12,11 @@
 #include "SnapAudioToolsAPI.h"
 #include "api/common.h"
 
-#if CONFIG_LEGACY
-#include "../legacy/dsp_processor.h"
-#endif
 
-// buffer size must hold 400ms-1000ms  // for 2ch16b48000 that is 76800 -
-// 192000 or 75-188 x 1024
-
-
-//#define BUFFER_SIZE 192 * (3528 + 12)    // 44100/16/2
-//(3840 + 12)  PCM 48000/16/2
-
-// 3852 3528
-
+/**
+ * Output Class which reads the data from the Queue and sends it out
+ * to the audio API
+*/
 class SnapOutput {
 
 public:
@@ -98,11 +90,7 @@ protected:
   }
 
   static void dsp_i2s_task_handler(void *arg) {
-#if CONFIG_LEGACY
-    dsp_i2s_task_handler_legacy(arg);
-#else
     instance().local_dsp_i2s_task_handler(arg);
-#endif
   }
 
   void local_dsp_i2s_task_handler(void *arg) {

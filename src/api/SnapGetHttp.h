@@ -23,11 +23,7 @@
 #include "lightsnapcast/snapcast.h"
 #include "net_functions/net_functions.h"
 #include "opus.h"
-//#include "websocket/websocket_server.h"
 
-#if CONFIG_LEGACY
-#include "../legacy/dsp_processor.h"
-#endif
 
 #define BASE_MESSAGE_SIZE 26
 #define TIME_MESSAGE_SIZE 8
@@ -95,11 +91,7 @@ public:
     if (output_started)
       return;
     if (output_start) {
-#if CONFIG_LEGACY
-      dsp_i2s_task_init(48000, false);
-#else
       SnapOutput::instance().begin(48000);
-#endif
     }
     output_started = true;
   }
@@ -613,10 +605,6 @@ protected:
   }
 
   size_t write_ringbuf(const uint8_t *data, size_t size) {
-#if CONFIG_LEGACY
-    return write_ringbuf(data, size);
-#else
     return SnapOutput::instance().write(data, size);
-#endif
   }
 };

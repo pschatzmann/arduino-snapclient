@@ -133,9 +133,7 @@ public:
   void end() {
     if (http_get_task_handle != nullptr)
       vTaskDelete(http_get_task_handle);
-#if !CONFIG_LEGACY
     SnapOutput::instance().end();
-#endif
     // ws_server_stop();
   }
 
@@ -167,11 +165,7 @@ protected:
   }
 
   static void http_get_task(void *pvParameters) {
-#if CONFIG_LEGACY
-    ::http_gettask(pvParameters);
-#else
     SnapGetHttp::instance().http_get_task(pvParameters);
-#endif
   }
 
   void writeSilence() {
