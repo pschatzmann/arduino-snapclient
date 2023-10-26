@@ -16,7 +16,6 @@
 #include "nvs_flash.h"
 
 // Web socket server
-#include "SnapAudioToolsAPI.h"
 #include "SnapOutput.h"
 #include "common.h"
 #include "config.h"
@@ -502,8 +501,9 @@ protected:
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
     // set volume
-    audio_mute(server_settings_message.muted);
-    audio_set_volume(server_settings_message.volume);
+    SnapOutput &out = SnapOutput::instance();
+    out.setMute(server_settings_message.muted);
+    out.setVolume(server_settings_message.volume);
 
     if (server_settings_message.muted != client_state_muted) {
       client_state_muted = server_settings_message.muted;

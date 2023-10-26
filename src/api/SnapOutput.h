@@ -8,15 +8,13 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-#include "config.h"
-#include "SnapAudioToolsAPI.h"
 #include "api/common.h"
-
+#include "config.h"
 
 /**
  * Output Class which reads the data from the Queue and sends it out
  * to the audio API
-*/
+ */
 class SnapOutput {
 
 public:
@@ -25,21 +23,23 @@ public:
     return self;
   }
 
-  /// Starts the processing which is also starting the the dsp_i2s_task_handler task
+  /// Starts the processing which is also starting the the dsp_i2s_task_handler
+  /// task
   void begin(uint32_t sample_rate) {
     const char *TAG = "I2S";
     ESP_LOGD(TAG, "");
 
-#if CONFIG_USE_PSRAM
-    if (ESP.getPsramSize() > 0) {
-      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
-    } else {
-      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
-    }
-#endif
+    // allow amplification
+    auto vol_cfg = vol_stream.defaultConfig();
+    vol_cfg.allow_boost = true;
+    vol_cfg.channels = 2;
+    vol_cfg.bits_per_sample = 16;
+    vol_stream.begin(vol_cfg);
 
     if (ringbuf_i2s == NULL) {
-      int buffer_size =  ESP.getPsramSize() > BUFFER_SIZE_PSRAM ? BUFFER_SIZE_PSRAM : BUFFER_SIZE_NO_PSRAM;
+      int buffer_size = ESP.getPsramSize() > BUFFER_SIZE_PSRAM
+                            ? BUFFER_SIZE_PSRAM
+                            : BUFFER_SIZE_NO_PSRAM;
       ringbuf_i2s = xRingbufferCreate(buffer_size, RINGBUF_TYPE_BYTEBUF);
       if (ringbuf_i2s == NULL) {
         printf("nospace for ringbuffer\n");
@@ -58,7 +58,8 @@ public:
   /// Writes audio data to the queue
   size_t write(const uint8_t *data, size_t size) {
     ESP_LOGD(TAG, "%d", size);
-    if(ringbuf_i2s == nullptr) return 0;
+    if (ringbuf_i2s == nullptr)
+      return 0;
     BaseType_t done = xRingbufferSend(ringbuf_i2s, (void *)data, size,
                                       (portTickType)portMAX_DELAY);
     return (done) ? size : 0;
@@ -77,16 +78,87 @@ public:
     }
   }
 
+  /// Adjust the volume
+  void setVolume(float vol) {
+    this->vol = vol / 100.0;
+    ESP_LOGI(TAG, "Volume: %f", this->vol);
+    vol_stream.setVolume(this->vol * vol_factor);
+  }
+
+  /// provides the actual volume
+  float volume() { return vol; }
+
+  /// mute / unmute
+  void setMute(bool mute) {
+    is_mute = mute;
+    vol_stream.setVolume(mute ? 0 : vol);
+    writeSilence();
+  }
+
+  /// checks if volume is mute
+  bool isMute() { return is_mute; }
+
+  /// Adjust volume by factor e.g. 1.5
+  void setVolumeFactor(float fact) { vol_factor = fact; }
+
+  void setOutput(AudioOutput &output) {
+    this->out = &output;
+    vol_stream.setTarget(output);
+  }
+
 protected:
+  const char *TAG = "SnapOutput";
   xTaskHandle dsp_i2s_task_handle = NULL;
   RingbufHandle_t ringbuf_i2s = NULL;
-  const char *TAG = "SnapOutput";
+  AudioOutput *out = nullptr;
+  VolumeStream vol_stream;
+  float vol = 1.0;
+  float vol_factor = 1.0;
+  bool is_mute = false;
 
   SnapOutput() = default;
 
+  void writeSilence() {
+    for (int j = 0; j < 50; j++) {
+      out->writeSilence(1024);
+    }
+  }
+
+  bool audioBegin(uint32_t sample_rate, uint8_t bits) {
+    ESP_LOGD(TAG, "sample_rate: %d, bits: %d", sample_rate, bits);
+    if (out == nullptr)
+      return false;
+    AudioInfo info;
+    info.sample_rate = sample_rate;
+    info.bits_per_sample = bits;
+    info.channels = 2;
+
+    out->setAudioInfo(info);
+    bool result = out->begin();
+    ESP_LOGD(TAG, "end");
+    return result;
+  }
+
+  void audioEnd() {
+    ESP_LOGD(TAG, "");
+    if (out == nullptr)
+      return;
+    out->end();
+  }
+
+  bool audioWrite(const void *src, size_t size, size_t *bytes_written) {
+    ESP_LOGD(TAG, "");
+    if (out == nullptr) {
+      *bytes_written = 0;
+      return false;
+    }
+    *bytes_written = vol_stream.write((const uint8_t *)src, size);
+    return *bytes_written > 0;
+  }
+
   void setup_dsp_i2s(uint32_t sample_rate) {
     ESP_LOGD(TAG, "sample_rate: %d", sample_rate);
-    audio_begin(sample_rate, 16);
+    audioBegin(sample_rate, 16);
   }
 
   static void dsp_i2s_task_handler(void *arg) {
@@ -160,8 +232,7 @@ protected:
       if (timestampSize == NULL) {
         ESP_LOGI(TAG, "Wait: no data in buffer %d %d", cnt, n_byte_read);
         // write silence to avoid noise
-        // selfSnapClient->writeSilence();
-        audio_mute(true);
+        setMute(true);
         continue;
       }
 
@@ -278,7 +349,7 @@ protected:
       if (cnt % 100 == 2) {
         ESP_LOGI(TAG, "Chunk :%d %d ms", chunk_size, age);
       }
-      audio_write((char *)audio, chunk_size, &bytes_written);
+      audioWrite((char *)audio, chunk_size, &bytes_written);
 
       vRingbufferReturnItem(ringbuf_i2s, (void *)audio);
     }

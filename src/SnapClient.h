@@ -6,53 +6,28 @@
 
 #include "WiFi.h"
 #include <string.h>
-
-//#include "esp_event.h"
 #include "esp_log.h"
-// #include "esp_netif.h"
-// #include "esp_system.h"
-// #include "esp_wifi.h"
-// #include "lwip/dns.h"
-// #include "lwip/err.h"
-// #include "lwip/netdb.h"
-// #include "lwip/sockets.h"
-// #include "lwip/sys.h"
-//#include "mdns.h"
 #include "nvs_flash.h"
 
 #include "AudioTools.h"
 #include "config.h"
-#include "api/SnapAudioToolsAPI.h"
 #include "api/SnapGetHttp.h"
 #include "api/SnapOutput.h"
 #include "api/common.h"
-//#include "lightsnapcast/snapcast.h"
-//#include "net_functions/net_functions.h"
-#include "opus.h"
-
-class SnapClient;
-extern SnapClient *selfSnapClient;
 
 /**
  * @brief Snap Client for ESP32 Arduino
  */
 class SnapClient {
-  friend bool audio_begin(uint32_t sample_rate, uint8_t bits);
-  friend void audio_end();
-  friend bool audio_write(const void *src, size_t size, size_t *bytes_written);
 
 public:
   SnapClient(AudioStream &stream) {
-    selfSnapClient = this;
     output_adapter.setStream(stream);
-    this->out = &output_adapter;
-    vol_stream.setTarget(output_adapter);
+    SnapOutput::instance().setOutput(output_adapter);
   }
 
   SnapClient(AudioOutput &output) {
-    selfSnapClient = this;
-    this->out = &output;
-    vol_stream.setTarget(output);
+    SnapOutput::instance().setOutput(output);
   }
 
   bool begin(void) {
@@ -60,6 +35,7 @@ public:
       ESP_LOGE(TAG, "WiFi not connected");
       return false;
     }
+    // use maximum speed
     WiFi.setSleep(false);
     ESP_LOGI(TAG, "Connected to AP");
 
@@ -83,19 +59,9 @@ public:
     }
     ESP_ERROR_CHECK(ret);
 
-    //net_mdns_register("snapclient");
-
 #if CONFIG_SNAPCLIENT_SNTP_ENABLE
-    // set_time_from_sntp();
     setupTime();
 #endif
-
-    // allow amplification
-    auto vol_cfg = vol_stream.defaultConfig();
-    vol_cfg.allow_boost = true;
-    vol_cfg.channels = 2;
-    vol_cfg.bits_per_sample = 16;
-    vol_stream.begin(vol_cfg);
 
     ctx.flow_queue = xQueueCreate(10, sizeof(uint32_t));
     assert(ctx.flow_queue != NULL);
@@ -107,34 +73,21 @@ public:
     return true;
   }
 
-  /// Adjust the volume
-  void setVolume(float vol) {
-    this->vol = vol / 100.0;
-    ESP_LOGI(TAG, "Volume: %f", this->vol);
-    vol_stream.setVolume(this->vol * vol_factor);
-  }
-
-  /// provides the actual volume
-  float volume() { return vol; }
-
-  /// mute / unmute
-  void setMute(bool mute) {
-    is_mute = mute;
-    vol_stream.setVolume(mute ? 0 : vol);
-    writeSilence();
-  }
-
-  /// checks if volume is mute
-  bool isMute() { return is_mute; }
-
-  /// Adjust volume by factor e.g. 1.5
-  void setVolumeFactor(float fact) { vol_factor = fact; }
 
   void end() {
     if (http_get_task_handle != nullptr)
       vTaskDelete(http_get_task_handle);
     SnapOutput::instance().end();
-    // ws_server_stop();
+  }
+
+  /// provides the actual volume
+  float volume() {
+    return SnapOutput::instance().volume();
+  }
+
+  /// Adjust volume by factor e.g. 1.5
+  void setVolumeFactor(float fact) { 
+    SnapOutput::instance().setVolumeFactor(fact);
   }
 
   /// For testing to deactivate the starting of the http task
@@ -142,14 +95,9 @@ public:
 
 protected:
   const char *TAG = "SnapClient";
-  AudioOutput *out = nullptr;
-  VolumeStream vol_stream;
+  bool is_start_http = true;
   AdapterAudioStreamToAudioOutput output_adapter;
   xTaskHandle http_get_task_handle = nullptr;
-  float vol = 1.0;
-  float vol_factor = 1.0;
-  bool is_mute = false;
-  bool is_start_http = true;
 
   void setupTime() {
     const char *ntpServer = CONFIG_SNTP_SERVER;
@@ -168,41 +116,4 @@ protected:
     SnapGetHttp::instance().http_get_task(pvParameters);
   }
 
-  void writeSilence() {
-    for (int j = 0; j < 50; j++) {
-      out->writeSilence(1024);
-    }
-  }
-
-  bool snap_audio_begin(uint32_t sample_rate, uint8_t bits) {
-    ESP_LOGD(TAG, "sample_rate: %d, bits: %d", sample_rate, bits);
-    if (out == nullptr)
-      return false;
-    AudioInfo info;
-    info.sample_rate = sample_rate;
-    info.bits_per_sample = bits;
-    info.channels = 2;
-
-    out->setAudioInfo(info);
-    bool result = out->begin();
-    ESP_LOGD(TAG, "end");
-    return result;
-  }
-
-  void snap_audio_end() {
-    ESP_LOGD(TAG, "");
-    if (out == nullptr)
-      return;
-    out->end();
-  }
-
-  bool snap_audio_write(const void *src, size_t size, size_t *bytes_written) {
-    ESP_LOGD(TAG, "");
-    if (out == nullptr) {
-      *bytes_written = 0;
-      return false;
-    }
-    *bytes_written = vol_stream.write((const uint8_t *)src, size);
-    return *bytes_written > 0;
-  }
 };
