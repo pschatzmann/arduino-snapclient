@@ -146,14 +146,23 @@ protected:
     out->end();
   }
 
+  // split up writes into batches of 512 bytes
   bool audioWrite(const void *src, size_t size, size_t *bytes_written) {
-    ESP_LOGD(TAG, "");
-    if (out == nullptr) {
-      *bytes_written = 0;
-      return false;
+    ESP_LOGD(TAG, "%d", size);
+    size_t result = 0;
+    if (out != nullptr) {
+      int open = size;
+      int written = 0;
+      while(open>0) {
+        int max_write = std::min((int)size, 512);
+        int result = vol_stream.write((const uint8_t *)src+written, max_write);
+        written += result;
+        open -= result;
+      }
+      result = written;
     }
-    *bytes_written = vol_stream.write((const uint8_t *)src, size);
-    return *bytes_written > 0;
+    if (bytes_written) *bytes_written = result;
+    return result > 0;
   }
 
   void setup_dsp_i2s(uint32_t sample_rate) {
@@ -344,7 +353,6 @@ protected:
         }
       }
 
-      // {
       int16_t len = chunk_size / 4;
       if (cnt % 100 == 2) {
         ESP_LOGI(TAG, "Chunk :%d %d ms", chunk_size, age);
@@ -352,6 +360,7 @@ protected:
       audioWrite((char *)audio, chunk_size, &bytes_written);
 
       vRingbufferReturnItem(ringbuf_i2s, (void *)audio);
+      ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
     }
   }
 };

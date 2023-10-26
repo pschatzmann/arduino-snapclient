@@ -4,8 +4,9 @@
  * to an Arduino Library using the AudioTools as output API
  */
 
-#include "WiFi.h"
-#include <string.h>
+//#include <string.h>
+#include <WiFi.h>
+#include <ESPmDNS.h>
 #include "esp_log.h"
 #include "nvs_flash.h"
 
@@ -60,14 +61,18 @@ public:
     ESP_ERROR_CHECK(ret);
 
 #if CONFIG_SNAPCLIENT_SNTP_ENABLE
-    setupTime();
+    setupSNTPTime ();
+#endif
+
+#if CONFIG_SNAPCLIENT_USE_MDNS
+    setupMDNS();
 #endif
 
     ctx.flow_queue = xQueueCreate(10, sizeof(uint32_t));
     assert(ctx.flow_queue != NULL);
 
     if (is_start_http) {
-      xTaskCreatePinnedToCore(&http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
+      xTaskCreatePinnedToCore(&SnapGetHttp::http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
                               NULL, 5, &http_get_task_handle, 1);
     }
     return true;
@@ -99,7 +104,7 @@ protected:
   AdapterAudioStreamToAudioOutput output_adapter;
   xTaskHandle http_get_task_handle = nullptr;
 
-  void setupTime() {
+  void setupSNTPTime () {
     const char *ntpServer = CONFIG_SNTP_SERVER;
     const long gmtOffset_sec =  1 * 60 * 60;
     const int daylightOffset_sec =  1 * 60 * 60;
@@ -112,8 +117,33 @@ protected:
     Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
   }
 
-  static void http_get_task(void *pvParameters) {
-    SnapGetHttp::instance().http_get_task(pvParameters);
+  void setupMDNS() {
+    ESP_LOGD(TAG, "");
+    if (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {
+      LOGE(TAG, "Error starting mDNS");
+      return;
+    }
+
+    // we just take the first address
+    int nrOfServices = MDNS.queryService("snapcast", "tcp");
+    if (nrOfServices > 0) {
+      IPAddress server_ip = MDNS.IP(0);
+      SnapGetHttp &hpp = SnapGetHttp::instance();
+      char str_address[13] = {0};
+      sprintf(str_address, "%d.%d.%d.%d", server_ip[0], server_ip[1],
+              server_ip[2], server_ip[3]);
+      int server_port = MDNS.port(0);
+
+      // update addres information
+      hpp.setServerIP(server_ip);
+      hpp.setServerPort(server_port);
+      ESP_LOGI(TAG, "SNAPCAST ip: %s, port: %d", str_address, server_port);
+
+    } else {
+      ESP_LOGE(TAG, "SNAPCAST server not found");
+    }
+
+    MDNS.end();
   }
 
 };

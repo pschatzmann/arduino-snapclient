@@ -3,7 +3,7 @@
 /* snapast parameters; configurable in menuconfig */
 #define CONFIG_SNAPCAST_SERVER_HOST "192.168.1.38"
 #define CONFIG_SNAPCAST_SERVER_PORT 1704
-#define CONFIG_SNAPCAST_BUFF_LEN 4000
+#define CONFIG_SNAPCAST_BUFF_LEN 256
 #define CONFIG_SNAPCAST_CLIENT_NAME "arduino-snapclient"
 #define CONFIG_SNTP_SERVER "pool.ntp.org"
 #define CONFIG_SNTP_TIMEZONE "UTC"
