@@ -20,7 +20,7 @@
 #include "common.h"
 #include "config.h"
 #include "lightsnapcast/snapcast.h"
-#include "net_functions/net_functions.h"
+//#include "net_functions/net_functions.h"
 #include "opus.h"
 
 
