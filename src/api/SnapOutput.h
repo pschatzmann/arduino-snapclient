@@ -51,8 +51,8 @@ public:
     setup_dsp_i2s(sample_rate);
     ESP_LOGI(TAG, "Start i2s task");
     xTaskCreatePinnedToCore(dsp_i2s_task_handler, "I2S_TASK",
-                            CONFIG_TASK_STACK_DSP_I2S, NULL, 5,
-                            &dsp_i2s_task_handle, 0);
+                            CONFIG_TASK_STACK_DSP_I2S, NULL, CONFIG_TASK_PRIORITY,
+                            &dsp_i2s_task_handle, CONFIG_TASK_CORE);
   }
 
   /// Writes audio data to the queue
@@ -205,7 +205,7 @@ protected:
 
       cnt++;
 
-      ESP_LOGI(TAG, "xQueueReceive");
+      ESP_LOGD(TAG, "xQueueReceive");
       assert(ctx.flow_queue != NULL);
       if (xQueueReceive(ctx.flow_queue, &flow_que_msg, 0)) {
         ESP_LOGI(TAG, "FLOW Queue message: %d ", flow_que_msg);
@@ -242,6 +242,7 @@ protected:
         ESP_LOGI(TAG, "Wait: no data in buffer %d %d", cnt, n_byte_read);
         // write silence to avoid noise
         setMute(true);
+        yield();
         continue;
       }
 
@@ -360,7 +361,9 @@ protected:
       audioWrite((char *)audio, chunk_size, &bytes_written);
 
       vRingbufferReturnItem(ringbuf_i2s, (void *)audio);
-      ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+      if (cnt % 100 == 2) {
+        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+      }
     }
   }
 };

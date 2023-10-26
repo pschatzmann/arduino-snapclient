@@ -103,7 +103,7 @@ protected:
     while (true) {
       ESP_LOGD(TAG, "startig new connection");
 
-      if (connectSocket()) {
+      if (connectClient()) {
         ESP_LOGI(TAG, "... connected");
       } else {
         delay(10);
@@ -122,12 +122,16 @@ protected:
       bool rc = true;
       while (rc) {
         rc = processLoop();
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+        ESP_LOGD(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
       }
 
       ESP_LOGI(TAG, "... done reading from socket");
       client.stop();
-      ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+
+      if(id_counter%100 ==0){
+        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+      }
+
     }
   }
 
@@ -182,9 +186,9 @@ protected:
     return true;
   }
 
-  bool connectSocket() {
+  bool connectClient() {
     ESP_LOGD(TAG, "");
-    client.setTimeout(CONFIG_WEBSOCKET_SERVER_TIMEOUT_SEC);
+    client.setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
 
     if (!client.connect(server_ip, server_port)) {
       ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);

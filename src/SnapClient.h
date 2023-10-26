@@ -73,7 +73,7 @@ public:
 
     if (is_start_http) {
       xTaskCreatePinnedToCore(&SnapGetHttp::http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
-                              NULL, 5, &http_get_task_handle, 1);
+                              NULL, CONFIG_TASK_PRIORITY, &http_get_task_handle, CONFIG_TASK_CORE);
     }
     return true;
   }
