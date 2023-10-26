@@ -1,7 +1,7 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
 
-AnalogAudioStream out;
+NullStream out;
 SnapClient client(out);
 
 void setup() {
@@ -14,14 +14,8 @@ void setup() {
     delay(1000);
   }
 
-  // print ip address
-  Serial.println();
-  Serial.println(WiFi.localIP());
-
-  // start snap client
+  client.setStartTask(false);
   client.begin();
 }
 
-void loop() {
-  delay(100);
-}
+void loop() {}

@@ -1,12 +1,13 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
 
-AnalogAudioStream out;
+NullStream out;
 SnapClient client(out);
 
 void setup() {
   Serial.begin(115200);
-  // login to wifk
+
+  // login to wifi
   WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
   Serial.print("Connecting to WiFi ..");
   while (WiFi.status() != WL_CONNECTED) {
@@ -14,14 +15,11 @@ void setup() {
     delay(1000);
   }
 
-  // print ip address
-  Serial.println();
-  Serial.println(WiFi.localIP());
-
-  // start snap client
+  // do not start http task
+  client.setStartTask(false);
   client.begin();
+  // start output task
+  SnapOutput::instance().begin(44100);
 }
 
-void loop() {
-  delay(100);
-}
+void loop() {}

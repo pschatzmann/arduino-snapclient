@@ -5,6 +5,7 @@ I2SStream out;
 SnapClient client(out);
 
 void setup() {
+  Serial.begin(115200);
   // login to wifk
   WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
   Serial.print("Connecting to WiFi ..");
