@@ -8,7 +8,7 @@ SnapClient client(out, opus);
 
 void setup() {
   Serial.begin(115200);
-  // login to wifk
+  // login to wifi
   WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
   Serial.print("Connecting to WiFi ..");
   while (WiFi.status() != WL_CONNECTED) {

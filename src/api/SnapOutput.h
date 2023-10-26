@@ -3,9 +3,9 @@
 #include "Arduino.h" // for ESP.getPsramSize()
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
 #include "freertos/ringbuf.h"
 #include "freertos/task.h"
-#include "freertos/queue.h"
 #include <stdint.h>
 #include <sys/time.h>
 
@@ -47,17 +47,19 @@ public:
         return;
       }
     }
-    printf("Ringbuffer ok\n");
+    ESP_LOGD(TAG, "Ringbuffer ok");
 
-    if (header_queue == nullptr){
-      header_queue = xQueueCreate(100, sizeof(AudioHeader)); 
+    if (header_queue == nullptr) {
+      header_queue = xQueueCreate(100, sizeof(AudioHeader));
     }
 
     setup_dsp_i2s(sample_rate);
     ESP_LOGI(TAG, "Start i2s task");
-    xTaskCreatePinnedToCore(dsp_i2s_task_handler, "I2S_TASK",
-                            CONFIG_TASK_STACK_DSP_I2S, NULL, CONFIG_TASK_PRIORITY,
-                            &dsp_i2s_task_handle, CONFIG_TASK_CORE);
+
+    // start output task
+    xTaskCreatePinnedToCore(
+        dsp_i2s_task_handler, "I2S_TASK", CONFIG_TASK_STACK_DSP_I2S, nullptr,
+        CONFIG_TASK_PRIORITY, &dsp_i2s_task_handle, CONFIG_TASK_CORE);
   }
 
   /// Writes audio data to the queue
@@ -70,8 +72,10 @@ public:
     return (done) ? size : 0;
   }
 
-  bool writeHeader(AudioHeader &header){
-    return xQueueSend(header_queue, &header, (TickType_t)portMAX_DELAY)==pdTRUE;
+  bool writeHeader(AudioHeader &header) {
+    if (header_queue==nullptr) return false;
+    return xQueueSend(header_queue, &header, (TickType_t)portMAX_DELAY) ==
+           pdTRUE;
   }
 
   /// Ends the processing and releases the memory
@@ -79,11 +83,11 @@ public:
     ESP_LOGD(TAG, "");
     if (dsp_i2s_task_handle) {
       vTaskDelete(dsp_i2s_task_handle);
-      dsp_i2s_task_handle = NULL;
+      dsp_i2s_task_handle = nullptr;
     }
     if (ringbuf_i2s) {
       vRingbufferDelete(ringbuf_i2s);
-      ringbuf_i2s = NULL;
+      ringbuf_i2s = nullptr;
     }
   }
 
@@ -116,11 +120,9 @@ public:
     decoder_stream.setStream(&vol_stream);
   }
 
-  void setDecoder(AudioDecoder &dec){
-    decoder_stream.setDecoder(&dec);
-  }
+  void setDecoder(AudioDecoder &dec) { decoder_stream.setDecoder(&dec); }
 
-  void setAudioInfo(AudioInfo info){
+  void setAudioInfo(AudioInfo info) {
     out->setAudioInfo(info);
     decoder_stream.setAudioInfo(info);
     vol_stream.setAudioInfo(info);
@@ -128,11 +130,11 @@ public:
 
 protected:
   const char *TAG = "SnapOutput";
-  xTaskHandle dsp_i2s_task_handle = NULL;
-  RingbufHandle_t ringbuf_i2s = NULL;
-  QueueHandle_t header_queue;
-  EncodedAudioStream decoder_stream;
+  xTaskHandle dsp_i2s_task_handle = nullptr;
+  RingbufHandle_t ringbuf_i2s = nullptr;
+  QueueHandle_t header_queue = nullptr;
   AudioOutput *out = nullptr;
+  EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
   float vol = 1.0;
   float vol_factor = 1.0;
@@ -169,22 +171,22 @@ protected:
   }
 
   // split up writes into batches of 512 bytes
-  bool audioWrite(const void *src, size_t size, size_t *bytes_written) {
+  size_t audioWrite(const void *src, size_t size) {
     ESP_LOGD(TAG, "%d", size);
     size_t result = 0;
     if (out != nullptr) {
       int open = size;
       int written = 0;
-      while(open>0) {
+      while (open > 0) {
         int max_write = std::min((int)size, 512);
-        int result = decoder_stream.write((const uint8_t *)src+written, max_write);
+        int result =
+            decoder_stream.write((const uint8_t *)src + written, max_write);
         written += result;
         open -= result;
       }
       result = written;
     }
-    if (bytes_written) *bytes_written = result;
-    return result > 0;
+    return result;
   }
 
   void setup_dsp_i2s(uint32_t sample_rate) {
@@ -197,26 +199,34 @@ protected:
   }
 
   void local_dsp_i2s_task_handler(void *arg) {
-    ESP_LOGD(TAG, "");
+    ESP_LOGI(TAG, "Waiting for data");
     uint32_t counter = 0;
 
-    AudioHeader audio_info;
+    AudioHeader header;
     while (true) {
       // receive header
-      xQueueReceive(header_queue, &audio_info, portMAX_DELAY);
+      if (xQueueReceive(header_queue, &header, portMAX_DELAY)) {
+        size_t open = header.size;
+        while (open > 0) {
+          // receive audio
+          size_t pxItemSize = open;
+          void *result =
+              xRingbufferReceive(ringbuf_i2s, &pxItemSize, portMAX_DELAY);
+          if (result != nullptr) {
+            open -= pxItemSize;
 
-      // receive audio
-      size_t pxItemSize;
-      void* result = xRingbufferReceive(ringbuf_i2s, &pxItemSize, portMAX_DELAY);
+            // write (encoded) audio
+            size_t bytes_written = audioWrite(result, pxItemSize);
+            assert(bytes_written == pxItemSize);
 
-      // write (encoded) audio
-      size_t bytes_written;
-      audioWrite(result, pxItemSize, &bytes_written);
-
-      // release memory
-      vRingbufferReturnItem(ringbuf_i2s, (void *)result);
+            // release memory
+            vRingbufferReturnItem(ringbuf_i2s, result);
+          }
+        }
+      }
       if (counter++ % 100 == 0) {
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
+                 ESP.getFreePsram());
       }
     }
   }

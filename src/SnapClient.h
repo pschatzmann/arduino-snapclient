@@ -48,14 +48,7 @@ public:
     ctx.mac_address = WiFi.macAddress().c_str();
     ESP_LOGI(TAG, "mac: %s", ctx.mac_address);
 
-#if CONFIG_USE_PSRAM
-    if (ESP.getPsramSize() > 0) {
-      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
-    } else {
-      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
-    }
-#endif
-
+#if CONFIG_NVS_FLASH
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
         ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -63,6 +56,7 @@ public:
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
+#endif
 
 #if CONFIG_SNAPCLIENT_SNTP_ENABLE
     setupSNTPTime ();
@@ -70,6 +64,15 @@ public:
 
 #if CONFIG_SNAPCLIENT_USE_MDNS
     setupMDNS();
+#endif
+
+#if CONFIG_USE_PSRAM
+    if (ESP.getPsramSize() > 0) {
+      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
+      ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
+    } else {
+      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
+    }
 #endif
 
     if (is_start_http) {
@@ -105,6 +108,7 @@ protected:
   xTaskHandle http_get_task_handle = nullptr;
 
   void setupSNTPTime () {
+    ESP_LOGD(TAG, "");
     const char *ntpServer = CONFIG_SNTP_SERVER;
     const long gmtOffset_sec =  1 * 60 * 60;
     const int daylightOffset_sec =  1 * 60 * 60;
@@ -129,7 +133,7 @@ protected:
     if (nrOfServices > 0) {
       IPAddress server_ip = MDNS.IP(0);
       SnapGetHttp &hpp = SnapGetHttp::instance();
-      char str_address[13] = {0};
+      char str_address[20] = {0};
       sprintf(str_address, "%d.%d.%d.%d", server_ip[0], server_ip[1],
               server_ip[2], server_ip[3]);
       int server_port = MDNS.port(0);

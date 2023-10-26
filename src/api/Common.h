@@ -11,19 +11,17 @@
 
 enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 
-struct SnapCtxDef{
-  uint32_t buffer_ms;
-  const char *mac_address;
+struct SnapCtxDef {
+  uint32_t buffer_ms =  400;
+  const char *mac_address = "";
   struct timeval tdif, tavg;
 };
 
 struct AudioHeader {
-  int32_t sec;
-  int32_t usec;
-  size_t size;
-  codec_type codec;
+  int32_t sec = 0;
+  int32_t usec = 0;
+  size_t size = 0;
+  codec_type codec = NO_CODEC;
 };
 
 extern SnapCtxDef ctx;
-
-

@@ -68,7 +68,6 @@ protected:
   WiFiClient client;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
-  OpusDecoder *decoder = nullptr;
   std::vector<int16_t> audio;
   std::vector<char> send_receive_buffer;
   std::vector<char> base_message_serialized;
@@ -330,14 +329,7 @@ protected:
     memcpy(&bits, start + 8, sizeof(bits));
     memcpy(&channels, start + 10, sizeof(channels));
     ESP_LOGI(TAG, "Opus sampleformat: %d:%d:%d", rate, bits, channels);
-    int error = 0;
-    // decoder = opus_decoder_create(rate, channels, &error);
-    // if (error != 0) {
-    //   ESP_LOGI(TAG, "Failed to init opus coder");
-    //   return false;
-    // }
     codec_from_server = OPUS;
-    ESP_LOGI(TAG, "Initialized opus Decoder: %d", error);
     return true;
   }
 
@@ -380,7 +372,7 @@ protected:
     size_t chunk_res;
     if ((chunk_res = write_ringbuf((const uint8_t *)start, size)) !=
         size) {
-      ESP_LOGI(TAG, "Error writing data to ring buffer: %d", chunk_res);
+      ESP_LOGW(TAG, "Error writing data to ring buffer: %d", chunk_res);
     }
     return true;
   }
