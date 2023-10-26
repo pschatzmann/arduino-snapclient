@@ -6,10 +6,11 @@
 #include "esp_netif.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
+#include "vector"
 
 // Web socket server
 #include "SnapOutput.h"
-#include "common.h"
+#include "Common.h"
 #include "config.h"
 #include "lightsnapcast/snapcast.h"
 #include "opus.h"
@@ -254,17 +255,17 @@ protected:
 
     // Read Header Record with size
     size = client.readBytes(&send_receive_buffer[0],BASE_MESSAGE_SIZE);
-    ESP_LOGI(TAG, "Bytes read: %d", size);
+    ESP_LOGD(TAG, "Bytes read: %d", size);
 
     int result = gettimeofday(&now, NULL);
     if (result) {
-      ESP_LOGI(TAG, "Failed to gettimeofday");
+      ESP_LOGW(TAG, "Failed to gettimeofday");
       return false;
     }
 
     result = base_message_deserialize(&base_message, &send_receive_buffer[0], size);
     if (result) {
-      ESP_LOGI(TAG, "Failed to read base message: %d", result);
+      ESP_LOGW(TAG, "Failed to read base message: %d", result);
       return false;
     }
 
@@ -330,11 +331,11 @@ protected:
     memcpy(&channels, start + 10, sizeof(channels));
     ESP_LOGI(TAG, "Opus sampleformat: %d:%d:%d", rate, bits, channels);
     int error = 0;
-    decoder = opus_decoder_create(rate, channels, &error);
-    if (error != 0) {
-      ESP_LOGI(TAG, "Failed to init opus coder");
-      return false;
-    }
+    // decoder = opus_decoder_create(rate, channels, &error);
+    // if (error != 0) {
+    //   ESP_LOGI(TAG, "Failed to init opus coder");
+    //   return false;
+    // }
     codec_from_server = OPUS;
     ESP_LOGI(TAG, "Initialized opus Decoder: %d", error);
     return true;
@@ -359,83 +360,27 @@ protected:
     start = (wire_chunk_message.payload);
     switch (codec_from_server) {
     case OPUS:
-      wireChunkOpus(wire_chunk_message);
-      break;
-
     case PCM:
-      wireChunkPCM(wire_chunk_message);
+      wireChunk(wire_chunk_message);
       break;
     }
     wire_chunk_message_free(&wire_chunk_message);
     return true;
   }
 
-  bool wireChunkPCM(wire_chunk_message_t &wire_chunk_message) {
+  bool wireChunk(wire_chunk_message_t &wire_chunk_message) {
     ESP_LOGD(TAG, "");
-    memcpy(timestamp_size, &wire_chunk_message.timestamp.sec,
-           sizeof(wire_chunk_message.timestamp.sec));
-    memcpy(timestamp_size + 4, &wire_chunk_message.timestamp.usec,
-           sizeof(wire_chunk_message.timestamp.usec));
-    uint32_t chunk_size = size;
-    memcpy(timestamp_size + 8, &chunk_size, sizeof(chunk_size));
+    AudioHeader header;
+    header.size = size;
+    header.sec = wire_chunk_message.timestamp.sec;
+    header.usec = wire_chunk_message.timestamp.usec;
+    header.codec = codec_from_server;
+    write_header(header);
 
-    // ESP_LOGI(TAG, "Network jitter %d %d",(uint32_t)
-    // wire_chunk_message.timestamp.usec/1000,
-    //                                          (uint32_t)
-    //                                          base_message.sent.usec/1000);
-
-    int chunk_res;
-    if ((chunk_res = write_ringbuf(timestamp_size, 3 * sizeof(uint32_t))) !=
-        12) {
-      ESP_LOGI(TAG, "Error writing timestamp to ring buffer: %d", chunk_res);
-    }
-
-    if ((chunk_res = write_ringbuf((const uint8_t *)start, size)) != size) {
-      ESP_LOGE(TAG, "Error writing data to ring buffer: %d", chunk_res);
-    }
-    return true;
-  }
-
-  bool wireChunkOpus(wire_chunk_message_t &wire_chunk_message) {
-    ESP_LOGD(TAG, "");
-    int frame_size_eff = 0;
-    while ((frame_size_eff = opus_decode(decoder, (unsigned char *)start, size,
-                                     (opus_int16 *)&audio[0], this->frame_size,
-                                     0)) == OPUS_BUFFER_TOO_SMALL) {
-      frame_size = frame_size * 2;
-      audio.resize(frame_size);
-      ESP_LOGI(TAG,
-               "OPUS encoding buffer too small, resizing to %d "
-               "samples per channel",
-               frame_size);
-    }
-    // ESP_LOGI(TAG, "time stamp in :
-    // %d",wire_chunk_message.timestamp.sec);
-    if (frame_size_eff < 0) {
-      ESP_LOGE(TAG, "Decode error : %d ", frame_size);
-    } else {
-      // pack(&timestamp_size,wire_chunk_message.timestamp,frame_size*2*size(uint16_t))
-      memcpy(timestamp_size, &wire_chunk_message.timestamp.sec,
-             sizeof(wire_chunk_message.timestamp.sec));
-      memcpy(timestamp_size + 4, &wire_chunk_message.timestamp.usec,
-             sizeof(wire_chunk_message.timestamp.usec));
-      uint32_t chunk_size = frame_size_eff * 2 * sizeof(uint16_t);
-      memcpy(timestamp_size + 8, &chunk_size, sizeof(chunk_size));
-
-      // ESP_LOGI(TAG, "Network jitter %d %d",(uint32_t)
-      // <wire_chunk_message>.timestamp.usec/1000,
-      //                                          (uint32_t)
-      //                                          base_message.sent.usec/1000);
-
-      int chunk_res;
-      if ((chunk_res = write_ringbuf(timestamp_size, 3 * sizeof(uint32_t))) !=
-          12) {
-        ESP_LOGI(TAG, "Error writing timestamp to ring buffer: %d", chunk_res);
-      }
-      if ((chunk_res = write_ringbuf((const uint8_t *)&audio[0], chunk_size)) !=
-          chunk_size) {
-        ESP_LOGI(TAG, "Error writing data to ring buffer: %d", chunk_res);
-      }
+    size_t chunk_res;
+    if ((chunk_res = write_ringbuf((const uint8_t *)start, size)) !=
+        size) {
+      ESP_LOGI(TAG, "Error writing data to ring buffer: %d", chunk_res);
     }
     return true;
   }
@@ -472,7 +417,6 @@ protected:
 
     if (server_settings_message.muted != client_state_muted) {
       client_state_muted = server_settings_message.muted;
-      xQueueSend(ctx.flow_queue, &client_state_muted, 10);
     }
     return true;
   }
@@ -572,4 +516,9 @@ protected:
   size_t write_ringbuf(const uint8_t *data, size_t size) {
     return SnapOutput::instance().write(data, size);
   }
+
+  size_t write_header(AudioHeader &header) {
+    return SnapOutput::instance().writeHeader(header);
+  }
+
 };

@@ -9,23 +9,21 @@
 #include "freertos/task.h"
 #include <sys/time.h>
 
-#define WIFI_CONNECTED_BIT BIT0
+enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef struct {
+struct SnapCtxDef{
   uint32_t buffer_ms;
-  xQueueHandle flow_queue;
   const char *mac_address;
   struct timeval tdif, tavg;
-} SnapCtxDef;
+};
+
+struct AudioHeader {
+  int32_t sec;
+  int32_t usec;
+  size_t size;
+  codec_type codec;
+};
 
 extern SnapCtxDef ctx;
 
-enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 
-#ifdef __cplusplus
-}
-#endif

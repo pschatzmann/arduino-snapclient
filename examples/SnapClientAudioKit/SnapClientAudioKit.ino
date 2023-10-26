@@ -1,10 +1,11 @@
 #include "AudioTools.h"
-#include "AudioLibs/AudioKit.h"
 #include "SnapClient.h"
+#include "AudioLibs/AudioKit.h"
+#include "AudioCodecs/CodecOpus.h"
 
-// setup I2S not necessary
 AudioKitStream out;
-SnapClient client(out);
+OpusAudioDecoder opus;
+SnapClient client(out, opus);
 
 void setup() {
   Serial.begin(115200);

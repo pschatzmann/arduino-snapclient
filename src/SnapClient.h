@@ -14,7 +14,7 @@
 #include "config.h"
 #include "api/SnapGetHttp.h"
 #include "api/SnapOutput.h"
-#include "api/common.h"
+#include "api/Common.h"
 
 /**
  * @brief Snap Client for ESP32 Arduino
@@ -22,13 +22,17 @@
 class SnapClient {
 
 public:
-  SnapClient(AudioStream &stream) {
+  SnapClient(AudioStream &stream, AudioDecoder &decoder) {
     output_adapter.setStream(stream);
-    SnapOutput::instance().setOutput(output_adapter);
+    SnapOutput &so = SnapOutput::instance();
+    so.setOutput(output_adapter);
+    so.setDecoder(decoder);
   }
 
-  SnapClient(AudioOutput &output) {
-    SnapOutput::instance().setOutput(output);
+  SnapClient(AudioOutput &output, AudioDecoder &decoder) {
+    SnapOutput &so = SnapOutput::instance();
+    so.setOutput(output);
+    so.setDecoder(decoder);
   }
 
   bool begin(void) {
@@ -68,16 +72,12 @@ public:
     setupMDNS();
 #endif
 
-    ctx.flow_queue = xQueueCreate(10, sizeof(uint32_t));
-    assert(ctx.flow_queue != NULL);
-
     if (is_start_http) {
       xTaskCreatePinnedToCore(&SnapGetHttp::http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
                               NULL, CONFIG_TASK_PRIORITY, &http_get_task_handle, CONFIG_TASK_CORE);
     }
     return true;
   }
-
 
   void end() {
     if (http_get_task_handle != nullptr)

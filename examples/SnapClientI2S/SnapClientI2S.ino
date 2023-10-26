@@ -1,8 +1,10 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
+#include "AudioCodecs/CodecOpus.h"
 
+OpusAudioDecoder opus;
 I2SStream out;
-SnapClient client(out);
+SnapClient client(out, opus);
 
 void setup() {
   Serial.begin(115200);
