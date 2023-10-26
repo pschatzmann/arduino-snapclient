@@ -17,7 +17,7 @@ void setup() {
     delay(1000);
   }
 
-  SnapGetHttp::instance().setStartOutput(false);
+  client.setStartOutput(false);
   client.begin();
 }
 

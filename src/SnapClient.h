@@ -76,10 +76,8 @@ public:
     }
 #endif
 
-    if (is_start_http) {
-      xTaskCreatePinnedToCore(&SnapGetHttp::http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
-                              NULL, CONFIG_TASK_PRIORITY, &http_get_task_handle, CONFIG_TASK_CORE);
-    }
+    startOutput();
+    startGetHttp();
     return true;
   }
 
@@ -100,13 +98,38 @@ public:
   }
 
   /// For testing to deactivate the starting of the http task
-  void setStartTask(bool flag) { is_start_http = flag; }
+  void setStartTask(bool flag) { http_task_start = flag; }
+
+  /// For Testing: Used to prevent the starting of the output task
+  void setStartOutput(bool start) { output_start = start; }
+
 
 protected:
   const char *TAG = "SnapClient";
-  bool is_start_http = true;
+  bool http_task_start = true;
+  bool output_start = true;
+  bool output_started = false;
   AdapterAudioStreamToAudioOutput output_adapter;
   xTaskHandle http_get_task_handle = nullptr;
+
+  /// start output (for testing)
+  void startOutput() {
+    ESP_LOGD(TAG, "");
+    if (output_started)
+      return;
+    if (output_start) {
+      SnapOutput::instance().begin(48000);
+    }
+    output_started = true;
+  }
+
+  void startGetHttp(){
+    if (http_task_start && http_get_task_handle==nullptr) {
+      xTaskCreatePinnedToCore(&SnapGetHttp::http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP,
+                              NULL, CONFIG_TASK_PRIORITY, &http_get_task_handle, CONFIG_TASK_CORE);
+    }
+
+  }
 
   void setupSNTPTime () {
     ESP_LOGD(TAG, "");

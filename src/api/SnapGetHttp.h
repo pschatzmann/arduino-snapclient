@@ -30,19 +30,6 @@ public:
     return self;
   }
 
-  /// For Testing: Used to prevent the starting of the output task
-  void setStartOutput(bool start) { output_start = start; }
-
-  /// @brief start output (for testing)
-  void startOutput() {
-    ESP_LOGD(TAG, "");
-    if (output_started)
-      return;
-    if (output_start) {
-      SnapOutput::instance().begin(48000);
-    }
-    output_started = true;
-  }
 
   void end() {
     ESP_LOGD(TAG, "");
@@ -88,8 +75,6 @@ protected:
   float time_diff = 0.0;
   int id_counter = 0;
   bool received_header = false;
-  bool output_start = true;
-  bool output_started = false;
   const char* mac_address = nullptr;
 
   SnapGetHttp() { server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST); }
@@ -102,8 +87,6 @@ protected:
     id_counter = 0;
 
     resizeData();
-
-    startOutput();
 
     while (true) {
       ESP_LOGD(TAG, "startig new connection");

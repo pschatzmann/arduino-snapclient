@@ -20,8 +20,6 @@ void setup() {
   // do not start http task
   client.setStartTask(false);
   client.begin();
-  // start output task
-  SnapOutput::instance().begin(44100);
 }
 
 void loop() {}
