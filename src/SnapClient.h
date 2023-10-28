@@ -9,6 +9,7 @@
 #include "AudioTools.h"
 #include "api/SnapCommon.h"
 #include "api/SnapLogger.h"
+
 #ifdef ESP32
 #  include "nvs_flash.h"
 #  include <ESPmDNS.h>
@@ -43,6 +44,11 @@ public:
     p_snapprocessor->setDecoder(decoder);
   }
 
+  /// Destructor
+  ~SnapClient(){
+    end();
+  }
+
   /// Defines an alternative comminucation client (default is WiFiClient)
   void setClient(Client &client){
     p_snapprocessor->setClient(client);
@@ -59,12 +65,7 @@ public:
     ESP_LOGI(TAG, "Connected to AP");
 
     // Get MAC address for WiFi station
-#ifdef ESP32
-    const char *adr = strdup(WiFi.macAddress().c_str());
-    p_snapprocessor->setMacAddress(adr);
-    ESP_LOGI(TAG, "mac: %s", adr);
-#endif
-    checkHeap();
+    setupMACAddress();
 
     setupNVS();
 
@@ -72,20 +73,13 @@ public:
 
     setupMDNS();
 
-#if CONFIG_USE_PSRAM
-    if (ESP.getPsramSize() > 0) {
-      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
-      ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
-    } else {
-      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
-    }
-#endif
+    setupPSRAM();
 
     // start tasks
     return p_snapprocessor->begin();
   }
 
-  // ends the processing
+  /// ends the processing and releases the resources
   void end(void) { p_snapprocessor->end(); }
 
   /// provides the actual volume
@@ -185,7 +179,26 @@ protected:
     checkHeap();
     ESP_ERROR_CHECK(ret);
 #endif
+  }
 
+  void setupPSRAM(){
+#if CONFIG_USE_PSRAM
+    if (ESP.getPsramSize() > 0) {
+      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
+      ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
+    } else {
+      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
+    }
+#endif
+  }
+
+  void setupMACAddress(){
+#ifdef ESP32
+    const char *adr = strdup(WiFi.macAddress().c_str());
+    p_snapprocessor->setMacAddress(adr);
+    ESP_LOGI(TAG, "mac: %s", adr);
+    checkHeap();
+#endif
   }
 
 };
