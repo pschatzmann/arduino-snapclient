@@ -9,56 +9,84 @@
 #include "vector"
 
 // Web socket server
-#include "SnapOutput.h"
 #include "Common.h"
+#include "SnapOutput.h"
+#include "SnapProcessor.h"
 #include "config.h"
 #include "lightsnapcast/snapcast.h"
 #include "opus.h"
-
 
 #define BASE_MESSAGE_SIZE 26
 #define TIME_MESSAGE_SIZE 8
 
 /**
- * Event handler providing local_http_get_task
+ * @brief Snap Processor implementation which does not rely on FreeRTOS
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
  */
-class SnapGetHttp {
-
+class SnapProcessor {
 public:
-  static SnapGetHttp &instance() {
-    static SnapGetHttp self;
-    return self;
+  SnapProcessor(SnapOutput &output) {
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+    p_snap_output = &output;
   }
 
+  virtual bool begin() {
+    bool result = false;
+    if (output_start) {
+      result = audioBegin();
+    }
 
-  void end() {
+    if (http_task_start) {
+      last_time_sync.tv_sec = 0;
+      last_time_sync.tv_usec = 0;
+      id_counter = 0;
+      resizeData();
+    }
+    return result;
+  }
+
+  virtual void end() {
     ESP_LOGD(TAG, "");
+    audioEnd();
     send_receive_buffer.resize(0);
     base_message_serialized.resize(0);
   }
 
-  void setServerIP(IPAddress address){
-    server_ip = address;
-  }
+  void setServerIP(IPAddress address) { server_ip = address; }
 
-  void setServerPort(int port){
-    server_port = port;
-  }
+  void setServerPort(int port) { server_port = port; }
 
-  void setMacAddress(const char* adr){
-    mac_address = adr;
-  }
+  void setMacAddress(const char *adr) { mac_address = adr; }
 
-  /// FreeRTOS Task Handler
-  static void http_get_task(void *pvParameters) {
-    SnapGetHttp::instance().http_get_local_task(pvParameters);
+  tv getLatency() { return time_message.latency; }
+
+  void setStartOutput(bool start) { output_start = start; }
+  void setStartTask(bool flag) { http_task_start = flag; }
+
+  virtual void doLoop() { processLoop(); }
+
+  /// Defines the output class
+  void setOutput(AudioOutput &output) { p_snap_output->setOutput(output); }
+
+  /// Defines the decoder class
+  void setDecoder(AudioDecoder &dec) { p_snap_output->setDecoder(dec); }
+
+  float volume(void) { return p_snap_output->volume(); }
+
+  /// Adjust volume by factor e.g. 1.5
+  void setVolumeFactor(float fact) { p_snap_output->setVolumeFactor(fact); }
+
+  void setSnapOutput(SnapOutput &out){
+    p_snap_output = &out;
   }
 
 protected:
-  const char *TAG = "SnapGetHttp";
+  const char *TAG = "SnapProcessor";
   WiFiClient client;
-  IPAddress server_ip;
-  int server_port = CONFIG_SNAPCAST_SERVER_PORT;
+  SnapOutput *p_snap_output = nullptr;
   std::vector<int16_t> audio;
   std::vector<char> send_receive_buffer;
   std::vector<char> base_message_serialized;
@@ -67,26 +95,21 @@ protected:
   codec_type codec_from_server = NO_CODEC;
   char *start = nullptr;
   base_message_t base_message;
-  time_message_t time_message;
   int size = 0;
   uint32_t client_state_muted = 0;
   struct timeval now, last_time_sync;
   uint8_t timestamp_size[12];
   float time_diff = 0.0;
   int id_counter = 0;
-  bool received_header = false;
-  const char* mac_address = nullptr;
+  IPAddress server_ip;
+  int server_port = CONFIG_SNAPCAST_SERVER_PORT;
+  const char *mac_address = nullptr;
+  bool output_start = true;
+  bool http_task_start = true;
+  time_message_t time_message;
 
-  SnapGetHttp() { server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST); }
-
-  void http_get_local_task(void *pvParameters) {
-    ESP_LOGI(TAG, "http_get_task");
-
-    last_time_sync.tv_sec = 0;
-    last_time_sync.tv_usec = 0;
-    id_counter = 0;
-
-    resizeData();
+  void processLoop(void *pvParameters = nullptr) {
+    ESP_LOGI(TAG, "processLoop");
 
     while (true) {
       ESP_LOGD(TAG, "startig new connection");
@@ -109,17 +132,21 @@ protected:
 
       bool rc = true;
       while (rc) {
-        rc = processLoop();
-        ESP_LOGD(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+        rc = processMessageLoop();
+        p_snap_output->doLoop();
+        ESP_LOGD(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
+                 ESP.getFreePsram());
+        checkHeap();
       }
 
       ESP_LOGI(TAG, "... done reading from socket");
       client.stop();
 
-      if(id_counter%100 ==0){
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d",ESP.getFreeHeap(),ESP.getFreePsram());
+      if (id_counter % 100 == 0) {
+        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
+                 ESP.getFreePsram());
       }
-
+      checkHeap();
     }
   }
 
@@ -132,23 +159,25 @@ protected:
     return true;
   }
 
-  bool processLoop() {
+  bool processMessageLoop() {
     ESP_LOGD(TAG, "");
+    bool header_received = false;
 
     if (!readBaseMessage())
       return false;
-    
+
     if (!readData())
       return false;
 
     switch (base_message.type) {
     case SNAPCAST_MESSAGE_CODEC_HEADER:
       processMessageCodecHeader();
+      header_received = true;
       break;
 
     case SNAPCAST_MESSAGE_WIRE_CHUNK:
       // chunk_cnt++;
-      if (!received_header) {
+      if (!header_received) {
         return true;
       }
       processMessageWireChunk();
@@ -206,19 +235,19 @@ protected:
         (char *)"esp32",                     // os name
         (char *)"xtensa",                    // arch
         1,                                   // instance
-        (char *)mac_address,             // id
+        (char *)mac_address,                 // id
         2,                                   // protocol version
     };
 
-    char* hello_message_serialized =
+    char *hello_message_serialized =
         hello_message_serialize(&hello_message, (size_t *)&(base_message.size));
     if (!hello_message_serialized) {
       ESP_LOGI(TAG, "Failed to serialize hello message\r\b");
       return false;
     }
 
-    int result = base_message_serialize(&base_message, &base_message_serialized[0],
-                                        BASE_MESSAGE_SIZE);
+    int result = base_message_serialize(
+        &base_message, &base_message_serialized[0], BASE_MESSAGE_SIZE);
     if (result) {
       ESP_LOGI(TAG, "Failed to serialize base message");
       free(hello_message_serialized);
@@ -232,16 +261,16 @@ protected:
     return true;
   }
 
-  bool readBaseMessage(){
+  bool readBaseMessage() {
     ESP_LOGD(TAG, "%d", BASE_MESSAGE_SIZE);
     // Wait for timeout
-    //uint64_t end = millis() + CONFIG_WEBSOCKET_SERVER_TIMEOUT_SEC * 1000;
+    // uint64_t end = millis() + CONFIG_WEBSOCKET_SERVER_TIMEOUT_SEC * 1000;
     while (client.available() < BASE_MESSAGE_SIZE) {
       delay(100);
     }
 
     // Read Header Record with size
-    size = client.readBytes(&send_receive_buffer[0],BASE_MESSAGE_SIZE);
+    size = client.readBytes(&send_receive_buffer[0], BASE_MESSAGE_SIZE);
     ESP_LOGD(TAG, "Bytes read: %d", size);
 
     int result = gettimeofday(&now, NULL);
@@ -250,7 +279,8 @@ protected:
       return false;
     }
 
-    result = base_message_deserialize(&base_message, &send_receive_buffer[0], size);
+    result =
+        base_message_deserialize(&base_message, &send_receive_buffer[0], size);
     if (result) {
       ESP_LOGW(TAG, "Failed to read base message: %d", result);
       return false;
@@ -265,11 +295,12 @@ protected:
 
   bool readData() {
     ESP_LOGD(TAG, "%d", base_message.size);
-    if (base_message.size > send_receive_buffer.size()){
+    if (base_message.size > send_receive_buffer.size()) {
       send_receive_buffer.resize(base_message.size);
     }
     start = &send_receive_buffer[0];
-    while(client.available() < base_message.size) delay(100);
+    while (client.available() < base_message.size)
+      delay(100);
     size = client.readBytes(&(send_receive_buffer[0]), base_message.size);
     return true;
   }
@@ -277,7 +308,6 @@ protected:
   bool processMessageCodecHeader() {
     ESP_LOGD(TAG, "");
     codec_header_message_t codec_header_message;
-    received_header = false;
 
     int result =
         codec_header_message_deserialize(&codec_header_message, start, size);
@@ -304,7 +334,6 @@ protected:
     }
     ESP_LOGI(TAG, "Codec : %s , Size: %d ", codec_header_message.codec, size);
     codec_header_message_free(&codec_header_message);
-    received_header = true;
 
     return true;
   }
@@ -316,7 +345,8 @@ protected:
     uint16_t bits;
     memcpy(&bits, start + 8, sizeof(bits));
     memcpy(&channels, start + 10, sizeof(channels));
-    ESP_LOGI(TAG, "Opus sampleformat: %d:%d:%d", rate, bits, channels);
+    // notify output about format
+    audioConfig(rate, channels, bits);
     codec_from_server = OPUS;
     return true;
   }
@@ -355,11 +385,10 @@ protected:
     header.sec = wire_chunk_message.timestamp.sec;
     header.usec = wire_chunk_message.timestamp.usec;
     header.codec = codec_from_server;
-    write_header(header);
+    writeAudioInfo(header);
 
     size_t chunk_res;
-    if ((chunk_res = write_ringbuf((const uint8_t *)start, size)) !=
-        size) {
+    if ((chunk_res = writeAudio((const uint8_t *)start, size)) != size) {
       ESP_LOGW(TAG, "Error writing data to ring buffer: %d", chunk_res);
     }
     return true;
@@ -391,9 +420,8 @@ protected:
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
     // set volume
-    SnapOutput &out = SnapOutput::instance();
-    out.setMute(server_settings_message.muted);
-    out.setVolume(server_settings_message.volume);
+    setMute(server_settings_message.muted);
+    setVolume(server_settings_message.volume);
 
     if (server_settings_message.muted != client_state_muted) {
       client_state_muted = server_settings_message.muted;
@@ -473,8 +501,8 @@ protected:
     base_message.sent.usec = now.tv_usec;
     base_message.size = TIME_MESSAGE_SIZE;
 
-    int result = base_message_serialize(&base_message, &base_message_serialized[0],
-                                        BASE_MESSAGE_SIZE);
+    int result = base_message_serialize(
+        &base_message, &base_message_serialized[0], BASE_MESSAGE_SIZE);
     if (result) {
       ESP_LOGE(TAG, "Failed to serialize base message for time");
       return true;
@@ -493,12 +521,26 @@ protected:
     return true;
   }
 
-  size_t write_ringbuf(const uint8_t *data, size_t size) {
-    return SnapOutput::instance().write(data, size);
+  void setMute(bool flag) { p_snap_output->setMute(flag); }
+
+  void setVolume(float vol) { p_snap_output->setVolume(vol); }
+
+  bool audioBegin() { return p_snap_output->begin(); }
+
+  void audioConfig(int rate, uint8_t channels, uint8_t bits) {
+    p_snap_output->audioBegin(rate, channels, bits);
   }
 
-  size_t write_header(AudioHeader &header) {
-    return SnapOutput::instance().writeHeader(header);
+  void audioEnd() { p_snap_output->end(); }
+
+  size_t writeAudio(const uint8_t *data, size_t size) {
+    return p_snap_output->write(data, size);
   }
+
+  size_t writeAudioInfo(AudioHeader &header) {
+    return p_snap_output->writeHeader(header);
+  }
+
+
 
 };

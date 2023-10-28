@@ -2,10 +2,6 @@
 
 #include "Arduino.h" // for ESP.getPsramSize()
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "freertos/ringbuf.h"
-#include "freertos/task.h"
 #include <stdint.h>
 #include <sys/time.h>
 
@@ -13,83 +9,35 @@
 #include "config.h"
 
 /**
- * Output Class which reads the data from the Queue and sends it out
- * to the audio API
- */
+ * @brief Abstract Output Class
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
+ **/
+
 class SnapOutput {
 
 public:
-  static SnapOutput &instance() {
-    static SnapOutput self;
-    return self;
+  // singleton: only access via instance class method
+  SnapOutput() {
+    audio_info.sample_rate = 48000;
+    audio_info.channels = 2;
+    audio_info.bits_per_sample = 16;
   }
 
   /// Starts the processing which is also starting the the dsp_i2s_task_handler
   /// task
-  void begin(uint32_t sample_rate) {
-    const char *TAG = "I2S";
-    ESP_LOGD(TAG, "");
-
-    // allow amplification
-    auto vol_cfg = vol_stream.defaultConfig();
-    vol_cfg.allow_boost = true;
-    vol_cfg.channels = 2;
-    vol_cfg.bits_per_sample = 16;
-    vol_stream.begin(vol_cfg);
-
-    if (ringbuf_i2s == nullptr) {
-      int buffer_size = ESP.getPsramSize() > BUFFER_SIZE_PSRAM
-                            ? BUFFER_SIZE_PSRAM
-                            : BUFFER_SIZE_NO_PSRAM;
-      ringbuf_i2s = xRingbufferCreate(buffer_size, RINGBUF_TYPE_BYTEBUF);
-      if (ringbuf_i2s == nullptr) {
-        printf("nospace for ringbuffer\n");
-        return;
-      }
-    }
-    ESP_LOGD(TAG, "Ringbuffer ok");
-
-    if (header_queue == nullptr) {
-      header_queue = xQueueCreate(100, sizeof(AudioHeader));
-    }
-
-    setup_dsp_i2s(sample_rate);
-    ESP_LOGI(TAG, "Start i2s task");
-
-    // start output task
-    xTaskCreatePinnedToCore(
-        dsp_i2s_task_handler, "I2S_TASK", CONFIG_TASK_STACK_DSP_I2S, nullptr,
-        CONFIG_TASK_PRIORITY, &dsp_i2s_task_handle, CONFIG_TASK_CORE);
-  }
+  virtual bool begin() = 0;
 
   /// Writes audio data to the queue
-  size_t write(const uint8_t *data, size_t size) {
-    ESP_LOGD(TAG, "%d", size);
-    if (ringbuf_i2s == nullptr)
-      return 0;
-    BaseType_t done = xRingbufferSend(ringbuf_i2s, (void *)data, size,
-                                      (portTickType)portMAX_DELAY);
-    return (done) ? size : 0;
-  }
+  virtual size_t write(const uint8_t *data, size_t size) = 0;
 
-  bool writeHeader(AudioHeader &header) {
-    if (header_queue==nullptr) return false;
-    return xQueueSend(header_queue, &header, (TickType_t)portMAX_DELAY) ==
-           pdTRUE;
-  }
+  /// Provides info about the audio data
+  virtual bool writeHeader(AudioHeader &header) = 0;
 
   /// Ends the processing and releases the memory
-  void end(void) {
-    ESP_LOGD(TAG, "");
-    if (dsp_i2s_task_handle) {
-      vTaskDelete(dsp_i2s_task_handle);
-      dsp_i2s_task_handle = nullptr;
-    }
-    if (ringbuf_i2s) {
-      vRingbufferDelete(ringbuf_i2s);
-      ringbuf_i2s = nullptr;
-    }
-  }
+  virtual void end(void) = 0;
 
   /// Adjust the volume
   void setVolume(float vol) {
@@ -105,7 +53,7 @@ public:
   void setMute(bool mute) {
     is_mute = mute;
     vol_stream.setVolume(mute ? 0 : vol);
-    writeSilence();
+    audioWriteSilence();
   }
 
   /// checks if volume is mute
@@ -114,53 +62,65 @@ public:
   /// Adjust volume by factor e.g. 1.5
   void setVolumeFactor(float fact) { vol_factor = fact; }
 
+  /// Defines the output class
   void setOutput(AudioOutput &output) {
     this->out = &output;
     vol_stream.setTarget(output);
     decoder_stream.setStream(&vol_stream);
   }
 
+  /// Defines the decoder class
   void setDecoder(AudioDecoder &dec) { decoder_stream.setDecoder(&dec); }
 
-  void setAudioInfo(AudioInfo info) {
-    out->setAudioInfo(info);
-    decoder_stream.setAudioInfo(info);
-    vol_stream.setAudioInfo(info);
+  /// setup of all audio objects
+  bool audioBegin(uint32_t sample_rate, uint8_t channels, uint8_t bits) {
+    ESP_LOGI(TAG, "sample_rate: %d, channels: %d, bits: %d", sample_rate,
+             channels, bits);
+    if (out == nullptr)
+      return false;
+    audio_info.sample_rate = sample_rate;
+    audio_info.bits_per_sample = bits;
+    audio_info.channels = channels;
+
+    // open volume control: allow amplification
+    auto vol_cfg = vol_stream.defaultConfig();
+    vol_cfg.copyFrom(audio_info);
+    vol_cfg.allow_boost = true;
+    vol_cfg.channels = 2;
+    vol_cfg.bits_per_sample = 16;
+    vol_stream.begin(vol_cfg);
+
+    // open final output
+    out->setAudioInfo(audio_info);
+    out->begin();
+
+    // open decoder
+    auto dec_cfg = decoder_stream.defaultConfig();
+    dec_cfg.copyFrom(audio_info);
+    decoder_stream.begin(dec_cfg);
+
+    ESP_LOGD(TAG, "end");
+    return true;
   }
+
+  virtual void doLoop() = 0;
 
 protected:
   const char *TAG = "SnapOutput";
-  xTaskHandle dsp_i2s_task_handle = nullptr;
-  RingbufHandle_t ringbuf_i2s = nullptr;
-  QueueHandle_t header_queue = nullptr;
   AudioOutput *out = nullptr;
+  AudioInfo audio_info;
   EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
   float vol = 1.0;
   float vol_factor = 1.0;
   bool is_mute = false;
+  uint64_t start_us;
+  AudioHeader first_header;
 
-  SnapOutput() = default;
-
-  void writeSilence() {
-    for (int j = 0; j < 50; j++) {
-      out->writeSilence(1024);
-    }
-  }
-
-  bool audioBegin(uint32_t sample_rate, uint8_t bits) {
-    ESP_LOGD(TAG, "sample_rate: %d, bits: %d", sample_rate, bits);
-    if (out == nullptr)
-      return false;
-    AudioInfo info;
-    info.sample_rate = sample_rate;
-    info.bits_per_sample = bits;
-    info.channels = 2;
-
-    setAudioInfo(info);
-    bool result = out->begin();
-    ESP_LOGD(TAG, "end");
-    return result;
+  void audioWriteSilence() {
+    // for (int j = 0; j < 50; j++) {
+    //   out->writeSilence(1024);
+    // }
   }
 
   void audioEnd() {
@@ -170,64 +130,19 @@ protected:
     out->end();
   }
 
-  // split up writes into batches of 512 bytes
+  //
   size_t audioWrite(const void *src, size_t size) {
-    ESP_LOGD(TAG, "%d", size);
-    size_t result = 0;
-    if (out != nullptr) {
-      int open = size;
-      int written = 0;
-      while (open > 0) {
-        int max_write = std::min((int)size, 512);
-        int result =
-            decoder_stream.write((const uint8_t *)src + written, max_write);
-        written += result;
-        open -= result;
-      }
-      result = written;
-    }
-    return result;
+    ESP_LOGI(TAG, "%d", size);
+    return decoder_stream.write((const uint8_t *)src, size);
   }
 
-  void setup_dsp_i2s(uint32_t sample_rate) {
-    ESP_LOGD(TAG, "sample_rate: %d", sample_rate);
-    audioBegin(sample_rate, 16);
-  }
-
-  static void dsp_i2s_task_handler(void *arg) {
-    instance().local_dsp_i2s_task_handler(arg);
-  }
-
-  void local_dsp_i2s_task_handler(void *arg) {
-    ESP_LOGI(TAG, "Waiting for data");
-    uint32_t counter = 0;
-
-    AudioHeader header;
-    while (true) {
-      // receive header
-      if (xQueueReceive(header_queue, &header, portMAX_DELAY)) {
-        size_t open = header.size;
-        while (open > 0) {
-          // receive audio
-          size_t pxItemSize = open;
-          void *result =
-              xRingbufferReceive(ringbuf_i2s, &pxItemSize, portMAX_DELAY);
-          if (result != nullptr) {
-            open -= pxItemSize;
-
-            // write (encoded) audio
-            size_t bytes_written = audioWrite(result, pxItemSize);
-            assert(bytes_written == pxItemSize);
-
-            // release memory
-            vRingbufferReturnItem(ringbuf_i2s, result);
-          }
-        }
-      }
-      if (counter++ % 100 == 0) {
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
-                 ESP.getFreePsram());
-      }
-    }
+  float local_dsp_measure_time(AudioHeader &header) {
+    ESP_LOGD(TAG, "");
+    float local_us = micros() - start_us;
+    float server_us = header - first_header;
+    float factor = local_us / server_us;
+    LOGD("Speed us local: %f / server: %f -> factor %f", local_us, server_us,
+         factor);
+    return factor;
   }
 };

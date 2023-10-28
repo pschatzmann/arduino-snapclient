@@ -21,6 +21,16 @@ struct AudioHeader {
   int32_t usec = 0;
   size_t size = 0;
   codec_type codec = NO_CODEC;
+
+  uint64_t operator-(AudioHeader&h1){
+    return (sec - h1.sec) * 1000000 + usec - h1.usec;
+  }
 };
+
+inline void checkHeap(){
+#if CONFIG_CHECK_HEAP
+    heap_caps_check_integrity_all(true);   
+#endif 
+}
 
 extern SnapCtxDef ctx;
