@@ -8,3 +8,4 @@
 #  define ESP_LOGW(tag, ...) DEFAULT_LOG(__VA_ARGS__)
 #  define ESP_LOGI(tag, ...) DEFAULT_LOG(__VA_ARGS__)
 #  define ESP_LOGD(tag, ...) 
+#endif

@@ -132,7 +132,7 @@ protected:
 
   //
   size_t audioWrite(const void *src, size_t size) {
-    ESP_LOGI(TAG, "%d", size);
+    ESP_LOGI(TAG, "%zu", size);
     return decoder_stream.write((const uint8_t *)src, size);
   }
 

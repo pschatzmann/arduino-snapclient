@@ -80,11 +80,18 @@ $(function() {
 Inheritance diagram for SnapOutputTasks:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="class_snap_output_tasks.png" alt=""/>
- </div></div>
+  <img src="class_snap_output_tasks.png" usemap="#SnapOutputTasks_map" alt=""/>
+  <map id="SnapOutputTasks_map" name="SnapOutputTasks_map">
+<area href="class_snap_output.html" title="Abstract Output Class." alt="SnapOutput" shape="rect" coords="0,0,110,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a06bd6bff6dee7be92784189ff0fae5fb"><td class="memItemLeft" align="right" valign="top"><a id="a06bd6bff6dee7be92784189ff0fae5fb"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">audioBegin</a> (uint32_t sample_rate, uint8_t channels, uint8_t bits)</td></tr>
+<tr class="memdesc:a06bd6bff6dee7be92784189ff0fae5fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup of all audio objects <br /></td></tr>
+<tr class="separator:a06bd6bff6dee7be92784189ff0fae5fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a601fb7cf1fc15db50c71a826f084f934"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output_tasks.html#a601fb7cf1fc15db50c71a826f084f934">begin</a> ()</td></tr>
 <tr class="separator:a601fb7cf1fc15db50c71a826f084f934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0d28a9842dd1a20e72bdf59f8892fb8"><td class="memItemLeft" align="right" valign="top"><a id="ae0d28a9842dd1a20e72bdf59f8892fb8"></a>
@@ -94,6 +101,34 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>doLoop</b> ()
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output_tasks.html#a081b5c662ecee58405a543518f699d31">end</a> (void)</td></tr>
 <tr class="memdesc:a081b5c662ecee58405a543518f699d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends the processing and releases the memory. <br /></td></tr>
 <tr class="separator:a081b5c662ecee58405a543518f699d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6f1c80ac878b7c454a49f0f16f2bfb0"><td class="memItemLeft" align="right" valign="top"><a id="aa6f1c80ac878b7c454a49f0f16f2bfb0"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">isMute</a> ()</td></tr>
+<tr class="memdesc:aa6f1c80ac878b7c454a49f0f16f2bfb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks if volume is mute <br /></td></tr>
+<tr class="separator:aa6f1c80ac878b7c454a49f0f16f2bfb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f9488e045147706a13387c0c6a634ea"><td class="memItemLeft" align="right" valign="top"><a id="a6f9488e045147706a13387c0c6a634ea"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">setDecoder</a> (AudioDecoder &amp;dec)</td></tr>
+<tr class="memdesc:a6f9488e045147706a13387c0c6a634ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the decoder class. <br /></td></tr>
+<tr class="separator:a6f9488e045147706a13387c0c6a634ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27459cee4bd97a6ac4a09aec45cd3bbd"><td class="memItemLeft" align="right" valign="top"><a id="a27459cee4bd97a6ac4a09aec45cd3bbd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">setMute</a> (bool mute)</td></tr>
+<tr class="memdesc:a27459cee4bd97a6ac4a09aec45cd3bbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">mute / unmute <br /></td></tr>
+<tr class="separator:a27459cee4bd97a6ac4a09aec45cd3bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0d3775308edf58cac6e7f763edbb96a"><td class="memItemLeft" align="right" valign="top"><a id="aa0d3775308edf58cac6e7f763edbb96a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a> (AudioOutput &amp;output)</td></tr>
+<tr class="memdesc:aa0d3775308edf58cac6e7f763edbb96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the output class. <br /></td></tr>
+<tr class="separator:aa0d3775308edf58cac6e7f763edbb96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35c7533999826a3706e97f99442d4c7e"><td class="memItemLeft" align="right" valign="top"><a id="a35c7533999826a3706e97f99442d4c7e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">setVolume</a> (float vol)</td></tr>
+<tr class="memdesc:a35c7533999826a3706e97f99442d4c7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjust the volume. <br /></td></tr>
+<tr class="separator:a35c7533999826a3706e97f99442d4c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ffb49aa46d01ea1f30e374e0573cc83"><td class="memItemLeft" align="right" valign="top"><a id="a7ffb49aa46d01ea1f30e374e0573cc83"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a> (float fact)</td></tr>
+<tr class="memdesc:a7ffb49aa46d01ea1f30e374e0573cc83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjust volume by factor e.g. 1.5. <br /></td></tr>
+<tr class="separator:a7ffb49aa46d01ea1f30e374e0573cc83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d59a107c6918cdc9a17b92f6cd4e136"><td class="memItemLeft" align="right" valign="top"><a id="a1d59a107c6918cdc9a17b92f6cd4e136"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">volume</a> ()</td></tr>
+<tr class="memdesc:a1d59a107c6918cdc9a17b92f6cd4e136"><td class="mdescLeft">&#160;</td><td class="mdescRight">provides the actual volume <br /></td></tr>
+<tr class="separator:a1d59a107c6918cdc9a17b92f6cd4e136"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd01521d9ce6f1eb9caefdcf6260f6da"><td class="memItemLeft" align="right" valign="top"><a id="abd01521d9ce6f1eb9caefdcf6260f6da"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output_tasks.html#abd01521d9ce6f1eb9caefdcf6260f6da">write</a> (const uint8_t *data, size_t size)</td></tr>
 <tr class="memdesc:abd01521d9ce6f1eb9caefdcf6260f6da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes audio data to the queue. <br /></td></tr>
@@ -111,6 +146,15 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>dsp_i2s_task_h
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memItemLeft" align="right" valign="top"><a id="ae82d3c5e5c41bc2f58d73026888d177f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>audioEnd</b> ()</td></tr>
+<tr class="separator:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a559f4ab6c8d27721853c691885f35a8e"><td class="memItemLeft" align="right" valign="top"><a id="a559f4ab6c8d27721853c691885f35a8e"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>audioWrite</b> (const void *src, size_t size)</td></tr>
+<tr class="separator:a559f4ab6c8d27721853c691885f35a8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b084eb63510810d2d19042798833c5c"><td class="memItemLeft" align="right" valign="top"><a id="a8b084eb63510810d2d19042798833c5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>audioWriteSilence</b> ()</td></tr>
+<tr class="separator:a8b084eb63510810d2d19042798833c5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eba321f506d9042f602b7f3f0598496"><td class="memItemLeft" align="right" valign="top"><a id="a2eba321f506d9042f602b7f3f0598496"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>createHeaderQueue</b> ()</td></tr>
 <tr class="separator:a2eba321f506d9042f602b7f3f0598496"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,18 +167,51 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>local_dsp_audio_write
 <tr class="memitem:a7f7cbf954c60352bcfc7acc2a1abe735"><td class="memItemLeft" align="right" valign="top"><a id="a7f7cbf954c60352bcfc7acc2a1abe735"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>local_dsp_i2s_task_handler</b> (void *arg)</td></tr>
 <tr class="separator:a7f7cbf954c60352bcfc7acc2a1abe735"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36b5e788548df5e05a6a09ec94378b4f"><td class="memItemLeft" align="right" valign="top"><a id="a36b5e788548df5e05a6a09ec94378b4f"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>local_dsp_measure_time</b> (<a class="el" href="struct_snap_audio_header.html">SnapAudioHeader</a> &amp;header)</td></tr>
+<tr class="separator:a36b5e788548df5e05a6a09ec94378b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:a60a4955976dbf22347a7be08e089371c"><td class="memItemLeft" align="right" valign="top"><a id="a60a4955976dbf22347a7be08e089371c"></a>
+AudioInfo&#160;</td><td class="memItemRight" valign="bottom"><b>audio_info</b></td></tr>
+<tr class="separator:a60a4955976dbf22347a7be08e089371c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8175c86e006417dc9631068898a7d655"><td class="memItemLeft" align="right" valign="top"><a id="a8175c86e006417dc9631068898a7d655"></a>
 RingbufHandle_t&#160;</td><td class="memItemRight" valign="bottom"><b>audio_ringbuffer</b> = nullptr</td></tr>
 <tr class="separator:a8175c86e006417dc9631068898a7d655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaebb75fcca6648d729c8390703086130"><td class="memItemLeft" align="right" valign="top"><a id="aaebb75fcca6648d729c8390703086130"></a>
+EncodedAudioStream&#160;</td><td class="memItemRight" valign="bottom"><b>decoder_stream</b></td></tr>
+<tr class="separator:aaebb75fcca6648d729c8390703086130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5c9485bfb401b6f86fb0174af321082"><td class="memItemLeft" align="right" valign="top"><a id="ad5c9485bfb401b6f86fb0174af321082"></a>
 xTaskHandle&#160;</td><td class="memItemRight" valign="bottom"><b>dsp_i2s_task_handle</b> = nullptr</td></tr>
 <tr class="separator:ad5c9485bfb401b6f86fb0174af321082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab0c7a2912db6a074e2eede7e2b12b9c"><td class="memItemLeft" align="right" valign="top"><a id="aab0c7a2912db6a074e2eede7e2b12b9c"></a>
+<a class="el" href="struct_snap_audio_header.html">SnapAudioHeader</a>&#160;</td><td class="memItemRight" valign="bottom"><b>first_header</b></td></tr>
+<tr class="separator:aab0c7a2912db6a074e2eede7e2b12b9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb142107166a4819c994d566ea57393b"><td class="memItemLeft" align="right" valign="top"><a id="abb142107166a4819c994d566ea57393b"></a>
 QueueHandle_t&#160;</td><td class="memItemRight" valign="bottom"><b>header_queue</b> = nullptr</td></tr>
 <tr class="separator:abb142107166a4819c994d566ea57393b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76051e56b41b12a5e5bda9c2cc62a40d"><td class="memItemLeft" align="right" valign="top"><a id="a76051e56b41b12a5e5bda9c2cc62a40d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_mute</b> = false</td></tr>
+<tr class="separator:a76051e56b41b12a5e5bda9c2cc62a40d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a647ab00ba9c2b6128832612b9062d96f"><td class="memItemLeft" align="right" valign="top"><a id="a647ab00ba9c2b6128832612b9062d96f"></a>
+AudioOutput *&#160;</td><td class="memItemRight" valign="bottom"><b>out</b> = nullptr</td></tr>
+<tr class="separator:a647ab00ba9c2b6128832612b9062d96f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e5f85bead9f5973c68929e82df504b6"><td class="memItemLeft" align="right" valign="top"><a id="a6e5f85bead9f5973c68929e82df504b6"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>start_us</b></td></tr>
+<tr class="separator:a6e5f85bead9f5973c68929e82df504b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memItemLeft" align="right" valign="top"><a id="a5a85b9c772bbeb480b209a3e6ea92b4c"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapOutput&quot;</td></tr>
+<tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88e7c10303524def0241927378e9b58c"><td class="memItemLeft" align="right" valign="top"><a id="a88e7c10303524def0241927378e9b58c"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>vol</b> = 1.0</td></tr>
+<tr class="separator:a88e7c10303524def0241927378e9b58c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d121a3f5f8bbd48cf219b27b06bdc4e"><td class="memItemLeft" align="right" valign="top"><a id="a7d121a3f5f8bbd48cf219b27b06bdc4e"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>vol_factor</b> = 1.0</td></tr>
+<tr class="separator:a7d121a3f5f8bbd48cf219b27b06bdc4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d1e3dedb3fa3f118da4e7b70d21021a"><td class="memItemLeft" align="right" valign="top"><a id="a9d1e3dedb3fa3f118da4e7b70d21021a"></a>
+VolumeStream&#160;</td><td class="memItemRight" valign="bottom"><b>vol_stream</b></td></tr>
+<tr class="separator:a9d1e3dedb3fa3f118da4e7b70d21021a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Output Class which reads the data from the Queue and sends it to the audio API. </p>
@@ -161,11 +238,13 @@ QueueHandle_t&#160;</td><td class="memItemRight" valign="bottom"><b>header_queue
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Starts the processing which is also starting the the dsp_i2s_task_handler task </p>
+
+<p>Implements <a class="el" href="class_snap_output.html#ae8a0d9ca63f8bb3de100e347c3f3bca4">SnapOutput</a>.</p>
 
 </div>
 </div>

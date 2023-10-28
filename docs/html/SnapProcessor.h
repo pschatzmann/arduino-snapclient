@@ -256,8 +256,8 @@ protected:
       return false;
     }
 
-    p_client->write((const uint8_t*)&base_message_serialized[0], BASE_MESSAGE_SIZE);
-    p_client->write((const uint8_t*)hello_message_serialized, base_message.size);
+    SnapAudioHeader((const uint8_t*)&base_message_serialized[0], BASE_MESSAGE_SIZE);
+    SnapAudioHeader((const uint8_t*)hello_message_serialized, base_message.size);
 
     free(hello_message_serialized);
     return true;
@@ -391,7 +391,7 @@ protected:
 
     size_t chunk_res;
     if ((chunk_res = writeAudio((const uint8_t *)start, size)) != size) {
-      ESP_LOGW(TAG, "Error writing data to ring buffer: %zu", chunk_res);
+      ESP_LOGW(TAG, "SnapAudioHeader data to ring buffer: %zu", chunk_res);
     }
     return true;
   }

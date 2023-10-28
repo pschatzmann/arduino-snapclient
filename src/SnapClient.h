@@ -43,6 +43,12 @@ public:
     p_snapprocessor->setDecoder(decoder);
   }
 
+  /// Defines an alternative comminucation client (default is WiFiClient)
+  void setClient(Client &client){
+    p_snapprocessor->setClient(client);
+  }
+
+  /// Starts the processing
   bool begin(void) {
     if (WiFi.status() != WL_CONNECTED) {
       ESP_LOGE(TAG, "WiFi not connected");
@@ -94,9 +100,12 @@ public:
   /// For Testing: Used to prevent the starting of the output task
   void setStartOutput(bool start) { p_snapprocessor->setStartOutput(start); }
 
+  /// Defines an alternative Processor
   void setSnapProcessor(SnapProcessor &processor){
     p_snapprocessor = &processor;
   }
+
+  /// Call from Arduino Loop (when no tasks are used)
   void doLoop(){
     p_snapprocessor->doLoop();
   }
