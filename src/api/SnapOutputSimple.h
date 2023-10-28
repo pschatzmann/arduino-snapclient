@@ -2,8 +2,12 @@
 #include "SnapOutput.h"
 
 /**
- * Direct output of received data
- */
+ * @brief Direct output of received data
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
+ **/
 
 class SnapOutputSimple : public SnapOutput {
 public:
@@ -19,7 +23,7 @@ public:
   }
 
   /// nop
-  bool writeHeader(AudioHeader &header) { return true; }
+  bool writeHeader(SnapAudioHeader &header) { return true; }
 
   /// nop
   void end(void) {}

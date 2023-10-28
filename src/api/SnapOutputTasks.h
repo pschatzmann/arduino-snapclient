@@ -54,7 +54,7 @@ public:
   }
 
   /// Provides info about the audio data
-  bool writeHeader(AudioHeader &header) {
+  bool writeHeader(SnapAudioHeader &header) {
     ESP_LOGD(TAG, "");
     if (header_queue == nullptr) {
       ESP_LOGE(TAG, "header_queue is null");
@@ -91,7 +91,7 @@ protected:
   void local_dsp_i2s_task_handler(void *arg) {
     ESP_LOGI(TAG, "Waiting for data");
     uint32_t counter = 0;
-    AudioHeader header;
+    SnapAudioHeader header;
     while (true) {
       // receive header
       if (xQueueReceive(header_queue, &header, pdMS_TO_TICKS(5000)) == pdTRUE) {
@@ -116,7 +116,7 @@ protected:
 
   bool createHeaderQueue() {
     if (header_queue == nullptr) {
-      header_queue = xQueueCreate(200, sizeof(AudioHeader));
+      header_queue = xQueueCreate(200, sizeof(SnapAudioHeader));
     }
     return header_queue != nullptr;
   }

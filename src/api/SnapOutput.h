@@ -34,7 +34,7 @@ public:
   virtual size_t write(const uint8_t *data, size_t size) = 0;
 
   /// Provides info about the audio data
-  virtual bool writeHeader(AudioHeader &header) = 0;
+  virtual bool writeHeader(SnapAudioHeader &header) = 0;
 
   /// Ends the processing and releases the memory
   virtual void end(void) = 0;
@@ -115,7 +115,7 @@ protected:
   float vol_factor = 1.0;
   bool is_mute = false;
   uint64_t start_us;
-  AudioHeader first_header;
+  SnapAudioHeader first_header;
 
   void audioWriteSilence() {
     // for (int j = 0; j < 50; j++) {
@@ -136,7 +136,7 @@ protected:
     return decoder_stream.write((const uint8_t *)src, size);
   }
 
-  float local_dsp_measure_time(AudioHeader &header) {
+  float local_dsp_measure_time(SnapAudioHeader &header) {
     ESP_LOGD(TAG, "");
     float local_us = micros() - start_us;
     float server_us = header - first_header;

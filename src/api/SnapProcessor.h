@@ -376,7 +376,7 @@ protected:
 
   bool wireChunk(wire_chunk_message_t &wire_chunk_message) {
     ESP_LOGD(TAG, "");
-    AudioHeader header;
+    SnapAudioHeader header;
     header.size = size;
     header.sec = wire_chunk_message.timestamp.sec;
     header.usec = wire_chunk_message.timestamp.usec;
@@ -533,7 +533,7 @@ protected:
     return p_snap_output->write(data, size);
   }
 
-  size_t writeAudioInfo(AudioHeader &header) {
+  size_t writeAudioInfo(SnapAudioHeader &header) {
     return p_snap_output->writeHeader(header);
   }
 

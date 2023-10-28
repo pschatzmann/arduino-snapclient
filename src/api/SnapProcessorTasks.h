@@ -4,6 +4,14 @@
 class SnapProcessorTasks;
 static SnapProcessorTasks *selfSnapProcessorTasks = nullptr;
 
+/**
+ * @brief Snap Processor implementation which relies on FreeRTOS tasks 
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
+ */
+
 class SnapProcessorTasks : public SnapProcessor {
 public:
   SnapProcessorTasks(SnapOutput &output) : SnapProcessor(output) {
