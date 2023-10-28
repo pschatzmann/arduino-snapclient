@@ -6,7 +6,7 @@
 #include <sys/time.h>
 
 #include "api/Common.h"
-#include "config.h"
+#include "SnapConfig.h"
 
 /**
  * @brief Abstract Output Class

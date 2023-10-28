@@ -22,5 +22,5 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 
 ## Configuration
 
-Configuration settings can be found in [config.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/config.h)
+Configuration settings can be found in [SnapConfig.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h)
 Please note that you will need a processor with PSRAM to decode opus and PSRAM must be enabled!

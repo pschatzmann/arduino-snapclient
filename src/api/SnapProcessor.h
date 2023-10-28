@@ -12,7 +12,7 @@
 #include "Common.h"
 #include "SnapOutput.h"
 #include "SnapProcessor.h"
-#include "config.h"
+#include "SnapConfig.h"
 #include "lightsnapcast/snapcast.h"
 #include "opus.h"
 

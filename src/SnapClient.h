@@ -14,7 +14,7 @@
 #include "api/Common.h"
 #include "api/SnapProcessorTasks.h"
 #include "api/SnapOutputTasks.h"
-#include "config.h"
+#include "SnapConfig.h"
 
 /**
  * @brief Snap Client for ESP32 Arduino
