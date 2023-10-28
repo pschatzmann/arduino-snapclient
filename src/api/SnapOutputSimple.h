@@ -14,7 +14,7 @@ public:
 
   /// Writes audio data to the queue
   size_t write(const uint8_t *data, size_t size) {
-    ESP_LOGD(TAG, "%d", size);
+    ESP_LOGD(TAG, "%zu", size);
     return audioWrite(data, size);
   }
 

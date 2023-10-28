@@ -1,15 +1,7 @@
 #pragma once
 
 #include "WiFi.h"
-// #ifdef ESP32
-// #include "esp_event.h"
-// #include "esp_netif.h"
-// #include "esp_system.h"
-// #include "esp_wifi.h"
-// #endif
 #include "vector"
-
-// Web socket server
 #include "SnapCommon.h"
 #include "SnapLogger.h"
 #include "SnapOutput.h"

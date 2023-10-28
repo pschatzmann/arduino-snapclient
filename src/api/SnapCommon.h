@@ -3,10 +3,6 @@
  */
 
 #pragma once
-// #include "freertos/FreeRTOS.h"
-// #include "freertos/event_groups.h"
-// #include "freertos/queue.h"
-// #include "freertos/task.h"
 #include <sys/time.h>
 
 enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };

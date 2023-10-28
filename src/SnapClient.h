@@ -5,17 +5,16 @@
  */
 
 #include "SnapConfig.h"
+#include <WiFi.h>
+#include "AudioTools.h"
+#include "api/SnapCommon.h"
+#include "api/SnapLogger.h"
 #ifdef ESP32
 #  include "nvs_flash.h"
 #  include <ESPmDNS.h>
 #endif
-#include <WiFi.h>
 
-#include "AudioTools.h"
-#include "api/SnapCommon.h"
-#include "api/SnapLogger.h"
-
-#if USE_RTOS
+#if CONFIG_USE_RTOS
 #  include "api/SnapProcessorTasks.h"
 #  include "api/SnapOutputTasks.h"
 #else
@@ -50,11 +49,11 @@ public:
       return false;
     }
     // use maximum speed
-#ifdef ESP32
     WiFi.setSleep(false);
     ESP_LOGI(TAG, "Connected to AP");
 
     // Get MAC address for WiFi station
+#ifdef ESP32
     const char *adr = strdup(WiFi.macAddress().c_str());
     p_snapprocessor->setMacAddress(adr);
     ESP_LOGI(TAG, "mac: %s", adr);

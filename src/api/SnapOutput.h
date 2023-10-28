@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Arduino.h" // for ESP.getPsramSize()
-#include "SnapLogger.h"
 #include <stdint.h>
 #include <sys/time.h>
-
-#include "api/SnapCommon.h"
+#include "Arduino.h" // for ESP.getPsramSize()
 #include "SnapConfig.h"
+#include "SnapLogger.h"
+#include "api/SnapCommon.h"
+
 
 /**
  * @brief Abstract Output Class

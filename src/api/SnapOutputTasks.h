@@ -42,7 +42,7 @@ public:
 
   /// Writes audio data to the queue
   size_t write(const uint8_t *data, size_t size) {
-    ESP_LOGD(TAG, "%d", size);
+    ESP_LOGD(TAG, "%zu", size);
     if (audio_ringbuffer == nullptr) {
       ESP_LOGE(TAG, "audio_ringbuffer is null");
       return 0;
