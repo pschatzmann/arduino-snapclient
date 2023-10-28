@@ -1,3 +1,8 @@
+/**
+ * @brief SnapClient with Opus decoder: I2S OUtput to an AudioKit
+ * @author Phil Schatzmann
+ * @copyright GPLv3
+ */
 #include "AudioTools.h"
 #include "SnapClient.h"
 #include "AudioLibs/AudioKit.h"

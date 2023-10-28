@@ -1,3 +1,9 @@
+/**
+ * @brief SnapClient with Opus decoder: OUtput to internal DAC
+ * @author Phil Schatzmann
+ * @copyright GPLv3
+ */
+
 #include "AudioTools.h"
 #include "SnapClient.h"
 #include "AudioCodecs/CodecOpus.h"

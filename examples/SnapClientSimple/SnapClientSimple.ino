@@ -1,3 +1,10 @@
+/**
+ * @brief SnapClient with Opus decoder: I2S OUtput to an AudioKit.
+ * Arduino only implementation: No dependceny to FreeRTOS!
+ * @author Phil Schatzmann
+ * @copyright GPLv3
+ */
+
 #include "AudioTools.h"
 #include "SnapClient.h"
 #include "api/SnapOutputSimple.h"

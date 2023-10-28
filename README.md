@@ -6,8 +6,6 @@
 
 - Opus and PCM decoding are currently supported
 - Auto connect to snapcast server on network
-- Buffers up to 150 ms on Wroom modules
-- Buffers more then enough on Wrover modules using PSRAM
 - Multiroom sync delay controlled from Snapcast server 400ms - 2000ms
 
 ## Description
@@ -23,4 +21,3 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 ## Configuration
 
 Configuration settings can be found in [SnapConfig.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h)
-Please note that you will need a processor with PSRAM to decode opus and PSRAM must be enabled!
