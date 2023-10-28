@@ -11,11 +11,6 @@
 
 enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 
-struct SnapCtxDef {
-  uint32_t buffer_ms =  400;
-  struct timeval tdif, tavg;
-};
-
 struct AudioHeader {
   int32_t sec = 0;
   int32_t usec = 0;
@@ -32,5 +27,3 @@ inline void checkHeap(){
     heap_caps_check_integrity_all(true);   
 #endif 
 }
-
-extern SnapCtxDef ctx;

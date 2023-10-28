@@ -107,6 +107,8 @@ protected:
   bool output_start = true;
   bool http_task_start = true;
   time_message_t time_message;
+  uint32_t buffer_ms =  400;
+  struct timeval tdif, tavg;
 
   void processLoop(void *pvParameters = nullptr) {
     ESP_LOGI(TAG, "processLoop");
@@ -411,7 +413,7 @@ protected:
       return false;
     }
     // log mute state, buffer, latency
-    ctx.buffer_ms = server_settings_message.buffer_ms;
+    buffer_ms = server_settings_message.buffer_ms;
     ESP_LOGI(TAG, "Buffer length:  %d", server_settings_message.buffer_ms);
     ESP_LOGI(TAG, "Ringbuffer size:%d",
              server_settings_message.buffer_ms * 48 * 4);
@@ -443,13 +445,13 @@ protected:
     trx.tv_sec = base_message.received.sec;
     trx.tv_usec = base_message.received.usec;
 
-    timersub(&trx, &ttx, &ctx.tdif);
+    timersub(&trx, &ttx, &tdif);
 
     char retbuf[10];
     retbuf[0] = 5;
     retbuf[1] = 5;
-    uint32_t usec = ctx.tdif.tv_usec;
-    uint32_t uavg = ctx.tavg.tv_usec;
+    uint32_t usec = tdif.tv_usec;
+    uint32_t uavg = tavg.tv_usec;
 
     retbuf[2] = (usec & 0xff000000) >> 24;
     retbuf[3] = (usec & 0x00ff0000) >> 16;

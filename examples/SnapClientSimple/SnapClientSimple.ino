@@ -5,16 +5,14 @@
  * @copyright GPLv3
  */
 
+#include "AudioCodecs/CodecOpus.h"
+#include "AudioLibs/AudioKit.h"
 #include "AudioTools.h"
 #include "SnapClient.h"
 #include "api/SnapOutputSimple.h"
-#include "AudioLibs/AudioKit.h"
-#include "AudioCodecs/CodecOpus.h"
 
 AudioKitStream out;
 OpusAudioDecoder opus;
-SnapOutputSimple snap_out_simple;
-SnapProcessor snap_simple(snap_out_simple);
 SnapClient client(out, opus);
 
 void setup() {
@@ -36,11 +34,14 @@ void setup() {
   // use full volume of kit - volume control done by client
   out.setVolume(1.0);
 
-  // start snap client
+  // start snap client with SnapProcessor usingSnap OutputSimple
+  static SnapOutputSimple snap_out_simple;
+  static SnapProcessor snap_simple(snap_out_simple);
   client.setSnapProcessor(snap_simple);
   client.begin();
 }
 
-void loop() {
-  client.doLoop();
+void loop() { 
+  // process next data
+  client.doLoop(); 
 }
