@@ -26,6 +26,6 @@ Configuration settings can be found in [SnapConfig.h](https://github.com/pschatz
 
 ### Documentation
 
-For further information consult the [class documentation](https://pschatzmann.github.io/html/annotated.html) or the [examples](examples/).
+For further information consult the [class documentation](https://pschatzmann.github.io/arduino-snapclient/html/annotated.html) or the [examples](examples/).
 
 

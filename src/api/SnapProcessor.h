@@ -62,6 +62,7 @@ public:
   void setStartOutput(bool start) { output_start = start; }
   void setStartTask(bool flag) { http_task_start = flag; }
 
+  /// Call via SnapClient in Arduino Loop!
   virtual void doLoop() { processLoop(); }
 
   /// Defines the output class
