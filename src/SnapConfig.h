@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef CONFIG_USE_RTOS
+#define CONFIG_USE_RTOS true
+#endif
+
 /* snapast parameters; configurable in menuconfig */
 #define CONFIG_SNAPCAST_SERVER_HOST "192.168.1.38"
 #define CONFIG_SNAPCAST_SERVER_PORT 1704
@@ -17,12 +21,24 @@
 #define CONFIG_TASK_STACK_DSP_I2S (60 * 1024)
 
 // activate extended functionality
-#define CONFIG_USE_PSRAM true
-#define CONFIG_PSRAM_LIMIT 512
-#define CONFIG_SNAPCLIENT_SNTP_ENABLE true
-#define CONFIG_SNAPCLIENT_USE_MDNS true
-#define CONFIG_NVS_FLASH false
-#define CONFIG_CHECK_HEAP true
+#ifndef CONFIG_USE_PSRAM 
+#  define CONFIG_USE_PSRAM true
+#endif
+#ifndef CONFIG_PSRAM_LIMIT 
+#  define CONFIG_PSRAM_LIMIT 512
+#endif
+#ifndef CONFIG_SNAPCLIENT_SNTP_ENABLE 
+#  define CONFIG_SNAPCLIENT_SNTP_ENABLE true
+#endif
+#ifndef CONFIG_SNAPCLIENT_USE_MDNS 
+#  define CONFIG_SNAPCLIENT_USE_MDNS true
+#endif
+#ifndef CONFIG_NVS_FLASH 
+#  define CONFIG_NVS_FLASH false
+#endif
+#ifndef CONFIG_CHECK_HEAP 
+#  define CONFIG_CHECK_HEAP true
+#endif
 
 // buffer size
 #define BUFFER_SIZE_PSRAM 32 * 1024

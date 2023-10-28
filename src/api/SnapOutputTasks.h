@@ -108,8 +108,7 @@ protected:
       if (counter > 10)
         local_dsp_measure_time(header);
       if (counter++ % 100 == 0) {
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
-                 ESP.getFreePsram());
+        logHeap(TAG);
       }
       checkHeap();
     }

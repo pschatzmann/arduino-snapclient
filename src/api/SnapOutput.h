@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Arduino.h" // for ESP.getPsramSize()
-#include "esp_log.h"
+#include "SnapLogger.h"
 #include <stdint.h>
 #include <sys/time.h>
 

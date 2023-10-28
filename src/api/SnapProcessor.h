@@ -1,15 +1,17 @@
 #pragma once
 
 #include "WiFi.h"
-#include "esp_event.h"
-#include "esp_log.h"
-#include "esp_netif.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
+// #ifdef ESP32
+// #include "esp_event.h"
+// #include "esp_netif.h"
+// #include "esp_system.h"
+// #include "esp_wifi.h"
+// #endif
 #include "vector"
 
 // Web socket server
 #include "SnapCommon.h"
+#include "SnapLogger.h"
 #include "SnapOutput.h"
 #include "SnapProcessor.h"
 #include "SnapConfig.h"
@@ -103,7 +105,7 @@ protected:
   int id_counter = 0;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
-  const char *mac_address = nullptr;
+  const char *mac_address = "00-00-00-00-00";
   bool output_start = true;
   bool http_task_start = true;
   time_message_t time_message;
@@ -136,8 +138,7 @@ protected:
       while (rc) {
         rc = processMessageLoop();
         p_snap_output->doLoop();
-        ESP_LOGD(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
-                 ESP.getFreePsram());
+        logHeap(TAG);
         checkHeap();
       }
 
@@ -145,8 +146,7 @@ protected:
       client.stop();
 
       if (id_counter % 100 == 0) {
-        ESP_LOGI(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
-                 ESP.getFreePsram());
+        logHeap(TAG);
       }
       checkHeap();
     }
@@ -211,7 +211,7 @@ protected:
 
     if (!client.connect(server_ip, server_port)) {
       ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
-      vTaskDelay(4000 / portTICK_PERIOD_MS);
+      delay(4000);
       return false;
     }
     return true;

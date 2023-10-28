@@ -4,17 +4,24 @@
  * to an Arduino Library using the AudioTools as output API
  */
 
-//#include <string.h>
-#include "esp_log.h"
-#include "nvs_flash.h"
-#include <ESPmDNS.h>
+#include "SnapConfig.h"
+#ifdef ESP32
+#  include "nvs_flash.h"
+#  include <ESPmDNS.h>
+#endif
 #include <WiFi.h>
 
 #include "AudioTools.h"
 #include "api/SnapCommon.h"
-#include "api/SnapProcessorTasks.h"
-#include "api/SnapOutputTasks.h"
-#include "SnapConfig.h"
+#include "api/SnapLogger.h"
+
+#if USE_RTOS
+#  include "api/SnapProcessorTasks.h"
+#  include "api/SnapOutputTasks.h"
+#else
+#  include "api/SnapProcessor.h"
+#  include "api/SnapOutputSimple.h"
+#endif
 
 /**
  * @brief Snap Client for ESP32 Arduino
@@ -43,6 +50,7 @@ public:
       return false;
     }
     // use maximum speed
+#ifdef ESP32
     WiFi.setSleep(false);
     ESP_LOGI(TAG, "Connected to AP");
 
@@ -50,26 +58,14 @@ public:
     const char *adr = strdup(WiFi.macAddress().c_str());
     p_snapprocessor->setMacAddress(adr);
     ESP_LOGI(TAG, "mac: %s", adr);
-    checkHeap();
-
-#if CONFIG_NVS_FLASH
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
-        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-      ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
-    }
-    checkHeap();
-    ESP_ERROR_CHECK(ret);
 #endif
+    checkHeap();
 
-#if CONFIG_SNAPCLIENT_SNTP_ENABLE
+    setupNVS();
+
     setupSNTPTime();
-#endif
 
-#if CONFIG_SNAPCLIENT_USE_MDNS
     setupMDNS();
-#endif
 
 #if CONFIG_USE_PSRAM
     if (ESP.getPsramSize() > 0) {
@@ -110,11 +106,17 @@ protected:
   const char *TAG = "SnapClient";
   AdapterAudioStreamToAudioOutput output_adapter;
   // default setup
+#if CONFIG_USE_RTOS
   SnapOutputTasks snap_output;
   SnapProcessorTasks default_processor{snap_output};
+#else
+  SnapOutputSimple snap_output;
+  SnapProcessor default_processor{snap_output};
+#endif
   SnapProcessor *p_snapprocessor = &default_processor;
 
   void setupSNTPTime() {
+#if CONFIG_SNAPCLIENT_SNTP_ENABLE
     ESP_LOGD(TAG, "");
     const char *ntpServer = CONFIG_SNTP_SERVER;
     const long gmtOffset_sec = 1 * 60 * 60;
@@ -130,9 +132,11 @@ protected:
       Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
       break;
     }
+  #endif
   }
 
   void setupMDNS() {
+#if CONFIG_SNAPCLIENT_USE_MDNS
     ESP_LOGD(TAG, "");
     if (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {
       LOGE(TAG, "Error starting mDNS");
@@ -159,5 +163,21 @@ protected:
 
     MDNS.end();
     checkHeap();
+ #endif 
   }
+
+  void setupNVS(){
+#if CONFIG_NVS_FLASH
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
+        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    checkHeap();
+    ESP_ERROR_CHECK(ret);
+#endif
+
+  }
+
 };
