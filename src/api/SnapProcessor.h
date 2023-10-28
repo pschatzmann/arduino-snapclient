@@ -9,7 +9,7 @@
 #include "vector"
 
 // Web socket server
-#include "Common.h"
+#include "SnapCommon.h"
 #include "SnapOutput.h"
 #include "SnapProcessor.h"
 #include "SnapConfig.h"

@@ -11,7 +11,7 @@
 #include <WiFi.h>
 
 #include "AudioTools.h"
-#include "api/Common.h"
+#include "api/SnapCommon.h"
 #include "api/SnapProcessorTasks.h"
 #include "api/SnapOutputTasks.h"
 #include "SnapConfig.h"

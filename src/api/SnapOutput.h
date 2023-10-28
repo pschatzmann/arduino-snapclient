@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-#include "api/Common.h"
+#include "api/SnapCommon.h"
 #include "SnapConfig.h"
 
 /**
