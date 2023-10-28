@@ -39,6 +39,8 @@ public:
       id_counter = 0;
       resizeData();
     }
+    header_received = false;
+
     return result;
   }
 
@@ -103,6 +105,7 @@ protected:
   time_message_t time_message;
   uint32_t buffer_ms =  400;
   struct timeval tdif, tavg;
+  bool header_received = false;
 
   void processLoop(void *pvParameters = nullptr) {
     ESP_LOGI(TAG, "processLoop");
@@ -155,7 +158,6 @@ protected:
 
   bool processMessageLoop() {
     ESP_LOGD(TAG, "");
-    bool header_received = false;
 
     if (!readBaseMessage())
       return false;
