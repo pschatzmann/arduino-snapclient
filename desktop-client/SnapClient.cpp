@@ -5,10 +5,11 @@
  */
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioLibs/PortAudioStream.h"
+#include "AudioLibs/MiniAudioStream.h"
 #include "AudioCodecs/CodecOpus.h"
 
-PortAudioStream out;
+//PortAudioStream out;
+MiniAudioStream out;                         // Output to MiniAudioStream
 OpusAudioDecoder opus;
 SnapClient client(out, opus);
 

@@ -25,7 +25,7 @@ public:
   /// task
   bool begin() {
     const char *TAG = "I2S";
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
 
     createHeaderQueue();
     createRingBuffer();
@@ -55,7 +55,7 @@ public:
 
   /// Provides info about the audio data
   bool writeHeader(SnapAudioHeader &header) {
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     if (header_queue == nullptr) {
       ESP_LOGE(TAG, "header_queue is null");
       return false;
@@ -66,7 +66,7 @@ public:
 
   /// Ends the processing and releases the memory
   void end(void) {
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     if (dsp_i2s_task_handle) {
       vTaskDelete(dsp_i2s_task_handle);
       dsp_i2s_task_handle = nullptr;

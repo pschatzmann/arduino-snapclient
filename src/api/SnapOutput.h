@@ -5,8 +5,9 @@
 #include "Arduino.h" // for ESP.getPsramSize()
 #include "SnapConfig.h"
 #include "SnapLogger.h"
-#include "api/SnapCommon.h"
-
+#include "SnapTime.h"
+#include "SnapCommon.h"
+#include "AudioTools.h"
 
 /**
  * @brief Abstract Output Class
@@ -62,11 +63,12 @@ public:
   /// Adjust volume by factor e.g. 1.5
   void setVolumeFactor(float fact) { vol_factor = fact; }
 
-  /// Defines the output class
+  /// Defines the audio output chain to the final output
   void setOutput(AudioOutput &output) {
-    this->out = &output;
-    vol_stream.setTarget(output);
-    decoder_stream.setStream(&vol_stream);
+    this->out = &output; // final output
+    measure_stream.setStream(output); // measure effective rate
+    vol_stream.setStream(measure_stream); // adjust volume
+    decoder_stream.setStream(&vol_stream); // decode to pcm
   }
 
   /// Defines the decoder class
@@ -78,6 +80,7 @@ public:
              channels, bits);
     if (out == nullptr)
       return false;
+
     audio_info.sample_rate = sample_rate;
     audio_info.bits_per_sample = bits;
     audio_info.channels = channels;
@@ -99,6 +102,12 @@ public:
     dec_cfg.copyFrom(audio_info);
     decoder_stream.begin(dec_cfg);
 
+    // mesauring stream
+    auto ms = []() { return SnapTime::instance().serverMillis(); };
+    measure_stream.setTimeCallback(ms);
+    measure_stream.setAudioInfo(audio_info);
+    measure_stream.setReportAt(measure_at_index);
+
     ESP_LOGD(TAG, "end");
     return true;
   }
@@ -111,33 +120,36 @@ protected:
   AudioInfo audio_info;
   EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
+  RateMeasuringStream measure_stream;
   float vol = 1.0;
   float vol_factor = 1.0;
+  uint16_t measure_at_index = 100;
   bool is_mute = false;
   uint64_t start_us;
   SnapAudioHeader first_header;
+  SnapTime& snap_time = SnapTime::instance();
 
   void audioWriteSilence() {
-    // for (int j = 0; j < 50; j++) {
-    //   out->writeSilence(1024);
-    // }
+    for (int j = 0; j < 50; j++) {
+      out->writeSilence(1024);
+    }
   }
 
   void audioEnd() {
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     if (out == nullptr)
       return;
     out->end();
   }
 
-  //
+  // writes the audio data to the decoder
   size_t audioWrite(const void *src, size_t size) {
     ESP_LOGI(TAG, "%zu", size);
     return decoder_stream.write((const uint8_t *)src, size);
   }
 
   float local_dsp_measure_time(SnapAudioHeader &header) {
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     float local_us = micros() - start_us;
     float server_us = header - first_header;
     float factor = local_us / server_us;

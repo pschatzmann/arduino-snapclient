@@ -82,7 +82,7 @@ public:
   /// ends the processing and releases the resources
   void end(void) { p_snapprocessor->end(); }
 
-  /// provides the actual volume
+  /// Provides the actual volume (in the range of 0.0 to 1.0)
   float volume(void) { return p_snapprocessor->volume(); }
 
   /// Adjust volume by factor e.g. 1.5
@@ -119,7 +119,7 @@ protected:
 
   void setupSNTPTime() {
 #if CONFIG_SNAPCLIENT_SNTP_ENABLE
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     const char *ntpServer = CONFIG_SNTP_SERVER;
     const long gmtOffset_sec = 1 * 60 * 60;
     const int daylightOffset_sec = 1 * 60 * 60;
@@ -139,7 +139,7 @@ protected:
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS
-    ESP_LOGD(TAG, "");
+    ESP_LOGD(TAG, "start");
     if (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {
       LOGE(TAG, "Error starting mDNS");
       return;
