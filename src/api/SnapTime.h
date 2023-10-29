@@ -25,10 +25,11 @@ public:
 
   /// Record the last latency value so that we can calculate the avg
   void addLatency(int latency) {
-    if (latency_vector.size() > 50) {
-      latency_vector.pop_front();
+    if (latency_values.available() >= 50) {
+      // remove oldest value to make room for the latest data
+      latency_values.clearArray(1);
     }
-    latency_vector.push_back(latency);
+    latency_values.write(latency);
   }
 
   /// Provides the current server time
@@ -41,14 +42,14 @@ public:
 
   /// Provides the avg latecy in milliseconds
   int latencyMs() {
-    if (latency_vector.size() == 0)
+    if (latency_values.size() == 0)
       return 0;
     // calculate avg latency
     int64_t total = 0;
-    for (int j = 0; j < latency_vector; j++) {
-      total += latency_vector[j];
+    for (int j = 0; j < latency_values.size(); j++) {
+      total += latency_values.data()[j];
     }
-    return total / latency_vector.size();
+    return total / latency_values.size();
   }
 
   uint64_t toMillis(uint32_t sec, uint32_t usec) {
@@ -56,7 +57,7 @@ public:
   }
 
 protected:
-  Vector<int> latency_vector;
+  SingleBuffer<int> latency_values{30};
 
   void sub_timeval(struct timeval t1, struct timeval t2, struct timeval *td) {
     td->tv_usec = t2.tv_usec - t1.tv_usec;

@@ -266,14 +266,19 @@ int wire_chunk_message_deserialize(wire_chunk_message_t *msg, const char *data,
     return result;
   }
 
-  // TODO maybe should check to see if need to free memory?
-  msg->payload = malloc(msg->size * sizeof(char));
-  // Failed to allocate the memory
-  if (!msg->payload) {
-    return 2;
-  }
+  // // TODO maybe should check to see if need to free memory?
+  // msg->payload = malloc(msg->size * sizeof(char));
+  // // Failed to allocate the memory
+  // if (!msg->payload) {
+  //   return 2;
+  // }
+  //result |= buffer_read_buffer(&buffer, msg->payload, msg->size);
 
-  result |= buffer_read_buffer(&buffer, msg->payload, msg->size);
+  // pschatzmann: avoid malloc we just provide the pointer to the data in the buffer
+  if (buffer.size - buffer.index < msg->size) {
+    return 1;
+  }
+  msg->payload =(char*) &buffer.buffer[buffer.index];
   return result;
 }
 

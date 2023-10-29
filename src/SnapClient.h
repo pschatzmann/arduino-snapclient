@@ -10,8 +10,10 @@
 #include "api/SnapCommon.h"
 #include "api/SnapLogger.h"
 
-#ifdef ESP32
+#if CONFIG_NVS_FLASH
 #  include "nvs_flash.h"
+#endif
+#if CONFIG_SNAPCLIENT_USE_MDNS
 #  include <ESPmDNS.h>
 #endif
 

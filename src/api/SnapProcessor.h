@@ -204,8 +204,7 @@ protected:
 
   bool connectClient() {
     ESP_LOGD(TAG, "start");
-    p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
-
+    //p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
     if (!p_client->connect(server_ip, server_port)) {
       ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
       delay(4000);
@@ -309,7 +308,7 @@ protected:
   bool processMessageCodecHeader() {
     ESP_LOGD(TAG, "start");
     codec_header_message_t codec_header_message;
-
+    start = &send_receive_buffer[0];
     int result =
         codec_header_message_deserialize(&codec_header_message, start, size);
     if (result) {
@@ -360,36 +359,36 @@ protected:
 
   bool processMessageWireChunk() {
     ESP_LOGD(TAG, "start");
+    start = &send_receive_buffer[0];
     wire_chunk_message_t wire_chunk_message;
+    memset(&wire_chunk_message, 0, sizeof(wire_chunk_message));
     int result =
         wire_chunk_message_deserialize(&wire_chunk_message, start, size);
     if (result) {
       ESP_LOGI(TAG, "Failed to read wire chunk: %d", result);
       return false;
     }
-    size = wire_chunk_message.size;
-    start = (wire_chunk_message.payload);
     switch (codec_from_server) {
     case OPUS:
     case PCM:
       wireChunk(wire_chunk_message);
       break;
     }
-    wire_chunk_message_free(&wire_chunk_message);
+    //wire_chunk_message_free(&wire_chunk_message);
     return true;
   }
 
   bool wireChunk(wire_chunk_message_t &wire_chunk_message) {
     ESP_LOGD(TAG, "start");
     SnapAudioHeader header;
-    header.size = size;
+    header.size = wire_chunk_message.size;;
     header.sec = wire_chunk_message.timestamp.sec;
     header.usec = wire_chunk_message.timestamp.usec;
     header.codec = codec_from_server;
     writeAudioInfo(header);
 
     size_t chunk_res;
-    if ((chunk_res = writeAudio((const uint8_t *)start, size)) != size) {
+    if ((chunk_res = writeAudio((const uint8_t *)wire_chunk_message.payload, wire_chunk_message.size)) != wire_chunk_message.size) {
       ESP_LOGW(TAG, "Error writing data to ring buffer: %zu", chunk_res);
     }
     return true;
@@ -418,7 +417,9 @@ protected:
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
     // set volume
-    setMute(server_settings_message.muted);
+    if (header_received){
+      setMute(server_settings_message.muted);
+    }
     setVolume(server_settings_message.volume);
 
     if (server_settings_message.muted != client_state_muted) {

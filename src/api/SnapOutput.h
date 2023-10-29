@@ -145,7 +145,8 @@ protected:
   // writes the audio data to the decoder
   size_t audioWrite(const void *src, size_t size) {
     ESP_LOGI(TAG, "%zu", size);
-    return decoder_stream.write((const uint8_t *)src, size);
+    size_t result = decoder_stream.write((const uint8_t *)src, size);
+    return result;
   }
 
   float local_dsp_measure_time(SnapAudioHeader &header) {

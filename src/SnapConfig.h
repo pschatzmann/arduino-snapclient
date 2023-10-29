@@ -20,7 +20,7 @@
 #  define CONFIG_NVS_FLASH false
 #endif
 #ifndef CONFIG_CHECK_HEAP 
-#  define CONFIG_CHECK_HEAP true
+#  define CONFIG_CHECK_HEAP false
 #endif
 
 // snapast parameters; 
@@ -50,8 +50,8 @@
 // Only relevant with FreeRTOS implementation
 #define CONFIG_TASK_PRIORITY 5
 #define CONFIG_TASK_CORE 1
-#define CONFIG_TASK_STACK_HTTP (20 * 1024)
-#define CONFIG_TASK_STACK_DSP_I2S (60 * 1024)
+#define CONFIG_TASK_STACK_HTTP (6 * 1024)
+#define CONFIG_TASK_STACK_DSP_I2S (6 * 1024)
 #define BUFFER_SIZE_PSRAM 32 * 1024
 #define BUFFER_SIZE_NO_PSRAM 10 * 1024
 
