@@ -8,6 +8,8 @@
 #include "AudioLibs/AudioKit.h"
 #include "AudioCodecs/CodecOpus.h"
 
+#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
+
 AudioKitStream out;
 OpusAudioDecoder opus;
 SnapClient client(out, opus);

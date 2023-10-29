@@ -8,6 +8,8 @@
 #include "SnapClient.h"
 #include "AudioCodecs/CodecOpus.h"
 
+#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
+
 OpusAudioDecoder opus;
 I2SStream out;
 SnapClient client(out, opus);

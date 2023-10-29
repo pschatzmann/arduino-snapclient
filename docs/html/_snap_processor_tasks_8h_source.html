@@ -85,7 +85,7 @@ $(function() {
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordtype">bool</span> result = SnapProcessor::begin();</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordflow">if</span> (http_get_task_handle == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      result = xTaskCreatePinnedToCore(</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;          &amp;<a class="code" href="class_snap_processor_tasks.html#a315d1900a872af248ea9c8470f82071e">http_get_task</a>, <span class="stringliteral">&quot;HTTP&quot;</span>, CONFIG_TASK_STACK_HTTP, NULL,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;          &amp;<a class="code" href="class_snap_processor_tasks.html#a315d1900a872af248ea9c8470f82071e">http_get_task</a>, <span class="stringliteral">&quot;HTTP&quot;</span>, CONFIG_TASK_STACK_PROCESSOR, NULL,</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;          CONFIG_TASK_PRIORITY, &amp;http_get_task_handle, CONFIG_TASK_CORE);</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">return</span> result;</div>

@@ -10,7 +10,7 @@
 - Auto connect to snapcast server on network
 - The functionality has been tested on an ESP32
 - Memory efficient implementation, so that PSRAM is not needed
-- Use any Output device suppored by the AudioTools
+- Use any output device suppored by the [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
 
 ### Description
 

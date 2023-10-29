@@ -95,7 +95,7 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// start output task</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;Start i2s task&quot;</span>);</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    xTaskCreatePinnedToCore(</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        dsp_i2s_task_handler, <span class="stringliteral">&quot;I2S_TASK&quot;</span>, CONFIG_TASK_STACK_DSP_I2S, <span class="keyword">nullptr</span>,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        dsp_i2s_task_handler, <span class="stringliteral">&quot;I2S_TASK&quot;</span>, CONFIG_TASK_STACK_OUTPUT, <span class="keyword">nullptr</span>,</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        CONFIG_TASK_PRIORITY, &amp;dsp_i2s_task_handle, CONFIG_TASK_CORE);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>

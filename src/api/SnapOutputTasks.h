@@ -34,7 +34,7 @@ public:
     // start output task
     ESP_LOGI(TAG, "Start i2s task");
     xTaskCreatePinnedToCore(
-        dsp_i2s_task_handler, "I2S_TASK", CONFIG_TASK_STACK_DSP_I2S, nullptr,
+        dsp_i2s_task_handler, "I2S_TASK", CONFIG_TASK_STACK_OUTPUT, nullptr,
         CONFIG_TASK_PRIORITY, &dsp_i2s_task_handle, CONFIG_TASK_CORE);
 
     return true;

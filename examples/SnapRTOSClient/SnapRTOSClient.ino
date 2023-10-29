@@ -1,13 +1,13 @@
 /**
- * @brief SnapClient with Opus decoder: I2S OUtput to an AudioKit.
- * Arduino only implementation: No dependceny to FreeRTOS!
+ * @brief SnapClient with Opus decoder: I2S Output to an AudioKit.
+ * This version is using FreeRTOS!
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
 
+#include "AudioTools.h"
 #include "AudioCodecs/CodecOpus.h"
 #include "AudioLibs/AudioKit.h"
-#include "AudioTools.h"
 #include "SnapClient.h"
 #include "api/SnapOutputTasks.h"
 #include "api/SnapProcessorTasks.h"
@@ -35,7 +35,7 @@ void setup() {
   // use full volume of kit - volume control done by client
   out.setVolume(1.0);
 
-  // start snap client with SnapProcessor usingSnap OutputSimple
+  // use FreeRTOS tasks
   static SnapOutputTasks snap_out;
   static SnapProcessorTasks snap_processor(snap_out);
   client.setSnapProcessor(snap_processor);
@@ -43,5 +43,5 @@ void setup() {
 }
 
 void loop() { 
-  delay(100)
+  delay(100);
 }

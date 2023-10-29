@@ -22,7 +22,7 @@ public:
     bool result = SnapProcessor::begin();
     if (http_get_task_handle == nullptr) {
       result = xTaskCreatePinnedToCore(
-          &http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP, NULL,
+          &http_get_task, "HTTP", CONFIG_TASK_STACK_PROCESSOR, NULL,
           CONFIG_TASK_PRIORITY, &http_get_task_handle, CONFIG_TASK_CORE);
     }
     return result;
