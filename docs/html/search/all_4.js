@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['read_5fbuffer_5ft_5',['read_buffer_t',['../structread__buffer__t.html',1,'']]],
-  ['rtprx_2ec_6',['rtprx.c',['../rtprx_8c.html',1,'']]]
+  ['http_5fget_5ftask_4',['http_get_task',['../class_snap_processor_tasks.html#a315d1900a872af248ea9c8470f82071e',1,'SnapProcessorTasks']]]
 ];

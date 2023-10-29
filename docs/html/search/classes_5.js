@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['server_5fsettings_5fmessage_22',['server_settings_message',['../structserver__settings__message.html',1,'']]],
-  ['snapclient_23',['SnapClient',['../class_snap_client.html',1,'']]]
+  ['parse_5fbuffer_40',['parse_buffer',['../structparse__buffer.html',1,'']]],
+  ['printbuffer_41',['printbuffer',['../structprintbuffer.html',1,'']]]
 ];

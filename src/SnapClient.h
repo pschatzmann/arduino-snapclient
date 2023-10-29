@@ -1,218 +1,206 @@
+#pragma once
 /**
  * Snap Client from https://github.com/jorgenkraghjakobsen/snapclient converted
- * to an Arduino Library using the AudioTools as output API 
-*/
+ * to an Arduino Library using the AudioTools as output API
+ */
 
-
-#include "config.h"
+#include "SnapConfig.h"
+#include <WiFi.h>
 #include "AudioTools.h"
-#include "WiFi.h"
+#include "api/SnapCommon.h"
+#include "api/SnapLogger.h"
 
-#include <string.h>
-#include <sys/time.h>
+#if CONFIG_NVS_FLASH
+#  include "nvs_flash.h"
+#endif
+#if CONFIG_SNAPCLIENT_USE_MDNS
+#  include <ESPmDNS.h>
+#endif
 
-extern "C" {
-
-#include "esp_event.h"
-#include "esp_log.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
-#include "freertos/task.h"
-#include "nvs_flash.h"
-#include "esp_netif.h"
-#include "lwip/dns.h"
-#include "lwip/err.h"
-#include "lwip/netdb.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
-#include "mdns.h"
-#include "components/net_functions/include/net_functions.h"
-
-// Web socket server 
-#include "components/websocket/include/websocket_server.h"
-#include "components/dsp_processor/include/dsp_processor.h"
-#include "components/lightsnapcast/include/snapcast.h"
-#include "opus.h"
-#include "AudioToolsAPI.h"
-
-extern xTaskHandle t_http_get_task;
-extern xQueueHandle flow_queue;
-extern xQueueHandle prot_queue;
-extern xQueueHandle i2s_queue;
-
-//extern EventGroupHandle_t s_wifi_event_group;
-extern uint32_t buffer_ms;
-// extern uint8_t muteCH[4];
-extern char mac_address[18];
-extern struct timeval tdif,tavg;
-
-}
-
-class SnapClient;
-extern SnapClient *selfSnapClient;
+#if CONFIG_USE_RTOS
+#  include "api/SnapProcessorTasks.h"
+#  include "api/SnapOutputTasks.h"
+#else
+#  include "api/SnapProcessor.h"
+#  include "api/SnapOutputSimple.h"
+#endif
 
 /**
  * @brief Snap Client for ESP32 Arduino
-*/
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
+ */
 class SnapClient {
- friend bool audio_begin(uint32_t sample_rate, uint8_t bits );
- friend void audio_end();
- friend bool audio_write(const void *src, size_t size, size_t *bytes_written);
- friend bool audio_write_expand(const void *src, size_t size, size_t src_bits, size_t aim_bits, size_t *bytes_written);
 
-  public: 
-    SnapClient(AudioStream &stream){
-      selfSnapClient = this;
-      output_adapter.setStream(stream);
-      this->out = &output_adapter;
-      vol_stream.setTarget(output_adapter);
+public:
+  SnapClient(AudioStream &stream, AudioDecoder &decoder) {
+    output_adapter.setStream(stream);
+    p_snapprocessor->setOutput(output_adapter);
+    p_snapprocessor->setDecoder(decoder);
+  }
+
+  SnapClient(AudioOutput &output, AudioDecoder &decoder) {
+    p_snapprocessor->setOutput(output);
+    p_snapprocessor->setDecoder(decoder);
+  }
+
+  /// Destructor
+  ~SnapClient(){
+    end();
+  }
+
+  /// Defines an alternative comminucation client (default is WiFiClient)
+  void setClient(Client &client){
+    p_snapprocessor->setClient(client);
+  }
+
+  /// Starts the processing
+  bool begin(void) {
+    if (WiFi.status() != WL_CONNECTED) {
+      ESP_LOGE(TAG, "WiFi not connected");
+      return false;
     }
+    // use maximum speed
+    WiFi.setSleep(false);
+    ESP_LOGI(TAG, "Connected to AP");
 
-    SnapClient(AudioOutput &output){
-      selfSnapClient = this;
-      this->out = &output;
-      vol_stream.setTarget(output);
-    }
+    // Get MAC address for WiFi station
+    setupMACAddress();
 
-    ~SnapClient(){
-      if (buff!=nullptr) delete(buff);
-    }
+    setupNVS();
 
-    bool begin(void) {
-      if (WiFi.status() != WL_CONNECTED){
-        ESP_LOGE(TAG, "WiFi not connected");
-        return false;
-      }
-      ESP_LOGI(TAG, "Connected to AP");
+    setupSNTPTime();
 
-      // Get MAC address for WiFi station
-      strcpy(mac_address, WiFi.macAddress().c_str());
-      ESP_LOGI(TAG, "mac: %s", mac_address);
+    setupMDNS();
 
-#if CONFIG_USE_PSRAM
-      if (ESP.getPsramSize()>0) heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
+    setupPSRAM();
+
+    // start tasks
+    return p_snapprocessor->begin();
+  }
+
+  /// ends the processing and releases the resources
+  void end(void) { p_snapprocessor->end(); }
+
+  /// Provides the actual volume (in the range of 0.0 to 1.0)
+  float volume(void) { return p_snapprocessor->volume(); }
+
+  /// Adjust volume by factor e.g. 1.5
+  void setVolumeFactor(float fact) { p_snapprocessor->setVolumeFactor(fact); }
+
+  /// For testing to deactivate the starting of the http task
+  void setStartTask(bool flag) { p_snapprocessor->setStartTask(flag); }
+
+  /// For Testing: Used to prevent the starting of the output task
+  void setStartOutput(bool start) { p_snapprocessor->setStartOutput(start); }
+
+  /// Defines an alternative Processor
+  void setSnapProcessor(SnapProcessor &processor){
+    p_snapprocessor = &processor;
+  }
+
+  /// Call from Arduino Loop (when no tasks are used)
+  void doLoop(){
+    p_snapprocessor->doLoop();
+  }
+
+protected:
+  const char *TAG = "SnapClient";
+  AdapterAudioStreamToAudioOutput output_adapter;
+  // default setup
+#if CONFIG_USE_RTOS
+  SnapOutputTasks snap_output;
+  SnapProcessorTasks default_processor{snap_output};
+#else
+  SnapOutputSimple snap_output;
+  SnapProcessor default_processor{snap_output};
 #endif
+  SnapProcessor *p_snapprocessor = &default_processor;
 
-      // allocate buff
-      if (buff==nullptr){
-        buff = new char[CONFIG_SNAPCAST_BUFF_LEN];
+  void setupSNTPTime() {
+#if CONFIG_SNAPCLIENT_SNTP_ENABLE
+    ESP_LOGD(TAG, "start");
+    const char *ntpServer = CONFIG_SNTP_SERVER;
+    const long gmtOffset_sec = 1 * 60 * 60;
+    const int daylightOffset_sec = 1 * 60 * 60;
+    for (int retry = 0; retry < 5; retry++) {
+      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      struct tm timeinfo;
+      if (!getLocalTime(&timeinfo)) {
+        ESP_LOGE(TAG, "Failed to obtain time");
+        continue;
       }
-      assert(buff!=nullptr);
+      checkHeap();
+      Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+      break;
+    }
+  #endif
+  }
 
-      esp_err_t ret = nvs_flash_init();
-      if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
-          ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-      }
-      ESP_ERROR_CHECK(ret);
-
-      // setup dsp
-      //dsp_setup_flow(500, 48000);
-    
-      // Enable websocket server  
-      ESP_LOGI(TAG, "Setup ws server");
-      //websocket_if_start();
-    
-      net_mdns_register("snapclient");
-
-    #if CONFIG_SNAPCLIENT_SNTP_ENABLE
-      set_time_from_sntp();
-    #endif
-
-      // allow amplification
-      auto vol_cfg = vol_stream.defaultConfig();
-      vol_cfg.allow_boost = true;
-      vol_cfg.channels = 2;
-      vol_cfg.bits_per_sample = 16;
-      vol_stream.begin(vol_cfg);
-      
-      flow_queue = xQueueCreate(10, sizeof(uint32_t));
-      assert(flow_queue!=NULL);
-      
-      xTaskCreatePinnedToCore(&http_get_task, "HTTP", CONFIG_TASK_STACK_HTTP, NULL, 5,
-                              &t_http_get_task, 1);
-      return true;
+  void setupMDNS() {
+#if CONFIG_SNAPCLIENT_USE_MDNS
+    ESP_LOGD(TAG, "start");
+    if (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {
+      LOGE(TAG, "Error starting mDNS");
+      return;
     }
 
-    /// Adjust the volume
-    void setVolume(float vol){
-      this->vol = vol / 100.0;
-      ESP_LOGI(TAG, "Volume: %f", this->vol);
-      vol_stream.setVolume(this->vol * vol_factor);
+    // we just take the first address
+    int nrOfServices = MDNS.queryService("snapcast", "tcp");
+    if (nrOfServices > 0) {
+      IPAddress server_ip = MDNS.IP(0);
+      char str_address[20] = {0};
+      sprintf(str_address, "%d.%d.%d.%d", server_ip[0], server_ip[1],
+              server_ip[2], server_ip[3]);
+      int server_port = MDNS.port(0);
+
+      // update addres information
+      p_snapprocessor->setServerIP(server_ip);
+      p_snapprocessor->setServerPort(server_port);
+      ESP_LOGI(TAG, "SNAPCAST ip: %s, port: %d", str_address, server_port);
+
+    } else {
+      ESP_LOGE(TAG, "SNAPCAST server not found");
     }
 
-    /// provides the actual volume
-    float volume() {
-      return vol;
+    MDNS.end();
+    checkHeap();
+ #endif 
+  }
+
+  void setupNVS(){
+#if CONFIG_NVS_FLASH
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
+        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
     }
+    checkHeap();
+    ESP_ERROR_CHECK(ret);
+#endif
+  }
 
-    /// mute / unmute
-    void setMute(bool mute){
-      is_mute = mute;
-      vol_stream.setVolume(mute ? 0 : vol);
+  void setupPSRAM(){
+#if CONFIG_USE_PSRAM
+    if (ESP.getPsramSize() > 0) {
+      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
+      ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
+    } else {
+      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
     }
+#endif
+  }
 
-    /// checks if volume is mute
-    bool isMute(){
-      return is_mute;
-    }
-
-    void writeSilence(){
-      for(int j=0;j<50;j++){
-        out->writeSilence(1024);
-      }
-    }
-
-    /// Adjust volume by factor e.g. 1.5
-    void setVolumeFactor(float fact){
-      vol_factor = fact;
-    }
-
-  protected:
-    AudioOutput *out = nullptr;
-    VolumeStream vol_stream;
-    AdapterAudioStreamToAudioOutput output_adapter;
-    float vol = 1.0;
-    float vol_factor = 1.0;
-    bool is_mute = false;
-    char* buff = nullptr; //[CONFG_SNAPCAST_BUFF_LEN];
-    unsigned int addr;
-    uint32_t port = CONFIG_SNAPCAST_SERVER_PORT;
-    const char *TAG = "SNAPCAST";
-    enum codec_type { PCM, FLAC, OGG, OPUS };
-    uint32_t avg[32];  
-    int avgptr = 0; 
-    int avgsync = 0; 
-
-    static void http_get_task(void *pvParameters) {
-      selfSnapClient->local_http_get_task(pvParameters);
-    }
-
-    void local_http_get_task(void *pvParameters);
-
-    bool snap_audio_begin(uint32_t sample_rate, uint8_t bits){
-        AudioInfo info;
-        info.sample_rate = sample_rate;
-        info.bits_per_sample = bits;
-        info.channels = 2;
-        out->setAudioInfo(info);
-        return out->begin();
-    }
-
-    void snap_audio_end() { out->end(); }
-
-    bool snap_audio_write(const void *src, size_t size, size_t *bytes_written) {
-        *bytes_written = vol_stream.write((const uint8_t*)src, size);
-        return *bytes_written > 0;
-    }
-
-    bool snap_audio_write_expand(const void *src, size_t size, size_t src_bits, size_t aim_bits, size_t *bytes_written){
-        *bytes_written = vol_stream.write((const uint8_t*)src, size);
-        return *bytes_written > 0;
-    }
-      
+  void setupMACAddress(){
+#ifdef ESP32
+    const char *adr = strdup(WiFi.macAddress().c_str());
+    p_snapprocessor->setMacAddress(adr);
+    ESP_LOGI(TAG, "mac: %s", adr);
+    checkHeap();
+#endif
+  }
 
 };

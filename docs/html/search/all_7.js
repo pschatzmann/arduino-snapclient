@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['wire_5fchunk_5fmessage_12',['wire_chunk_message',['../structwire__chunk__message.html',1,'']]],
-  ['write_5fbuffer_5ft_13',['write_buffer_t',['../structwrite__buffer__t.html',1,'']]],
-  ['ws_5fclient_5ft_14',['ws_client_t',['../structws__client__t.html',1,'']]],
-  ['ws_5fheader_5ft_15',['ws_header_t',['../structws__header__t.html',1,'']]]
+  ['volume_23',['volume',['../class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136',1,'SnapOutput::volume()'],['../class_snap_client.html#a92937495d01c777a843b576f7fd02145',1,'SnapClient::volume()']]]
 ];

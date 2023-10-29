@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>arduino-snapclient: src/components/libbuffer/include/buffer.h Source File</title>
+<title>arduino-snapclient: src/lightsnapcast/buffer.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -61,7 +61,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3c4c7c1a85608ccd561c026bec818e51.html">components</a></li><li class="navelem"><a class="el" href="dir_bfeb7d12c3dc48aa8903a2f9e7f255f0.html">libbuffer</a></li><li class="navelem"><a class="el" href="dir_e461efd251e15a9381839567525ecfbf.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_a85da072069d9bd71d4ecf2c917a6bdd.html">lightsnapcast</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -75,51 +75,61 @@ $(function() {
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="structread__buffer__t.html">    7</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structread__buffer__t.html">read_buffer_t</a> {</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *buffer;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  <span class="keywordtype">size_t</span> size, index;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;} <a class="code" href="structread__buffer__t.html">read_buffer_t</a>;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structwrite__buffer__t.html">   12</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keywordtype">char</span> *buffer;</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structread__buffer__t.html">   12</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structread__buffer__t.html">read_buffer_t</a> {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *buffer;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keywordtype">size_t</span> size, index;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;} <a class="code" href="structwrite__buffer__t.html">write_buffer_t</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;} <a class="code" href="structread__buffer__t.html">read_buffer_t</a>;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keywordtype">void</span> buffer_read_init(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, <span class="keyword">const</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordtype">void</span> buffer_write_init(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">int</span> buffer_read_buffer(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">int</span> buffer_write_buffer(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, <span class="keyword">const</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keywordtype">int</span> buffer_read_uint32(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint32_t *data);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordtype">int</span> buffer_write_uint32(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint32_t data);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">int</span> buffer_read_uint16(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint16_t *data);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keywordtype">int</span> buffer_write_uint16(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint16_t data);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keywordtype">int</span> buffer_read_uint8(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint8_t *data);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keywordtype">int</span> buffer_write_uint8(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint8_t data);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keywordtype">int</span> buffer_read_int32(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int32_t *data);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keywordtype">int</span> buffer_write_int32(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int32_t data);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keywordtype">int</span> buffer_read_int16(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int16_t *data);</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="keywordtype">int</span> buffer_write_int16(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int16_t data);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="keywordtype">int</span> buffer_read_int8(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int8_t *data);</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keywordtype">int</span> buffer_write_int8(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int8_t data);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// __BUFFER_H__</span></div>
-<div class="ttc" id="astructread__buffer__t_html"><div class="ttname"><a href="structread__buffer__t.html">read_buffer_t</a></div><div class="ttdef"><b>Definition:</b> buffer.h:7</div></div>
-<div class="ttc" id="astructwrite__buffer__t_html"><div class="ttname"><a href="structwrite__buffer__t.html">write_buffer_t</a></div><div class="ttdef"><b>Definition:</b> buffer.h:12</div></div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="structwrite__buffer__t.html">   17</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keywordtype">char</span> *buffer;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keywordtype">size_t</span> size, index;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;} <a class="code" href="structwrite__buffer__t.html">write_buffer_t</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordtype">void</span> buffer_read_init(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, <span class="keyword">const</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keywordtype">void</span> buffer_write_init(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">int</span> buffer_read_buffer(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keywordtype">int</span> buffer_write_buffer(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, <span class="keyword">const</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">int</span> buffer_read_uint32(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint32_t *data);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keywordtype">int</span> buffer_write_uint32(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint32_t data);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordtype">int</span> buffer_read_uint16(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint16_t *data);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keywordtype">int</span> buffer_write_uint16(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint16_t data);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keywordtype">int</span> buffer_read_uint8(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, uint8_t *data);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keywordtype">int</span> buffer_write_uint8(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, uint8_t data);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keywordtype">int</span> buffer_read_int32(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int32_t *data);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="keywordtype">int</span> buffer_write_int32(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int32_t data);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="keywordtype">int</span> buffer_read_int16(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int16_t *data);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="keywordtype">int</span> buffer_write_int16(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int16_t data);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="keywordtype">int</span> buffer_read_int8(<a class="code" href="structread__buffer__t.html">read_buffer_t</a> *buffer, int8_t *data);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="keywordtype">int</span> buffer_write_int8(<a class="code" href="structwrite__buffer__t.html">write_buffer_t</a> *buffer, int8_t data);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;}</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// __BUFFER_H__</span></div>
+<div class="ttc" id="astructread__buffer__t_html"><div class="ttname"><a href="structread__buffer__t.html">read_buffer_t</a></div><div class="ttdef"><b>Definition:</b> buffer.h:12</div></div>
+<div class="ttc" id="astructwrite__buffer__t_html"><div class="ttname"><a href="structwrite__buffer__t.html">write_buffer_t</a></div><div class="ttdef"><b>Definition:</b> buffer.h:17</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['pnode_19',['pnode',['../structpnode.html',1,'']]],
-  ['ptype_20',['ptype',['../structptype.html',1,'']]]
+  ['hello_5fmessage_38',['hello_message',['../structhello__message.html',1,'']]]
 ];

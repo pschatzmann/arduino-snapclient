@@ -67,25 +67,30 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a> </p>
 <h2><a class="anchor" id="autotoc_md1"></a>
-&lt;a href="https://github.com/badaix/snapcast"&gt;Snapcast&lt;/a&gt; Audio Streaming Client for ESP32</h2>
-<h1><a class="anchor" id="autotoc_md2"></a>
-Feature list</h1>
+Snapcast Audio Streaming Client for ESP32</h2>
+<p><a href="https://github.com/badaix/snapcast">Snapcast</a> is a multiroom client-server audio player, where all clients are time synchronized with the server to play perfectly synced audio</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Feature list</h2>
 <ul>
 <li>Opus and PCM decoding are currently supported</li>
 <li>Auto connect to snapcast server on network</li>
-<li>Buffers up to 150 ms on Wroom modules</li>
-<li>Buffers more then enough on Wrover modules using PSRAM</li>
 <li>Multiroom sync delay controlled from Snapcast server 400ms - 2000ms</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md3"></a>
-Description</h1>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Description</h2>
 <p>I have converted the <a href="https://github.com/jorgenkraghjakobsen/snapclient">snapclient</a> from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.</p>
-<h1><a class="anchor" id="autotoc_md4"></a>
-Dependencies</h1>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Dependencies</h2>
 <ul>
 <li><a href="https://github.com/pschatzmann/arduino-audio-tools">Audio Tools</a></li>
-<li><a href="https://github.com/pschatzmann/arduino-libopus">LibOpus</a> </li>
+<li><a href="https://github.com/pschatzmann/arduino-libopus">LibOpus</a></li>
 </ul>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Configuration</h2>
+<p>Configuration settings can be found in <a href="https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h">SnapConfig.h</a></p>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Documentation</h2>
+<p>For further information consult the <a href="https://pschatzmann.github.io/arduino-snapclient/html/annotated.html">class documentation</a> or the <a href="examples/">examples</a>. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

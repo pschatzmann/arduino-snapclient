@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['base_5fmessage_0',['base_message',['../structbase__message.html',1,'']]]
+  ['audiobegin_0',['audioBegin',['../class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb',1,'SnapOutput']]]
 ];
