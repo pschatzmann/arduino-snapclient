@@ -115,7 +115,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a27459cee4bd97a6ac4a09aec45cd3bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0d3775308edf58cac6e7f763edbb96a"><td class="memItemLeft" align="right" valign="top"><a id="aa0d3775308edf58cac6e7f763edbb96a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a> (AudioOutput &amp;output)</td></tr>
-<tr class="memdesc:aa0d3775308edf58cac6e7f763edbb96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the output class. <br /></td></tr>
+<tr class="memdesc:aa0d3775308edf58cac6e7f763edbb96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the audio output chain to the final output. <br /></td></tr>
 <tr class="separator:aa0d3775308edf58cac6e7f763edbb96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35c7533999826a3706e97f99442d4c7e"><td class="memItemLeft" align="right" valign="top"><a id="a35c7533999826a3706e97f99442d4c7e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">setVolume</a> (float vol)</td></tr>
@@ -194,9 +194,18 @@ QueueHandle_t&#160;</td><td class="memItemRight" valign="bottom"><b>header_queue
 <tr class="memitem:a76051e56b41b12a5e5bda9c2cc62a40d"><td class="memItemLeft" align="right" valign="top"><a id="a76051e56b41b12a5e5bda9c2cc62a40d"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_mute</b> = false</td></tr>
 <tr class="separator:a76051e56b41b12a5e5bda9c2cc62a40d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7900b03f6bef7c01820a4965f9d0fff1"><td class="memItemLeft" align="right" valign="top"><a id="a7900b03f6bef7c01820a4965f9d0fff1"></a>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>measure_at_index</b> = 100</td></tr>
+<tr class="separator:a7900b03f6bef7c01820a4965f9d0fff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3d48683da42efe9b50ef4a1900d2072"><td class="memItemLeft" align="right" valign="top"><a id="aa3d48683da42efe9b50ef4a1900d2072"></a>
+RateMeasuringStream&#160;</td><td class="memItemRight" valign="bottom"><b>measure_stream</b></td></tr>
+<tr class="separator:aa3d48683da42efe9b50ef4a1900d2072"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a647ab00ba9c2b6128832612b9062d96f"><td class="memItemLeft" align="right" valign="top"><a id="a647ab00ba9c2b6128832612b9062d96f"></a>
 AudioOutput *&#160;</td><td class="memItemRight" valign="bottom"><b>out</b> = nullptr</td></tr>
 <tr class="separator:a647ab00ba9c2b6128832612b9062d96f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf3fa99a53bc456a46cd8e5e05be88bd"><td class="memItemLeft" align="right" valign="top"><a id="acf3fa99a53bc456a46cd8e5e05be88bd"></a>
+<a class="el" href="class_snap_time.html">SnapTime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>snap_time</b> = SnapTime::instance()</td></tr>
+<tr class="separator:acf3fa99a53bc456a46cd8e5e05be88bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e5f85bead9f5973c68929e82df504b6"><td class="memItemLeft" align="right" valign="top"><a id="a6e5f85bead9f5973c68929e82df504b6"></a>
 uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>start_us</b></td></tr>
 <tr class="separator:a6e5f85bead9f5973c68929e82df504b6"><td class="memSeparator" colspan="2">&#160;</td></tr>

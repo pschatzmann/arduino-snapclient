@@ -1,6 +1,6 @@
-# Snapcast client for Arduino ESP32
+# Snapcast Client for Arduino 
 
-### Snapcast Audio Streaming Client for ESP32
+### Snapcast Audio Streaming Client for Arduino
 
 [Snapcast](https://github.com/badaix/snapcast) is a multiroom client-server audio player, where all clients are time synchronized with the server to play perfectly synced audio
 
@@ -8,7 +8,9 @@
 
 - Opus and PCM decoding are currently supported
 - Auto connect to snapcast server on network
-- Multiroom sync delay controlled from Snapcast server 400ms - 2000ms
+- The functionality has been tested on an ESP32
+- Memory efficient implementation, so that PSRAM is not needed
+- Use any Output device suppored by the AudioTools
 
 ### Description
 
@@ -23,6 +25,7 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 ### Configuration
 
 Configuration settings can be found in [SnapConfig.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h)
+
 
 ### Documentation
 

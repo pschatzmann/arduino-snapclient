@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['write_49',['write',['../class_snap_output.html#aedfdfe9cf8a23cc55674527e863ca25e',1,'SnapOutput::write()'],['../class_snap_output_simple.html#abd01521d9ce6f1eb9caefdcf6260f6da',1,'SnapOutputSimple::write()'],['../class_snap_output_tasks.html#abd01521d9ce6f1eb9caefdcf6260f6da',1,'SnapOutputTasks::write()']]],
-  ['writeheader_50',['writeHeader',['../class_snap_output.html#a5fda87a1527e8e3792970db588499b97',1,'SnapOutput::writeHeader()'],['../class_snap_output_simple.html#aa7f33a70aea12f712a86ec2725de36e6',1,'SnapOutputSimple::writeHeader()'],['../class_snap_output_tasks.html#aa7f33a70aea12f712a86ec2725de36e6',1,'SnapOutputTasks::writeHeader()']]]
+  ['volume_59',['volume',['../class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136',1,'SnapOutput::volume()'],['../class_snap_processor.html#a92937495d01c777a843b576f7fd02145',1,'SnapProcessor::volume()'],['../class_snap_client.html#a92937495d01c777a843b576f7fd02145',1,'SnapClient::volume()']]]
 ];
