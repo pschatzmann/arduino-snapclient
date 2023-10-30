@@ -20,6 +20,8 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 
 - [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
 - [LibOpus](https://github.com/pschatzmann/arduino-libopus)
+- [LibFLAC.h](https://github.com/pschatzmann/arduino-libflac)
+- [CodecVorbis](https://github.com/pschatzmann/arduino-libvorbis-idec)
 
 
 ### Configuration

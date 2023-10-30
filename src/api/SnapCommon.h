@@ -5,15 +5,15 @@
 #pragma once
 #include <sys/time.h>
 
-enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
-
+enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS, VORBIS };
+static const char *TAG="COMMON";
 /**
  * @brief Information about the next bucket
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
  * @copyright Copyright (c) 2023
-*/
+ */
 struct SnapAudioHeader {
   int32_t sec = 0;
   int32_t usec = 0;
@@ -31,9 +31,19 @@ inline void checkHeap() {
 #endif
 }
 
-inline void logHeap(const char* TAG) {
+inline void logHeap() {
 #ifdef ESP32
   ESP_LOGD(TAG, "Free Heap: %d / Free Heap PSRAM %d", ESP.getFreeHeap(),
            ESP.getFreePsram());
 #endif
+}
+
+inline bool printLocalTime() {
+  tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    ESP_LOGE(TAG, "Failed to obtain time");
+    return false;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  return true;
 }

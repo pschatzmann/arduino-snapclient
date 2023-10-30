@@ -41,13 +41,28 @@ public:
     p_snapprocessor->setDecoder(decoder);
   }
 
+  SnapClient(AudioStream &stream, StreamingDecoder &decoder, int bufferSize = 5*1024) {
+    p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
+    output_adapter.setStream(stream);
+    p_snapprocessor->setOutput(output_adapter);
+    p_snapprocessor->setDecoder(*p_decoder_adapter);
+  }
+
+
   SnapClient(AudioOutput &output, AudioDecoder &decoder) {
     p_snapprocessor->setOutput(output);
     p_snapprocessor->setDecoder(decoder);
   }
 
+  SnapClient(AudioOutput &output, StreamingDecoder &decoder, int bufferSize = 5*1024) {
+    p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
+    p_snapprocessor->setOutput(output);
+    p_snapprocessor->setDecoder(*p_decoder_adapter);
+  }
+
   /// Destructor
   ~SnapClient(){
+    if (p_decoder_adapter != nullptr) delete p_decoder_adapter;
     end();
   }
 
@@ -109,6 +124,7 @@ public:
 protected:
   const char *TAG = "SnapClient";
   AdapterAudioStreamToAudioOutput output_adapter;
+  DecoderFromStreaming *p_decoder_adapter = nullptr;
   // default setup
 #if CONFIG_USE_RTOS
   SnapOutputTasks snap_output;
@@ -127,9 +143,7 @@ protected:
     const int daylightOffset_sec = 1 * 60 * 60;
     for (int retry = 0; retry < 5; retry++) {
       configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-      struct tm timeinfo;
-      if (!getLocalTime(&timeinfo)) {
-        ESP_LOGE(TAG, "Failed to obtain time");
+      if(!printLocalTime()){
         continue;
       }
       checkHeap();

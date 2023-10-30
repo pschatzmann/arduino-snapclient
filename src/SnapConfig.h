@@ -11,7 +11,7 @@
 #  define CONFIG_PSRAM_LIMIT 512
 #endif
 #ifndef CONFIG_SNAPCLIENT_SNTP_ENABLE 
-#  define CONFIG_SNAPCLIENT_SNTP_ENABLE true
+#  define CONFIG_SNAPCLIENT_SNTP_ENABLE false
 #endif
 #ifndef CONFIG_SNAPCLIENT_USE_MDNS 
 #  define CONFIG_SNAPCLIENT_USE_MDNS true
@@ -20,7 +20,7 @@
 #  define CONFIG_NVS_FLASH false
 #endif
 #ifndef CONFIG_CHECK_HEAP 
-#  define CONFIG_CHECK_HEAP false
+#  define CONFIG_CHECK_HEAP true
 #endif
 
 // snapast parameters; 
@@ -50,9 +50,7 @@
 // Only relevant with FreeRTOS implementation
 #define CONFIG_TASK_PRIORITY 5
 #define CONFIG_TASK_CORE 1
-#define CONFIG_TASK_STACK_PROCESSOR (5 * 1024)
-#define CONFIG_TASK_STACK_OUTPUT (8 * 1024)
+#define CONFIG_TASK_STACK_PROCESSOR (10 * 1024)
+#define CONFIG_TASK_STACK_OUTPUT (10 * 1024)
 #define BUFFER_SIZE_PSRAM 32 * 1024
-#define BUFFER_SIZE_NO_PSRAM 2 * 1024
-
-
+#define BUFFER_SIZE_NO_PSRAM 10 * 1024

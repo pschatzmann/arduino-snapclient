@@ -1,6 +1,9 @@
 /**
  * @brief SnapClient with Opus decoder: I2S Output to an AudioKit.
  * This version is using FreeRTOS!
+ * 
+ * TODO investigate crash!
+ * 
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
@@ -11,6 +14,8 @@
 #include "SnapClient.h"
 #include "api/SnapOutputTasks.h"
 #include "api/SnapProcessorTasks.h"
+
+#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
 
 AudioKitStream out;
 OpusAudioDecoder opus;

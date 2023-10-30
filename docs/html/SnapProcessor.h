@@ -139,7 +139,7 @@ protected:
       while (rc) {
         rc = processMessageLoop();
         p_snap_output->doLoop();
-        logHeap(TAG);
+        logHeap();
         checkHeap();
       }
 
@@ -147,7 +147,7 @@ protected:
       p_client->stop();
 
       if (id_counter % 100 == 0) {
-        logHeap(TAG);
+        logHeap();
       }
       checkHeap();
     }

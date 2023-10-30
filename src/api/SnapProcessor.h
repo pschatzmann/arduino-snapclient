@@ -63,7 +63,7 @@ public:
   void setStartTask(bool flag) { http_task_start = flag; }
 
   /// Call via SnapClient in Arduino Loop!
-  virtual void doLoop() { processLoop(); }
+  virtual void doLoop() { processLoopStep(); }
 
   /// Defines the output class
   void setOutput(AudioOutput &output) { p_snap_output->setOutput(output); }
@@ -115,28 +115,34 @@ protected:
 
     while (true) {
       ESP_LOGD(TAG, "startig new connection");
+      if (!processLoopStep()){
+        return;
+      }
+    }
+  }
 
+  bool processLoopStep(){
       if (connectClient()) {
         ESP_LOGI(TAG, "... connected");
       } else {
         delay(10);
-        continue;
+        return true;
       }
 
       int result = gettimeofday(&now, NULL);
       if (result) {
         ESP_LOGI(TAG, "Failed to gettimeofday");
-        return;
+        return false;
       }
 
       if (!writeHallo())
-        return;
+        return false;
 
       bool rc = true;
       while (rc) {
         rc = processMessageLoop();
         p_snap_output->doLoop();
-        logHeap(TAG);
+        logHeap();
         checkHeap();
       }
 
@@ -144,10 +150,10 @@ protected:
       p_client->stop();
 
       if (id_counter % 100 == 0) {
-        logHeap(TAG);
+        logHeap();
       }
       checkHeap();
-    }
+      return true;
   }
 
   bool resizeData() {
@@ -321,7 +327,13 @@ protected:
     size = codec_header_message.size;
     start = codec_header_message.payload;
     if (strcmp(codec_header_message.codec, "opus") == 0) {
-      if (!processMessageCodecHeaderOpus())
+      if (!processMessageCodecHeaderExt(OPUS))
+        return false;
+    } else if (strcmp(codec_header_message.codec, "flac") == 0) {
+      if (!processMessageCodecHeaderExt(FLAC))
+        return false;
+    } else if (strcmp(codec_header_message.codec, "vorbis") == 0) {
+      if (!processMessageCodecHeaderExt(VORBIS))
         return false;
     } else if (strcmp(codec_header_message.codec, "pcm") == 0) {
       if (!processMessageCodecHeaderPCM())
@@ -338,7 +350,7 @@ protected:
     return true;
   }
 
-  bool processMessageCodecHeaderOpus() {
+  bool processMessageCodecHeaderExt(codec_type codecType) {
     ESP_LOGD(TAG, "start");
     uint32_t rate;
     memcpy(&rate, start + 4, sizeof(rate));
@@ -347,7 +359,7 @@ protected:
     memcpy(&channels, start + 10, sizeof(channels));
     // notify output about format
     audioConfig(rate, channels, bits);
-    codec_from_server = OPUS;
+    codec_from_server = codecType;
     return true;
   }
 
@@ -441,7 +453,7 @@ protected:
     ttx.tv_usec = base_message.sent.usec;
     trx.tv_sec = base_message.received.sec;
     trx.tv_usec = base_message.received.usec;
-    snap_time.setTime(trx);
+    snap_time.setTime(trx, ttx);
 
     timersub(&trx, &ttx, &tdif);
     uint32_t usec = tdif.tv_usec;

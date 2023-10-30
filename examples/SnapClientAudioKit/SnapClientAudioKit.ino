@@ -5,12 +5,17 @@
  */
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioLibs/AudioKit.h"
-#include "AudioCodecs/CodecOpus.h"
+#include "AudioLibs/AudioKit.h" 
+#include "AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
+#include "AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
+#include "AudioCodecs/CodecVorbis.h" //https://github.com/pschatzmann/arduino-libvorbis-idec
 
 #define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
 
 AudioKitStream out;
+//FLACDecoder flac;
+//VorbisDecoder vorbis;
+//PCMDecoder pcm;
 OpusAudioDecoder opus;
 SnapClient client(out, opus);
 

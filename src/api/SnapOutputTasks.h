@@ -108,7 +108,7 @@ protected:
       if (counter > 10)
         local_dsp_measure_time(header);
       if (counter++ % 100 == 0) {
-        logHeap(TAG);
+        logHeap();
       }
       checkHeap();
     }
