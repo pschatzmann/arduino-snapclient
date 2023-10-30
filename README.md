@@ -18,7 +18,7 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 
 ### Example Arduino Sketch
 
-Here is an example Arduino sketch: 
+Here is an example Arduino sketch that uses the Opus codec and outputs the audio with I2S: 
 
 ```C++
 #include "AudioTools.h"
