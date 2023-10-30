@@ -143,7 +143,7 @@ protected:
     const int daylightOffset_sec = 1 * 60 * 60;
     for (int retry = 0; retry < 5; retry++) {
       configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-      if(!printLocalTime()){
+      if(!SnapTime().instance().printLocalTime()){
         continue;
       }
       checkHeap();

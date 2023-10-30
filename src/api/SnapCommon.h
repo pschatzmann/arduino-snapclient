@@ -3,7 +3,9 @@
  */
 
 #pragma once
-#include <sys/time.h>
+#include <iostream>
+#include <iomanip>
+#include <ctime>
 
 enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS, VORBIS };
 static const char *TAG="COMMON";
@@ -38,12 +40,3 @@ inline void logHeap() {
 #endif
 }
 
-inline bool printLocalTime() {
-  tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    ESP_LOGE(TAG, "Failed to obtain time");
-    return false;
-  }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-  return true;
-}

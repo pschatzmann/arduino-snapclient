@@ -23,9 +23,9 @@ public:
   size_t write(const uint8_t *data, size_t size) {
     ESP_LOGD(TAG, "%zu", size);
 
-    // if(!synchAtStart()){
-    //   return size;
-    // }
+    if(!synchAtStart()){
+      return size;
+    }
 
     size_t result = audioWrite(data, size);
     if (measure_stream.isUpdate()) measure_stream.logResult();
@@ -49,6 +49,7 @@ protected:
   SnapAudioHeader header;
   bool is_sync_active = true;
 
+  /// start to play audio only in valid server time
   bool synchAtStart(){
     // start audio when first package in the future becomes valid
     if (is_sync_active){
@@ -56,11 +57,12 @@ protected:
       auto server_time = snap_time.serverMillis();
       if (msg_time < server_time){
         // ignore the data and report it as processed
-        ESP_LOGW(TAG, "audio data expired...");
+        ESP_LOGW(TAG, "audio data expired: msg(%u) < time(%u)", msg_time, server_time);
         return false;
       } else {
         // wait for the audio to become valid
-        delay(msg_time - server_time);
+        int diff_ms = msg_time - server_time;
+        delay(diff_ms + SnapTime::instance().getStartDelay());
         is_sync_active = false;
       }
     }

@@ -15,7 +15,7 @@
 AudioKitStream out;
 //FLACDecoder flac;
 //VorbisDecoder vorbis;
-//PCMDecoder pcm;
+//WAVDecoder pcm;
 OpusAudioDecoder opus;
 SnapClient client(out, opus);
 

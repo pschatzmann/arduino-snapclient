@@ -10,7 +10,7 @@
 - Auto connect to snapcast server on network
 - The functionality has been tested on an ESP32
 - Memory efficient implementation, so that PSRAM is not needed
-- Use any output device suppored by the [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
+- Use any output device or DSP chain suppored by the [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
 
 ### Description
 
@@ -64,10 +64,9 @@ void loop() {
 ### Dependencies
 
 - [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
-
-- [LibOpus](https://github.com/pschatzmann/arduino-libopus)
-- [LibFLAC.h](https://github.com/pschatzmann/arduino-libflac)
-- [CodecVorbis](https://github.com/pschatzmann/arduino-libvorbis-idec)
+- [LibOpus](https://github.com/pschatzmann/arduino-libopus) (optional)
+- [LibFLAC.h](https://github.com/pschatzmann/arduino-libflac) (optinal)
+- [CodecVorbis](https://github.com/pschatzmann/arduino-libvorbis-idec) (optional)
 
 
 ### Configuration

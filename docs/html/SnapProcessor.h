@@ -101,7 +101,6 @@ protected:
   uint32_t client_state_muted = 0;
   struct timeval now, last_time_sync;
   uint8_t timestamp_size[12];
-  float time_diff = 0.0;
   int id_counter = 0;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
@@ -463,7 +462,7 @@ protected:
     retbuf[9] = (uavg & 0x000000ff);
     // ws_server_send_bin_client(0,(char*)retbuf, 10);
 
-    time_diff = time_message.latency.usec / 1000 +
+    float time_diff = time_message.latency.usec / 1000 +
                 base_message.received.usec / 1000 -
                 base_message.sent.usec / 1000;
     time_diff = (time_diff > 1000) ? time_diff - 1000 : time_diff;

@@ -13,6 +13,9 @@
 #ifndef CONFIG_SNAPCLIENT_SNTP_ENABLE 
 #  define CONFIG_SNAPCLIENT_SNTP_ENABLE false
 #endif
+#ifndef CONFIG_SNAPCLIENT_SETTIME_ALLOWD
+#  define CONFIG_SNAPCLIENT_SETTIME_ALLOWD true
+#endif
 #ifndef CONFIG_SNAPCLIENT_USE_MDNS 
 #  define CONFIG_SNAPCLIENT_USE_MDNS true
 #endif
@@ -23,7 +26,7 @@
 #  define CONFIG_CHECK_HEAP true
 #endif
 
-// snapast parameters; 
+// snapcast parameters; 
 #ifndef CONFIG_SNAPCAST_SERVER_HOST 
 #  define CONFIG_SNAPCAST_SERVER_HOST "192.168.1.38"
 #endif
@@ -42,6 +45,10 @@
 #ifndef CONFIG_CLIENT_TIMEOUT_SEC 
 #  define CONFIG_CLIENT_TIMEOUT_SEC 5
 #endif
+#ifndef CONFIG_PLAYBACK_LAG_MS 
+#  define CONFIG_PLAYBACK_LAG_MS 200
+#endif
+
 
 // wifi
 #define CONFIG_WIFI_SSID "piratnet"

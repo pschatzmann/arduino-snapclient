@@ -99,7 +99,7 @@ protected:
   uint32_t client_state_muted = 0;
   char *start = nullptr;
   int size = 0;
-  struct timeval now,tdif;
+  timeval now;
   uint64_t last_time_sync = 0;
   int id_counter = 0;
   IPAddress server_ip;
@@ -108,6 +108,7 @@ protected:
   bool output_start = true;
   bool http_task_start = true;
   bool header_received = false;
+  bool is_time_set = false;
   SnapTime& snap_time = SnapTime::instance();
 
   void processLoop(void *pvParameters = nullptr) {
@@ -129,11 +130,7 @@ protected:
         return true;
       }
 
-      int result = gettimeofday(&now, NULL);
-      if (result) {
-        ESP_LOGI(TAG, "Failed to gettimeofday");
-        return false;
-      }
+      now = snap_time.time();
 
       if (!writeHallo())
         return false;
@@ -210,7 +207,7 @@ protected:
 
   bool connectClient() {
     ESP_LOGD(TAG, "start");
-    //p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
+    p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
     if (!p_client->connect(server_ip, server_port)) {
       ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
       delay(4000);
@@ -279,14 +276,11 @@ protected:
     size = p_client->readBytes(&send_receive_buffer[0], BASE_MESSAGE_SIZE);
     ESP_LOGD(TAG, "Bytes read: %d", size);
 
-    int result = gettimeofday(&now, NULL);
-    if (result) {
-      ESP_LOGW(TAG, "Failed to gettimeofday");
-      return false;
-    }
+    now = snap_time.time();
 
-    result =
-        base_message_deserialize(&base_message, &send_receive_buffer[0], size);
+    int result = base_message_deserialize(&base_message, 
+                    &send_receive_buffer[0],
+                    size);
     if (result) {
       ESP_LOGW(TAG, "Failed to read base message: %d", result);
       return false;
@@ -327,7 +321,7 @@ protected:
     size = codec_header_message.size;
     start = codec_header_message.payload;
     if (strcmp(codec_header_message.codec, "opus") == 0) {
-      if (!processMessageCodecHeaderExt(OPUS))
+      if (!processMessageCodecHeaderOpus(OPUS))
         return false;
     } else if (strcmp(codec_header_message.codec, "flac") == 0) {
       if (!processMessageCodecHeaderExt(FLAC))
@@ -336,7 +330,7 @@ protected:
       if (!processMessageCodecHeaderExt(VORBIS))
         return false;
     } else if (strcmp(codec_header_message.codec, "pcm") == 0) {
-      if (!processMessageCodecHeaderPCM())
+      if (!processMessageCodecHeaderExt(PCM))
         return false;
     } else {
       ESP_LOGI(TAG, "Codec : %s not supported", codec_header_message.codec);
@@ -350,7 +344,7 @@ protected:
     return true;
   }
 
-  bool processMessageCodecHeaderExt(codec_type codecType) {
+  bool processMessageCodecHeaderOpus(codec_type codecType) {
     ESP_LOGD(TAG, "start");
     uint32_t rate;
     memcpy(&rate, start + 4, sizeof(rate));
@@ -363,9 +357,9 @@ protected:
     return true;
   }
 
-  bool processMessageCodecHeaderPCM() {
+  bool processMessageCodecHeaderExt(codec_type codecType) {
     ESP_LOGD(TAG, "start");
-    codec_from_server = PCM;
+    codec_from_server = codecType;
     return true;
   }
 
@@ -428,6 +422,9 @@ protected:
     ESP_LOGI(TAG, "Mute:           %d", server_settings_message.muted);
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
+    // define the start delay 
+    snap_time.setDelay(server_settings_message.buffer_ms);
+
     // set volume
     if (header_received){
       setMute(server_settings_message.muted);
@@ -447,29 +444,34 @@ protected:
       ESP_LOGI(TAG, "Failed to deserialize time message");
       return false;
     }
-    // Calculate TClienctx.tdif : Trx-Tsend-Tnetdelay/2
+
+    // // Calculate TClienctx.tdif : Trx-Tsend-Tnetdelay/2
     struct timeval ttx, trx;
     ttx.tv_sec = base_message.sent.sec;
     ttx.tv_usec = base_message.sent.usec;
     trx.tv_sec = base_message.received.sec;
     trx.tv_usec = base_message.received.usec;
-    snap_time.setTime(trx, ttx);
+    
+    snap_time.updateServerTime(trx);
+    if (!is_time_set){
+      // set time from server
+      snap_time.setTime(trx);
+      last_time_sync = 0;
+      is_time_set = true;
+    } else {
+      int64_t time_diff = snap_time.timeDifferenceMs(trx, ttx);
+      int time_diff_int = time_diff;
+      assert(time_diff_int==time_diff);
+      ESP_LOGI(TAG, "Time Difference to Server: %ld ms", time_diff);
+      snap_time.setTimeDifferenceClientServerMs(time_diff);
+    }
 
-    timersub(&trx, &ttx, &tdif);
-    uint32_t usec = tdif.tv_usec;
-
-    float time_diff = time_message.latency.usec / 1000 +
-                      base_message.received.usec / 1000 -
-                      base_message.sent.usec / 1000;
-    time_diff = (time_diff > 1000) ? time_diff - 1000 : time_diff;
-    ESP_LOGI(TAG, "TM loopback latency: %03.1f ms", time_diff);
-    snap_time.addLatency(time_diff);
     return true;
   }
 
   bool writeTimedMessage() {
     ESP_LOGD(TAG, "start");
-    int time_ms = millis() - last_time_sync;
+    uint32_t time_ms = millis() - last_time_sync;
     if (time_ms >= 1000) {
       last_time_sync = millis();
       if (!writeMessage()) {
@@ -481,9 +483,8 @@ protected:
 
   bool writeMessage() {
     ESP_LOGD(TAG, "start");
-    if (gettimeofday(&now, NULL)!=0){
-      ESP_LOGE(TAG, "gettimeofday");
-    }
+
+    now = snap_time.time();
 
     base_message.type = SNAPCAST_MESSAGE_TIME;
     base_message.id = id_counter++;
