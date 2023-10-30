@@ -147,7 +147,7 @@ protected:
         continue;
       }
       checkHeap();
-      Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+      SnapTime::instance().printLocalTime();
       break;
     }
   #endif

@@ -62,7 +62,9 @@ protected:
       } else {
         // wait for the audio to become valid
         int diff_ms = msg_time - server_time;
-        delay(diff_ms + SnapTime::instance().getStartDelay());
+        int delay_ms = diff_ms + SnapTime::instance().getStartDelay();
+        ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+        delay(delay_ms);
         is_sync_active = false;
       }
     }

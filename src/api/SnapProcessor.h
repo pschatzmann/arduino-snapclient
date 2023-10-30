@@ -423,7 +423,7 @@ protected:
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
     // define the start delay 
-    snap_time.setDelay(server_settings_message.buffer_ms);
+    snap_time.setDelay(server_settings_message.buffer_ms + server_settings_message.latency);
 
     // set volume
     if (header_received){
