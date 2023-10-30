@@ -47,7 +47,7 @@ public:
   }
 
   /// Record the last time difference between client and server
-  void setTimeDifferenceClientServerMs(int diff) { time_diff = diff; }
+  void setTimeDifferenceClientServerMs(uint32_t diff) { time_diff = diff; }
 
   /// Provides the current server time in ms
   uint32_t serverMillis() {
@@ -70,13 +70,13 @@ public:
     return sec * 1000 + (usec / 1000);
   }
 
-  bool printLocalTime() {
+  bool printLocalTime(const char* msg) {
     const timeval val = time();
     auto *tm_result = gmtime(&val.tv_sec);
 
     char str[80];
     strftime(str, 80, "%d-%m-%Y %H-%M-%S", tm_result);
-    ESP_LOGI(TAG, "Time is %s", str);
+    ESP_LOGI(TAG, "%s: Time is %s", msg, str);
     return true;
   }
 
@@ -89,12 +89,21 @@ public:
   /// updates the actual time
   bool setTime(timeval time) {
     ESP_LOGI(TAG, "epoch: %lu", time.tv_sec);
-#if !CONFIG_SNAPCLIENT_SNTP_ENABLE && CONFIG_SNAPCLIENT_SETTIME_ALLOWD
+#if CONFIG_SNAPCLIENT_SET_TIME_ALLOWD
+    // we do not allow the update when the time is managed via smtp
+    if(has_sntp_time){
+      ESP_LOGI(TAG,"setTime not relevant because it is managed via sntp");
+      return true;
+    }
+    // update epoch
     int rc = settimeofday(&time, NULL);
-    printLocalTime();
+    if (rc==0){
+      time_diff = time.tv_sec / 1000;
+    }
+    printLocalTime("setTime");
     return rc == 0;
 #else
-    ESP_LOGI(TAG, "setTime now allowed/active");
+    ESP_LOGI(TAG, "setTime not allowed/active");
     return false;
 #endif
   }
@@ -113,11 +122,32 @@ public:
     return delay;
   }
 
+  void setupSNTPTime() {
+#if CONFIG_SNAPCLIENT_SNTP_ENABLE
+    ESP_LOGD(TAG, "start");
+    const char *ntpServer = CONFIG_SNTP_SERVER;
+    const long gmtOffset_sec = 1 * 60 * 60;
+    const int daylightOffset_sec = 1 * 60 * 60;
+    for (int retry = 0; retry < 5; retry++) {
+      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      tm time;
+      if(!getLocalTime(&time)){
+        continue;
+      }
+      SnapTime::instance().printLocalTime("SNTP");
+      has_sntp_time = true;
+      break;
+    }
+  #endif
+  }
+
+
 protected:
-  int64_t time_diff = 0;
+  uint32_t time_diff = 0;
   const char *TAG = "SnapTime";
   uint32_t server_ms = 0;
   uint32_t local_ms;
   uint16_t message_buffer_delay_ms = 0;
   timeval server_time;
+  bool has_sntp_time = false;
 };

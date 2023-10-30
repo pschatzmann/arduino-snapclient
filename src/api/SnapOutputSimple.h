@@ -63,9 +63,15 @@ protected:
         // wait for the audio to become valid
         int diff_ms = msg_time - server_time;
         int delay_ms = diff_ms + SnapTime::instance().getStartDelay();
-        ESP_LOGI(TAG, "starting after %d ms", delay_ms);
-        delay(delay_ms);
-        is_sync_active = false;
+        if (delay_ms < 100000){
+          ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+          delay(delay_ms);
+          is_sync_active = false;
+        } else {
+          ESP_LOGI(TAG, "invalid delay: %d ms - starting anyhow...", delay_ms);
+          delay(SnapTime::instance().getStartDelay());
+          is_sync_active = false;
+        }
       }
     }
     return true;

@@ -460,7 +460,7 @@ protected:
       is_time_set = true;
     } else {
       int64_t time_diff = snap_time.timeDifferenceMs(trx, ttx);
-      int time_diff_int = time_diff;
+      uint32_t time_diff_int = time_diff;
       assert(time_diff_int==time_diff);
       ESP_LOGI(TAG, "Time Difference to Server: %ld ms", time_diff);
       snap_time.setTimeDifferenceClientServerMs(time_diff);

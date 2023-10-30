@@ -86,11 +86,11 @@ public:
 
     setupNVS();
 
-    setupSNTPTime();
-
     setupMDNS();
 
     setupPSRAM();
+
+    SnapTime::instance().setupSNTPTime();
 
     // start tasks
     return p_snapprocessor->begin();
@@ -135,23 +135,6 @@ protected:
 #endif
   SnapProcessor *p_snapprocessor = &default_processor;
 
-  void setupSNTPTime() {
-#if CONFIG_SNAPCLIENT_SNTP_ENABLE
-    ESP_LOGD(TAG, "start");
-    const char *ntpServer = CONFIG_SNTP_SERVER;
-    const long gmtOffset_sec = 1 * 60 * 60;
-    const int daylightOffset_sec = 1 * 60 * 60;
-    for (int retry = 0; retry < 5; retry++) {
-      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-      if(!SnapTime().instance().printLocalTime()){
-        continue;
-      }
-      checkHeap();
-      SnapTime::instance().printLocalTime();
-      break;
-    }
-  #endif
-  }
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS
