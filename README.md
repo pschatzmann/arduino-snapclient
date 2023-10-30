@@ -16,9 +16,55 @@
 
 I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapclient) from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.
 
+### Example Arduino Sketch
+
+Here is an example Arduino sketch: 
+
+```C++
+#include "AudioTools.h"
+#include "SnapClient.h"
+#include "AudioCodecs/CodecOpus.h"
+
+#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
+
+OpusAudioDecoder opus;
+I2SStream out;
+SnapClient client(out, opus);
+
+void setup() {
+  Serial.begin(115200);
+  // login to wifi
+  WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
+  Serial.print("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print('.');
+    delay(1000);
+  }
+
+  // print ip address
+  Serial.println();
+  Serial.println(WiFi.localIP());
+
+  // setup I2S to define custom pins
+  auto cfg = out.defaultConfig();
+  config.pin_bck = 14;
+  config.pin_ws = 15;
+  config.pin_data = 22;
+  out.begin(cfg);
+
+  // start snap client
+  client.begin();
+}
+
+void loop() {
+  client.doLoop();
+}
+```
+
 ### Dependencies
 
 - [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
+
 - [LibOpus](https://github.com/pschatzmann/arduino-libopus)
 - [LibFLAC.h](https://github.com/pschatzmann/arduino-libflac)
 - [CodecVorbis](https://github.com/pschatzmann/arduino-libvorbis-idec)
