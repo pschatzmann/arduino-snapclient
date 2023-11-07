@@ -106,7 +106,7 @@ public:
     int delay = avgDelay();
     float samples_diff = sample_rate * delay / 1000.0;
     float result_factor = sample_rate / (sample_rate + samples_diff);
-    ESP_LOGI(TAG, "delay ms: %d -> factor: %f", delay, result);
+    ESP_LOGI(TAG, "delay ms: %d -> factor: %f", delay, result_factor);
     return result_factor;
   }
 };
