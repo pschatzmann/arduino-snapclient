@@ -20,8 +20,8 @@ public:
 
   void begin(int rate) {
     delay_count = 0;
-    delay_total = 0;
     sample_rate = rate;
+    delays.resize(interval);
     is_active = false;
   }
 
@@ -34,13 +34,14 @@ public:
     if (abs(delay) > 5000)
       return;
     // ESP_LOGD(TAG, "delay: %d", delay);
+    if (is_active){
+      delays[delay_count % interval] = delay;
+    }
     delay_count++;
-    delay_total += delay;
     // ignore first
     if (!is_active && delay_count > 50) {
       is_active = true;
       delay_count = 0;
-      delay_total = 0;
     }
   }
   // returns true when we need to update the rate: we update at fixed interval
@@ -75,17 +76,22 @@ public:
 protected:
   const char *TAG = "SnapTimeSync";
   uint64_t delay_count = 0;
-  uint64_t delay_total = 0;
   float sample_rate = 48000;
   int interval = 10;
   bool is_active = false;
+  Vector<int> delays;
   // start delay
   uint16_t processing_lag = 0;
   uint16_t message_buffer_delay_ms = 0;
 
   // provides the effective avg delay corrected by the start delay (so that the
   // to be avg is 0)
-  int avgDelay() { return (delay_total / delay_count) - getStartDelay(); }
+  int avgDelay() { 
+    int64_t delay_total = 0;
+    for (int j=0;j<interval; j++){
+      delay_total += delays[j];
+    }
+    return (delay_total / interval) - getStartDelay(); }
 };
 
 /**
@@ -131,3 +137,4 @@ public:
 protected:
   float resample_factor;
 };
+

@@ -152,7 +152,7 @@ protected:
   bool is_mute = false;
   SnapAudioHeader header;
   SnapTime &snap_time = SnapTime::instance();
-  SnapTimeSyncDynamic time_sync_dynamic;
+  SnapTimeSyncFixed time_sync_dynamic;
   SnapTimeSync *p_snap_time_sync = &time_sync_dynamic;
   bool is_sync_started = false;
 
