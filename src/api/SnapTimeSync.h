@@ -13,7 +13,7 @@
 */
 class SnapTimeSync {
 public:
-  SnapTimeSync(int processingLag = CONFIG_PLAYBACK_LAG_MS, int interval = 10) {
+  SnapTimeSync(int processingLag = CONFIG_PROCESSING_TIME_MS, int interval = 10) {
     setInterval(interval);
     setProcessingLag(processingLag);
   }
@@ -97,17 +97,17 @@ protected:
  **/
 class SnapTimeSyncDynamic : public SnapTimeSync {
 public:
-  SnapTimeSyncDynamic(int processingLag = CONFIG_PLAYBACK_LAG_MS,
+  SnapTimeSyncDynamic(int processingLag = CONFIG_PROCESSING_TIME_MS,
                       int interval = 10)
       : SnapTimeSync(processingLag, interval) {}
   /// Calculate the resampling factor: with a positive delay we play too fast
   /// and need to slow down
   float getFactor() {
-    int del = avgDelay();
-    float samples_diff = sample_rate * del / 1000.0;
-    float result = sample_rate / (sample_rate + samples_diff);
+    int delay = avgDelay();
+    float samples_diff = sample_rate * delay / 1000.0;
+    float result_factor = sample_rate / (sample_rate + samples_diff);
     ESP_LOGI(TAG, "delay ms: %d -> factor: %f", del, result);
-    return result;
+    return result_factor;
   }
 };
 
@@ -121,7 +121,7 @@ public:
 class SnapTimeSyncFixed : public SnapTimeSync {
 public:
   SnapTimeSyncFixed(float factor = 1.0,
-                    int processingLag = CONFIG_PLAYBACK_LAG_MS,
+                    int processingLag = CONFIG_PROCESSING_TIME_MS,
                     int interval = 10)
       : SnapTimeSync(processingLag, interval) {
     resample_factor = factor;
