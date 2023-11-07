@@ -18,7 +18,7 @@ I have converted the [snapclient](https://github.com/jorgenkraghjakobsen/snapcli
 
 ### Example Arduino Sketch
 
-Here is an example Arduino sketch that uses the Opus codec and outputs the audio with I2S: 
+Here is an example Arduino sketch that uses the Wifi as communication API, the Opus codec and outputs the audio with I2S: 
 
 ```C++
 #include "AudioTools.h"
@@ -29,7 +29,8 @@ Here is an example Arduino sketch that uses the Opus codec and outputs the audio
 
 OpusAudioDecoder opus;
 I2SStream out;
-SnapClient client(out, opus);
+WiFiClient wifi;
+SnapClient client(wifi, out, opus);
 
 void setup() {
   Serial.begin(115200);
@@ -59,7 +60,11 @@ void setup() {
 void loop() {
   client.doLoop();
 }
+
 ```
+
+You can test your sketch e.g. with ```ffmpeg -i http://stream.srg-ssr.ch/m/rsj/mp3_128 -f s16le -ar 48000 /tmp/snapfifo```
+
 
 ### Dependencies
 
@@ -72,6 +77,8 @@ void loop() {
 ### Configuration
 
 Configuration settings can be found in [SnapConfig.h](https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h)
+
+
 
 
 ### Documentation

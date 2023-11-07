@@ -1,9 +1,7 @@
 #pragma once
 
 // activate extended functionality
-#ifndef CONFIG_USE_RTOS
-#  define CONFIG_USE_RTOS false
-#endif
+
 #ifndef CONFIG_USE_PSRAM 
 #  define CONFIG_USE_PSRAM true
 #endif
@@ -12,9 +10,6 @@
 #endif
 #ifndef CONFIG_SNAPCLIENT_SNTP_ENABLE 
 #  define CONFIG_SNAPCLIENT_SNTP_ENABLE false
-#endif
-#ifndef CONFIG_SNAPCLIENT_SET_TIME_ALLOWD
-#  define CONFIG_SNAPCLIENT_SET_TIME_ALLOWD true
 #endif
 #ifndef CONFIG_SNAPCLIENT_USE_MDNS 
 #  define CONFIG_SNAPCLIENT_USE_MDNS true

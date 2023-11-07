@@ -4,26 +4,23 @@
  * to an Arduino Library using the AudioTools as output API
  */
 
-#include "SnapConfig.h"
-#include <WiFi.h>
 #include "AudioTools.h"
+#include "SnapConfig.h"
 #include "api/SnapCommon.h"
 #include "api/SnapLogger.h"
+//#include <WiFi.h>
+#include "Client.h"
+
 
 #if CONFIG_NVS_FLASH
-#  include "nvs_flash.h"
+#include "nvs_flash.h"
 #endif
-#if CONFIG_SNAPCLIENT_USE_MDNS
-#  include <ESPmDNS.h>
+#if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)
+#include <ESPmDNS.h>
 #endif
 
-#if CONFIG_USE_RTOS
-#  include "api/SnapProcessorTasks.h"
-#  include "api/SnapOutputTasks.h"
-#else
-#  include "api/SnapProcessor.h"
-#  include "api/SnapOutputSimple.h"
-#endif
+#include "api/SnapOutput.h"
+#include "api/SnapProcessor.h"
 
 /**
  * @brief Snap Client for ESP32 Arduino
@@ -35,44 +32,55 @@
 class SnapClient {
 
 public:
-  SnapClient(AudioStream &stream, AudioDecoder &decoder) {
+  SnapClient(Client &client,AudioStream &stream, AudioDecoder &decoder) {
     output_adapter.setStream(stream);
     p_snapprocessor->setOutput(output_adapter);
     p_snapprocessor->setDecoder(decoder);
+    setClient(client);
   }
 
-  SnapClient(AudioStream &stream, StreamingDecoder &decoder, int bufferSize = 5*1024) {
+  SnapClient(Client &client, AudioStream &stream, StreamingDecoder &decoder,
+             int bufferSize = 5 * 1024) {
     p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
     output_adapter.setStream(stream);
     p_snapprocessor->setOutput(output_adapter);
     p_snapprocessor->setDecoder(*p_decoder_adapter);
+    setClient(client);
   }
 
-
-  SnapClient(AudioOutput &output, AudioDecoder &decoder) {
+  SnapClient(Client &client, AudioOutput &output, AudioDecoder &decoder) {
     p_snapprocessor->setOutput(output);
     p_snapprocessor->setDecoder(decoder);
+    setClient(client);
   }
 
-  SnapClient(AudioOutput &output, StreamingDecoder &decoder, int bufferSize = 5*1024) {
+  SnapClient(Client &client, AudioOutput &output, StreamingDecoder &decoder,
+             int bufferSize = 5 * 1024) {
     p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
     p_snapprocessor->setOutput(output);
     p_snapprocessor->setDecoder(*p_decoder_adapter);
+    setClient(client);
   }
 
   /// Destructor
-  ~SnapClient(){
-    if (p_decoder_adapter != nullptr) delete p_decoder_adapter;
+  ~SnapClient() {
+    if (p_decoder_adapter != nullptr)
+      delete p_decoder_adapter;
     end();
   }
 
   /// Defines an alternative comminucation client (default is WiFiClient)
-  void setClient(Client &client){
-    p_snapprocessor->setClient(client);
+  void setClient(Client &client) { p_snapprocessor->setClient(client); }
+
+
+  /// Defines the time synchronization logic
+  void setSnapTimeSync(SnapTimeSync &timeSync){
+    p_snapprocessor->snapOutput().setSnapTimeSync(timeSync);
   }
 
   /// Starts the processing
-  bool begin(void) {
+  bool begin() {
+#if defined(ESP32)
     if (WiFi.status() != WL_CONNECTED) {
       ESP_LOGE(TAG, "WiFi not connected");
       return false;
@@ -80,6 +88,7 @@ public:
     // use maximum speed
     WiFi.setSleep(false);
     ESP_LOGI(TAG, "Connected to AP");
+#endif
 
     // Get MAC address for WiFi station
     setupMACAddress();
@@ -90,7 +99,9 @@ public:
 
     setupPSRAM();
 
+#if CONFIG_SNAPCLIENT_SNTP_ENABLE
     SnapTime::instance().setupSNTPTime();
+#endif
 
     // start tasks
     return p_snapprocessor->begin();
@@ -112,32 +123,25 @@ public:
   void setStartOutput(bool start) { p_snapprocessor->setStartOutput(start); }
 
   /// Defines an alternative Processor
-  void setSnapProcessor(SnapProcessor &processor){
+  void setSnapProcessor(SnapProcessor &processor) {
     p_snapprocessor = &processor;
   }
 
   /// Call from Arduino Loop (when no tasks are used)
-  void doLoop(){
-    p_snapprocessor->doLoop();
-  }
+  void doLoop() { p_snapprocessor->doLoop(); }
 
 protected:
   const char *TAG = "SnapClient";
   AdapterAudioStreamToAudioOutput output_adapter;
   DecoderFromStreaming *p_decoder_adapter = nullptr;
+  SnapTime &snap_time = SnapTime::instance();
   // default setup
-#if CONFIG_USE_RTOS
-  SnapOutputTasks snap_output;
-  SnapProcessorTasks default_processor{snap_output};
-#else
-  SnapOutputSimple snap_output;
+  SnapOutput snap_output;
   SnapProcessor default_processor{snap_output};
-#endif
   SnapProcessor *p_snapprocessor = &default_processor;
 
-
   void setupMDNS() {
-#if CONFIG_SNAPCLIENT_USE_MDNS
+#if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)
     ESP_LOGD(TAG, "start");
     if (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {
       LOGE(TAG, "Error starting mDNS");
@@ -164,11 +168,11 @@ protected:
 
     MDNS.end();
     checkHeap();
- #endif 
+#endif
   }
 
-  void setupNVS(){
-#if CONFIG_NVS_FLASH
+  void setupNVS() {
+#if CONFIG_NVS_FLASH && defined(ESP32)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
         ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -180,8 +184,8 @@ protected:
 #endif
   }
 
-  void setupPSRAM(){
-#if CONFIG_USE_PSRAM
+  void setupPSRAM() {
+#if CONFIG_USE_PSRAM && defined(ESP32)
     if (ESP.getPsramSize() > 0) {
       heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
       ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
@@ -191,7 +195,7 @@ protected:
 #endif
   }
 
-  void setupMACAddress(){
+  void setupMACAddress() {
 #ifdef ESP32
     const char *adr = strdup(WiFi.macAddress().c_str());
     p_snapprocessor->setMacAddress(adr);
@@ -199,5 +203,4 @@ protected:
     checkHeap();
 #endif
   }
-
 };

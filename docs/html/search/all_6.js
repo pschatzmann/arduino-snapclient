@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['latencyms_7',['latencyMs',['../class_snap_time.html#a60bcc707b7311b5614121b803cf363c8',1,'SnapTime']]]
+  ['ismute_9',['isMute',['../class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0',1,'SnapOutput']]]
 ];

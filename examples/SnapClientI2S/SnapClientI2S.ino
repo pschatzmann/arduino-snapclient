@@ -1,5 +1,5 @@
 /**
- * @brief SnapClient with Opus decoder: I2S OUtput 
+ * @brief SnapClient with Opus decoder: I2S OUtput on an ESP32
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
@@ -12,7 +12,8 @@
 
 OpusAudioDecoder opus;
 I2SStream out;
-SnapClient client(out, opus);
+WiFiClient wifi;
+SnapClient client(wifi, out, opus);
 
 void setup() {
   Serial.begin(115200);
@@ -30,9 +31,9 @@ void setup() {
 
   // setup I2S to define custom pins
   auto cfg = out.defaultConfig();
-  config.pin_bck = 14;
-  config.pin_ws = 15;
-  config.pin_data = 22;
+  cfg.pin_bck = 14;
+  cfg.pin_ws = 15;
+  cfg.pin_data = 22;
   out.begin(cfg);
 
   // start snap client

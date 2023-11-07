@@ -1,16 +1,18 @@
 #pragma once
 
-#include <stdint.h>
-#include <sys/time.h>
 #include "Arduino.h" // for ESP.getPsramSize()
+#include "AudioTools.h"
+#include "SnapCommon.h"
 #include "SnapConfig.h"
 #include "SnapLogger.h"
 #include "SnapTime.h"
-#include "SnapCommon.h"
-#include "AudioTools.h"
+#include "SnapTimeSync.h"
+#include <stdint.h>
+#include <sys/time.h>
 
 /**
- * @brief Abstract Output Class
+ * @brief Simple Output Class which uses the AudioTools to build an output chain
+ * with volume control and a resampler
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -29,16 +31,30 @@ public:
 
   /// Starts the processing which is also starting the the dsp_i2s_task_handler
   /// task
-  virtual bool begin() = 0;
+  virtual bool begin() {
+    is_sync_started = false;
+    return true;
+  }
 
   /// Writes audio data to the queue
-  virtual size_t write(const uint8_t *data, size_t size) = 0;
+  virtual size_t write(const uint8_t *data, size_t size) {
+    ESP_LOGD(TAG, "%zu", size);
+
+    if (!synchronizePlayback()) {
+      return size;
+    }
+
+    return audioWrite(data, size);
+  }
 
   /// Provides info about the audio data
-  virtual bool writeHeader(SnapAudioHeader &header) = 0;
+  virtual bool writeHeader(SnapAudioHeader &header) {
+    this->header = header;
+    return true;
+  }
 
   /// Ends the processing and releases the memory
-  virtual void end(void) = 0;
+  virtual void end(void) {}
 
   /// Adjust the volume
   void setVolume(float vol) {
@@ -66,8 +82,8 @@ public:
   /// Defines the audio output chain to the final output
   void setOutput(AudioOutput &output) {
     this->out = &output; // final output
-    measure_stream.setStream(output); // measure effective rate
-    vol_stream.setStream(measure_stream); // adjust volume
+    resample.setStream(output);
+    vol_stream.setStream(resample);        // adjust volume
     decoder_stream.setStream(&vol_stream); // decode to pcm
   }
 
@@ -102,17 +118,27 @@ public:
     dec_cfg.copyFrom(audio_info);
     decoder_stream.begin(dec_cfg);
 
-    // mesauring stream
-    auto ms = []() { return SnapTime::instance().serverMillis(); };
-    measure_stream.setTimeCallback(ms);
-    measure_stream.setAudioInfo(audio_info);
-    measure_stream.setReportAt(measure_at_index);
+    // open resampler
+    auto res_cfg = resample.defaultConfig();
+    res_cfg.step_size = 1.009082;
+    res_cfg.copyFrom(audio_info);
+    resample.begin(res_cfg);
 
     ESP_LOGD(TAG, "end");
     return true;
   }
 
-  virtual void doLoop() = 0;
+  /// Defines the time synchronization logic
+  void setSnapTimeSync(SnapTimeSync &timeSync){
+    p_snap_time_sync = &timeSync;
+  }
+
+  // do nothing
+  virtual void doLoop() {}
+
+  SnapTimeSync& snapTimeSync() {
+    return *p_snap_time_sync;
+  }
 
 protected:
   const char *TAG = "SnapOutput";
@@ -120,14 +146,21 @@ protected:
   AudioInfo audio_info;
   EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
-  RateMeasuringStream measure_stream;
-  float vol = 1.0;
-  float vol_factor = 1.0;
-  uint16_t measure_at_index = 100;
+  ResampleStream resample;
+  float vol = 1.0;        // volume in the range 0.0 - 1.0
+  float vol_factor = 1.0; //
   bool is_mute = false;
-  uint64_t start_us;
-  SnapAudioHeader first_header;
-  SnapTime& snap_time = SnapTime::instance();
+  SnapAudioHeader header;
+  SnapTime &snap_time = SnapTime::instance();
+  SnapTimeSyncDynamic time_sync_dynamic;
+  SnapTimeSync *p_snap_time_sync = &time_sync_dynamic;
+  bool is_sync_started = false;
+
+  /// to speed up or slow down playback
+  void setPlaybackFactor(float fact) { resample.setStepSize(fact); }
+
+  /// determine actual playback speed
+  float playbackFactor() { return resample.getStepSize(); }
 
   void audioWriteSilence() {
     for (int j = 0; j < 50; j++) {
@@ -144,18 +177,68 @@ protected:
 
   // writes the audio data to the decoder
   size_t audioWrite(const void *src, size_t size) {
-    ESP_LOGI(TAG, "%zu", size);
+    ESP_LOGD(TAG, "%zu", size);
     size_t result = decoder_stream.write((const uint8_t *)src, size);
+
     return result;
   }
 
-  float local_dsp_measure_time(SnapAudioHeader &header) {
-    ESP_LOGD(TAG, "start");
-    float local_us = micros() - start_us;
-    float server_us = header - first_header;
-    float factor = local_us / server_us;
-    LOGD("Speed us local: %f / server: %f -> factor %f", local_us, server_us,
-         factor);
-    return factor;
+  /// start to play audio only in valid server time: return false if to be
+  /// ignored - update playback speed
+  bool synchronizePlayback() {
+    bool result = true;
+
+    auto delay_ms = getDelayMs();
+    SnapTimeSync& ts = *p_snap_time_sync;
+
+    if (!is_sync_started) {
+
+      ts.begin(audio_info.sample_rate);
+
+      // start audio when first package in the future becomes valid
+      result = synchronizeOnStart(delay_ms);
+    } else {
+      // calculate avg delay
+      ts.addDelay(delay_ms);
+
+      if (ts.isSync()) {
+        // update speed
+        float current_factor = playbackFactor();
+        float new_factor = p_snap_time_sync->getFactor();
+        if (new_factor != current_factor) {
+          setPlaybackFactor(new_factor);
+        }
+      }
+    }
+    return result;
+  }
+
+  bool synchronizeOnStart(int delay_ms) {
+    bool result = true;
+    if (delay_ms < 0) {
+      // ignore the data and report it as processed
+      ESP_LOGW(TAG, "audio data expired: delay %d", delay_ms);
+      result = false;
+    } else if (delay_ms > 100000) {
+      ESP_LOGW(TAG, "invalid delay: %d ms", delay_ms);
+      result = false;
+    } else {
+      // wait for the audio to become valid
+      ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+      delay(delay_ms);
+      is_sync_started = true;
+      result = true;
+    }
+    return result;
+  }
+
+  /// Calculate the delay in ms
+  int getDelayMs() {
+    auto msg_time = snap_time.toMillis(header.sec, header.usec);
+    auto server_time = snap_time.serverMillis();
+    // wait for the audio to become valid
+    int diff_ms = msg_time - server_time;
+    int delay_ms = diff_ms + p_snap_time_sync->getStartDelay();
+    return delay_ms;
   }
 };

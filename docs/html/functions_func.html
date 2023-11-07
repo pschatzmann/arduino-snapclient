@@ -64,8 +64,8 @@ $(function() {
 &#160;
 
 <h3><a id="index_a"></a>- a -</h3><ul>
-<li>addLatency()
-: <a class="el" href="class_snap_time.html#ae2a2c9f4f02b1fcc7ac33496fd657a42">SnapTime</a>
+<li>addDelay()
+: <a class="el" href="class_snap_time_sync.html#a57a79141a526db26aff2964f31b60a06">SnapTimeSync</a>
 </li>
 <li>audioBegin()
 : <a class="el" href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">SnapOutput</a>
@@ -75,9 +75,8 @@ $(function() {
 
 <h3><a id="index_b"></a>- b -</h3><ul>
 <li>begin()
-: <a class="el" href="class_snap_client.html#a30a103a2e8dc97eb5fda377ea163f6fb">SnapClient</a>
-, <a class="el" href="class_snap_output.html#ae8a0d9ca63f8bb3de100e347c3f3bca4">SnapOutput</a>
-, <a class="el" href="class_snap_output_simple.html#a601fb7cf1fc15db50c71a826f084f934">SnapOutputSimple</a>
+: <a class="el" href="class_snap_client.html#a86f34df872074e5ddabb5c25e0bd78cf">SnapClient</a>
+, <a class="el" href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">SnapOutput</a>
 , <a class="el" href="class_snap_output_tasks.html#a601fb7cf1fc15db50c71a826f084f934">SnapOutputTasks</a>
 </li>
 </ul>
@@ -95,9 +94,21 @@ $(function() {
 <h3><a id="index_e"></a>- e -</h3><ul>
 <li>end()
 : <a class="el" href="class_snap_client.html#a081b5c662ecee58405a543518f699d31">SnapClient</a>
-, <a class="el" href="class_snap_output.html#aeb7ab2c86c094702b97f82306d916a6a">SnapOutput</a>
-, <a class="el" href="class_snap_output_simple.html#a081b5c662ecee58405a543518f699d31">SnapOutputSimple</a>
+, <a class="el" href="class_snap_output.html#af8e0a63ec718201627220299012e654f">SnapOutput</a>
 , <a class="el" href="class_snap_output_tasks.html#a081b5c662ecee58405a543518f699d31">SnapOutputTasks</a>
+</li>
+</ul>
+
+
+<h3><a id="index_g"></a>- g -</h3><ul>
+<li>getDelayMs()
+: <a class="el" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">SnapOutput</a>
+</li>
+<li>getFactor()
+: <a class="el" href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">SnapTimeSync</a>
+</li>
+<li>getStartDelay()
+: <a class="el" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">SnapTimeSync</a>
 </li>
 </ul>
 
@@ -116,16 +127,16 @@ $(function() {
 </ul>
 
 
-<h3><a id="index_l"></a>- l -</h3><ul>
-<li>latencyMs()
-: <a class="el" href="class_snap_time.html#a60bcc707b7311b5614121b803cf363c8">SnapTime</a>
+<h3><a id="index_p"></a>- p -</h3><ul>
+<li>playbackFactor()
+: <a class="el" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">SnapOutput</a>
 </li>
 </ul>
 
 
 <h3><a id="index_s"></a>- s -</h3><ul>
 <li>serverMillis()
-: <a class="el" href="class_snap_time.html#ac46bcada37639e58352d9eabcdc06445">SnapTime</a>
+: <a class="el" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">SnapTime</a>
 </li>
 <li>setClient()
 : <a class="el" href="class_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">SnapClient</a>
@@ -135,6 +146,9 @@ $(function() {
 : <a class="el" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">SnapOutput</a>
 , <a class="el" href="class_snap_processor.html#a6f9488e045147706a13387c0c6a634ea">SnapProcessor</a>
 </li>
+<li>setMessageBufferDelay()
+: <a class="el" href="class_snap_time_sync.html#ac43c3135fd435d8006a5d48d2b13625c">SnapTimeSync</a>
+</li>
 <li>setMute()
 : <a class="el" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">SnapOutput</a>
 </li>
@@ -142,17 +156,31 @@ $(function() {
 : <a class="el" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">SnapOutput</a>
 , <a class="el" href="class_snap_processor.html#aa0d3775308edf58cac6e7f763edbb96a">SnapProcessor</a>
 </li>
+<li>setPlaybackFactor()
+: <a class="el" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">SnapOutput</a>
+</li>
+<li>setProcessingLag()
+: <a class="el" href="class_snap_client.html#a728ca6e65ef04a058b0aac1445b9a8a8">SnapClient</a>
+, <a class="el" href="class_snap_time_sync.html#a263ff3a9232682c353a845a6f87fcbf6">SnapTimeSync</a>
+</li>
 <li>setSnapOutput()
 : <a class="el" href="class_snap_processor.html#a5d9c21ad999d25919c01753e38a86bda">SnapProcessor</a>
 </li>
 <li>setSnapProcessor()
 : <a class="el" href="class_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">SnapClient</a>
 </li>
+<li>setSnapTimeSync()
+: <a class="el" href="class_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapClient</a>
+, <a class="el" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapOutput</a>
+</li>
 <li>setStartOutput()
 : <a class="el" href="class_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">SnapClient</a>
 </li>
 <li>setStartTask()
 : <a class="el" href="class_snap_client.html#a26a56ec17a4183c08447e33c80591209">SnapClient</a>
+</li>
+<li>setTimeDifferenceClientServerMs()
+: <a class="el" href="class_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">SnapTime</a>
 </li>
 <li>setVolume()
 : <a class="el" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">SnapOutput</a>
@@ -161,6 +189,19 @@ $(function() {
 : <a class="el" href="class_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapClient</a>
 , <a class="el" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapOutput</a>
 , <a class="el" href="class_snap_processor.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapProcessor</a>
+</li>
+<li>synchronizePlayback()
+: <a class="el" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">SnapOutput</a>
+</li>
+</ul>
+
+
+<h3><a id="index_t"></a>- t -</h3><ul>
+<li>time()
+: <a class="el" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">SnapTime</a>
+</li>
+<li>timeDifferenceClientServerMs()
+: <a class="el" href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">SnapTime</a>
 </li>
 </ul>
 
@@ -176,13 +217,11 @@ $(function() {
 
 <h3><a id="index_w"></a>- w -</h3><ul>
 <li>write()
-: <a class="el" href="class_snap_output.html#aedfdfe9cf8a23cc55674527e863ca25e">SnapOutput</a>
-, <a class="el" href="class_snap_output_simple.html#abd01521d9ce6f1eb9caefdcf6260f6da">SnapOutputSimple</a>
+: <a class="el" href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">SnapOutput</a>
 , <a class="el" href="class_snap_output_tasks.html#abd01521d9ce6f1eb9caefdcf6260f6da">SnapOutputTasks</a>
 </li>
 <li>writeHeader()
-: <a class="el" href="class_snap_output.html#a5fda87a1527e8e3792970db588499b97">SnapOutput</a>
-, <a class="el" href="class_snap_output_simple.html#aa7f33a70aea12f712a86ec2725de36e6">SnapOutputSimple</a>
+: <a class="el" href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">SnapOutput</a>
 , <a class="el" href="class_snap_output_tasks.html#aa7f33a70aea12f712a86ec2725de36e6">SnapOutputTasks</a>
 </li>
 </ul>

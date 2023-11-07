@@ -6,7 +6,7 @@
 #include "SnapOutput.h"
 #include "SnapProcessor.h"
 #include "SnapTime.h"
-#include "WiFi.h"
+//#include "WiFi.h"
 #include "lightsnapcast/snapcast.h"
 #include "opus.h"
 #include "vector"
@@ -80,13 +80,17 @@ public:
   /// Defines the SnapOutput implementation
   void setSnapOutput(SnapOutput &out) { p_snap_output = &out; }
 
+  SnapOutput& snapOutput() {
+    return *p_snap_output;
+  }
+
   /// Defines an alternative client to the WiFiClient
   void setClient(Client &client) { p_client = &client; }
 
 protected:
   const char *TAG = "SnapProcessor";
-  WiFiClient default_client;
-  Client *p_client = &default_client;
+//  WiFiClient default_client;
+  Client *p_client = nullptr;
   SnapOutput *p_snap_output = nullptr;
   std::vector<int16_t> audio;
   std::vector<char> send_receive_buffer;
@@ -422,8 +426,8 @@ protected:
     ESP_LOGI(TAG, "Mute:           %d", server_settings_message.muted);
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
-    // define the start delay 
-    snap_time.setDelay(server_settings_message.buffer_ms + server_settings_message.latency);
+    // define the start delay from the server settings
+    p_snap_output->snapTimeSync().setMessageBufferDelay(server_settings_message.buffer_ms + server_settings_message.latency);
 
     // set volume
     if (header_received){
@@ -453,18 +457,11 @@ protected:
     trx.tv_usec = base_message.received.usec;
     
     snap_time.updateServerTime(trx);
-    if (!is_time_set){
-      // set time from server
-      snap_time.setTime(trx);
-      last_time_sync = 0;
-      is_time_set = true;
-    } else {
-      int64_t time_diff = snap_time.timeDifferenceMs(trx, ttx);
-      uint32_t time_diff_int = time_diff;
-      assert(time_diff_int==time_diff);
-      ESP_LOGI(TAG, "Time Difference to Server: %ld ms", time_diff);
-      snap_time.setTimeDifferenceClientServerMs(time_diff);
-    }
+    int64_t time_diff = snap_time.timeDifferenceMs(trx, ttx);
+    uint32_t time_diff_int = time_diff;
+    assert(time_diff_int==time_diff);
+    ESP_LOGD(TAG, "Time Difference to Server: %ld ms", time_diff);
+    snap_time.setTimeDifferenceClientServerMs(time_diff);
 
     return true;
   }

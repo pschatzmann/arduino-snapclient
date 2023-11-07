@@ -1,5 +1,5 @@
 #pragma once
-#include "SnapOutputSimple.h"
+#include "SnapOutput.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/ringbuf.h"

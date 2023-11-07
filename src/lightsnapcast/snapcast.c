@@ -1,12 +1,5 @@
 #include "snapcast.h"
-
-//#ifdef ESP_PLATFORM
-// The ESP-IDF changes the include directory for cJSON
-#include <cJSON.h>
-//#else
-//#include "json/cJSON.h"
-//#endif
-
+#include "lightsnapcast/cJSON.h"
 #include "buffer.h"
 #include <stddef.h>
 #include <stdio.h>

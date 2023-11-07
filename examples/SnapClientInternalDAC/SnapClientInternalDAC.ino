@@ -1,5 +1,5 @@
 /**
- * @brief SnapClient with Opus decoder: OUtput to internal DAC
+ * @brief SnapClient with Opus decoder: OUtput to internal DAC on an ESP32
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
@@ -12,7 +12,8 @@
 
 OpusAudioDecoder opus;
 AnalogAudioStream out;
-SnapClient client(out, opus);
+WiFiClient wifi;
+SnapClient client(wifi, out, opus);
 
 void setup() {
   Serial.begin(115200);

@@ -1,5 +1,5 @@
 /**
- * @brief SnapClient with Opus decoder: I2S OUtput to an AudioKit
+ * @brief SnapClient with Opus decoder: I2S Output to an ESP32 AudioKit
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
@@ -17,7 +17,8 @@ AudioKitStream out;
 //VorbisDecoder vorbis;
 //WAVDecoder pcm;
 OpusAudioDecoder opus;
-SnapClient client(out, opus);
+WiFiClient wifi;
+SnapClient client(wifi, out, opus);
 
 void setup() {
   Serial.begin(115200);

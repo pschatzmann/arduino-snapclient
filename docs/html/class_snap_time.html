@@ -64,7 +64,6 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_snap_time-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -72,28 +71,53 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>We use the the sys/time functions to represent the server time. The local time will be measured with the help of the Arduino millis() method.  
+ <a href="class_snap_time.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_snap_time_8h_source.html">SnapTime.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae2a2c9f4f02b1fcc7ac33496fd657a42"><td class="memItemLeft" align="right" valign="top"><a id="ae2a2c9f4f02b1fcc7ac33496fd657a42"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#ae2a2c9f4f02b1fcc7ac33496fd657a42">addLatency</a> (int latency)</td></tr>
-<tr class="memdesc:ae2a2c9f4f02b1fcc7ac33496fd657a42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record the last latency value so that we can calculate the avg. <br /></td></tr>
-<tr class="separator:ae2a2c9f4f02b1fcc7ac33496fd657a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60bcc707b7311b5614121b803cf363c8"><td class="memItemLeft" align="right" valign="top"><a id="a60bcc707b7311b5614121b803cf363c8"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#a60bcc707b7311b5614121b803cf363c8">latencyMs</a> ()</td></tr>
-<tr class="memdesc:a60bcc707b7311b5614121b803cf363c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the avg latecy in milliseconds. <br /></td></tr>
-<tr class="separator:a60bcc707b7311b5614121b803cf363c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac46bcada37639e58352d9eabcdc06445"><td class="memItemLeft" align="right" valign="top"><a id="ac46bcada37639e58352d9eabcdc06445"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#ac46bcada37639e58352d9eabcdc06445">serverMillis</a> ()</td></tr>
-<tr class="memdesc:ac46bcada37639e58352d9eabcdc06445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the current server time. <br /></td></tr>
-<tr class="separator:ac46bcada37639e58352d9eabcdc06445"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab10d3ff116482943df595780a111f519"><td class="memItemLeft" align="right" valign="top"><a id="ab10d3ff116482943df595780a111f519"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setTime</b> (timeval ttx)</td></tr>
-<tr class="separator:ab10d3ff116482943df595780a111f519"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0380be8a403f47cfdf9f26c2c1eceab"><td class="memItemLeft" align="right" valign="top"><a id="ac0380be8a403f47cfdf9f26c2c1eceab"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>toMillis</b> (uint32_t sec, uint32_t usec)</td></tr>
-<tr class="separator:ac0380be8a403f47cfdf9f26c2c1eceab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aead2f5628085aee192c3b2b9065ec933"><td class="memItemLeft" align="right" valign="top"><a id="aead2f5628085aee192c3b2b9065ec933"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>localMillis</b> ()</td></tr>
+<tr class="separator:aead2f5628085aee192c3b2b9065ec933"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47ee68d6bd5d20d549d49fba28d79c20"><td class="memItemLeft" align="right" valign="top"><a id="a47ee68d6bd5d20d549d49fba28d79c20"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>printLocalTime</b> (const char *msg)</td></tr>
+<tr class="separator:a47ee68d6bd5d20d549d49fba28d79c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d46ea8f99a7fe6583f6d72a5f9c9afa"><td class="memItemLeft" align="right" valign="top"><a id="a2d46ea8f99a7fe6583f6d72a5f9c9afa"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a> ()</td></tr>
+<tr class="memdesc:a2d46ea8f99a7fe6583f6d72a5f9c9afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the current server time in ms. <br /></td></tr>
+<tr class="separator:a2d46ea8f99a7fe6583f6d72a5f9c9afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e98d81c157bfc9c1b4ef65d3bc6dade"><td class="memItemLeft" align="right" valign="top"><a id="a3e98d81c157bfc9c1b4ef65d3bc6dade"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">setTimeDifferenceClientServerMs</a> (uint32_t diff)</td></tr>
+<tr class="memdesc:a3e98d81c157bfc9c1b4ef65d3bc6dade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record the last time difference between client and server. <br /></td></tr>
+<tr class="separator:a3e98d81c157bfc9c1b4ef65d3bc6dade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af001ee47023d40b09bb32d774d567c46"><td class="memItemLeft" align="right" valign="top"><a id="af001ee47023d40b09bb32d774d567c46"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setupSNTPTime</b> ()</td></tr>
+<tr class="separator:af001ee47023d40b09bb32d774d567c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0371cbc995b3b2f546215d4ebfc11ade"><td class="memItemLeft" align="right" valign="top"><a id="a0371cbc995b3b2f546215d4ebfc11ade"></a>
+timeval&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a> ()</td></tr>
+<tr class="memdesc:a0371cbc995b3b2f546215d4ebfc11ade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the actual time as timeval. <br /></td></tr>
+<tr class="separator:a0371cbc995b3b2f546215d4ebfc11ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7623104e7990fe49237efbdc4b0822dc"><td class="memItemLeft" align="right" valign="top"><a id="a7623104e7990fe49237efbdc4b0822dc"></a>
+timeval&#160;</td><td class="memItemRight" valign="bottom"><b>timeDifference</b> (timeval t1, timeval t2)</td></tr>
+<tr class="separator:a7623104e7990fe49237efbdc4b0822dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a058d57baeeb43619ca44ee9342b6c70c"><td class="memItemLeft" align="right" valign="top"><a id="a058d57baeeb43619ca44ee9342b6c70c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">timeDifferenceClientServerMs</a> ()</td></tr>
+<tr class="memdesc:a058d57baeeb43619ca44ee9342b6c70c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the avg latecy in milliseconds. <br /></td></tr>
+<tr class="separator:a058d57baeeb43619ca44ee9342b6c70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab391c991b896074035db63b7bb87c040"><td class="memItemLeft" align="right" valign="top"><a id="ab391c991b896074035db63b7bb87c040"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>timeDifferenceMs</b> (timeval t1, timeval t2)</td></tr>
+<tr class="separator:ab391c991b896074035db63b7bb87c040"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93960c5c0ea38a99469dbd4c77bff796"><td class="memItemLeft" align="right" valign="top"><a id="a93960c5c0ea38a99469dbd4c77bff796"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>toMillis</b> (timeval tv)</td></tr>
+<tr class="separator:a93960c5c0ea38a99469dbd4c77bff796"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaac96145b9b33dd39ac052f556f27938"><td class="memItemLeft" align="right" valign="top"><a id="aaac96145b9b33dd39ac052f556f27938"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>toMillis</b> (uint32_t sec, uint32_t usec)</td></tr>
+<tr class="separator:aaac96145b9b33dd39ac052f556f27938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a6d4479f8aa4260822c2ac4dab75898"><td class="memItemLeft" align="right" valign="top"><a id="a2a6d4479f8aa4260822c2ac4dab75898"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>updateServerTime</b> (timeval &amp;server)</td></tr>
+<tr class="separator:a2a6d4479f8aa4260822c2ac4dab75898"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -101,23 +125,36 @@ Static Public Member Functions</h2></td></tr>
 static <a class="el" href="class_snap_time.html">SnapTime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>instance</b> ()</td></tr>
 <tr class="separator:aace4bcf7a5bcff2dd652b2638734b507"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a9c6a6eca615b4674e2e3034525bb12a2"><td class="memItemLeft" align="right" valign="top"><a id="a9c6a6eca615b4674e2e3034525bb12a2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add_timeval</b> (struct timeval t1, struct timeval t2, struct timeval *td)</td></tr>
-<tr class="separator:a9c6a6eca615b4674e2e3034525bb12a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11922f26b9391c6cb350d79f01b3ebb4"><td class="memItemLeft" align="right" valign="top"><a id="a11922f26b9391c6cb350d79f01b3ebb4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sub_timeval</b> (struct timeval t1, struct timeval t2, struct timeval *td)</td></tr>
-<tr class="separator:a11922f26b9391c6cb350d79f01b3ebb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a3c1490f1f861d96761374e0ef1215ebf"><td class="memItemLeft" align="right" valign="top"><a id="a3c1490f1f861d96761374e0ef1215ebf"></a>
-SingleBuffer&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>latency_values</b> {30}</td></tr>
-<tr class="separator:a3c1490f1f861d96761374e0ef1215ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc986d4f5baed91f758c54367a1b7bfa"><td class="memItemLeft" align="right" valign="top"><a id="adc986d4f5baed91f758c54367a1b7bfa"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>has_sntp_time</b> = false</td></tr>
+<tr class="separator:adc986d4f5baed91f758c54367a1b7bfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0ea26e4c1a1474a4e363396d13fcfe4"><td class="memItemLeft" align="right" valign="top"><a id="af0ea26e4c1a1474a4e363396d13fcfe4"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>local_ms</b></td></tr>
+<tr class="separator:af0ea26e4c1a1474a4e363396d13fcfe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dbe2777c86d02199cb57a3c1141bbc9"><td class="memItemLeft" align="right" valign="top"><a id="a6dbe2777c86d02199cb57a3c1141bbc9"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>server_ms</b> = 0</td></tr>
+<tr class="separator:a6dbe2777c86d02199cb57a3c1141bbc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68d486abf54799eb98e38b1977983c35"><td class="memItemLeft" align="right" valign="top"><a id="a68d486abf54799eb98e38b1977983c35"></a>
+timeval&#160;</td><td class="memItemRight" valign="bottom"><b>server_time</b></td></tr>
+<tr class="separator:a68d486abf54799eb98e38b1977983c35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memItemLeft" align="right" valign="top"><a id="a5a85b9c772bbeb480b209a3e6ea92b4c"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapTime&quot;</td></tr>
+<tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16eb2b43ba2e5c46dc6207ec022fa83e"><td class="memItemLeft" align="right" valign="top"><a id="a16eb2b43ba2e5c46dc6207ec022fa83e"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>time_diff</b> = 0</td></tr>
+<tr class="separator:a16eb2b43ba2e5c46dc6207ec022fa83e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bc5a21c9f3282c56e0525809f7e5de6"><td class="memItemLeft" align="right" valign="top"><a id="a8bc5a21c9f3282c56e0525809f7e5de6"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>time_update_count</b> = 0</td></tr>
+<tr class="separator:a8bc5a21c9f3282c56e0525809f7e5de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>We use the the sys/time functions to represent the server time. The local time will be measured with the help of the Arduino millis() method. </p>
+<dl class="section author"><dt>Author</dt><dd>Phil Schatzmann </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-10-28 </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/api/<a class="el" href="_snap_time_8h_source.html">SnapTime.h</a></li>
 </ul>
