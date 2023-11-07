@@ -70,19 +70,27 @@ $(function() {
 <div class="title">SnapTimeSync Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract Time Synchronization The delay has a big variablility: therefore we calculate the avg.  
+ <a href="class_snap_time_sync.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_snap_time_sync_8h_source.html">SnapTimeSync.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for SnapTimeSync:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_snap_time_sync.png" usemap="#SnapTimeSync_map" alt=""/>
   <map id="SnapTimeSync_map" name="SnapTimeSync_map">
-<area href="class_snap_time_sync_dynamic.html" alt="SnapTimeSyncDynamic" shape="rect" coords="0,56,145,80"/>
-<area href="class_snap_time_sync_fixed.html" alt="SnapTimeSyncFixed" shape="rect" coords="155,56,300,80"/>
+<area href="class_snap_time_sync_dynamic.html" title="Dynamically adjusts the effective playback sample rate." alt="SnapTimeSyncDynamic" shape="rect" coords="0,56,145,80"/>
+<area href="class_snap_time_sync_fixed.html" title="Uses predefined fixed factor." alt="SnapTimeSyncFixed" shape="rect" coords="155,56,300,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae52af1cc32e1d133bcf97f384ac30cf6"><td class="memItemLeft" align="right" valign="top"><a id="ae52af1cc32e1d133bcf97f384ac30cf6"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SnapTimeSync</b> (int processingLag=CONFIG_PLAYBACK_LAG_MS, int interval=10)</td></tr>
+<tr class="separator:ae52af1cc32e1d133bcf97f384ac30cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57a79141a526db26aff2964f31b60a06"><td class="memItemLeft" align="right" valign="top"><a id="a57a79141a526db26aff2964f31b60a06"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a57a79141a526db26aff2964f31b60a06">addDelay</a> (int delay)</td></tr>
 <tr class="memdesc:a57a79141a526db26aff2964f31b60a06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the delay. <br /></td></tr>
@@ -97,6 +105,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> (int rate)<
 <tr class="memitem:ae361c9a0939daff16cd8652325124905"><td class="memItemLeft" align="right" valign="top"><a id="ae361c9a0939daff16cd8652325124905"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isSync</b> ()</td></tr>
 <tr class="separator:ae361c9a0939daff16cd8652325124905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8303d863006ab5b759a4e1fa8bb0e39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#af8303d863006ab5b759a4e1fa8bb0e39">setInterval</a> (int interval)</td></tr>
+<tr class="separator:af8303d863006ab5b759a4e1fa8bb0e39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac43c3135fd435d8006a5d48d2b13625c"><td class="memItemLeft" align="right" valign="top"><a id="ac43c3135fd435d8006a5d48d2b13625c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#ac43c3135fd435d8006a5d48d2b13625c">setMessageBufferDelay</a> (int ms)</td></tr>
 <tr class="memdesc:ac43c3135fd435d8006a5d48d2b13625c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the message buffer lag. <br /></td></tr>
@@ -128,7 +138,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_active</b> = false
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>message_buffer_delay_ms</b> = 0</td></tr>
 <tr class="separator:a4faa2d902943bcfcd29cdadd84a43799"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afabf5d2d39fad303035a5549addd68d7"><td class="memItemLeft" align="right" valign="top"><a id="afabf5d2d39fad303035a5549addd68d7"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>processing_lag</b> = CONFIG_PLAYBACK_LAG_MS</td></tr>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>processing_lag</b> = 0</td></tr>
 <tr class="separator:afabf5d2d39fad303035a5549addd68d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63433fe701b4e06f2cfdd50509e660db"><td class="memItemLeft" align="right" valign="top"><a id="a63433fe701b4e06f2cfdd50509e660db"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>sample_rate</b> = 48000</td></tr>
@@ -137,7 +147,13 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>sample_rate</b> = 48
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapTimeSync&quot;</td></tr>
 <tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract Time Synchronization The delay has a big variablility: therefore we calculate the avg. </p>
+<dl class="section author"><dt>Author</dt><dd>Phil Schatzmann </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-10-28 </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a47e677c2396350208f1a2499fced812a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a47e677c2396350208f1a2499fced812a">&#9670;&nbsp;</a></span>getFactor()</h2>
 
@@ -161,6 +177,8 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &qu
 </table>
 </div><div class="memdoc">
 <p>Calculate the resampling factor: with a positive delay we play too fast and need to slow down </p>
+
+<p>Implemented in <a class="el" href="class_snap_time_sync_fixed.html#a266c93347cd6fb48d564c9d12ec26059">SnapTimeSyncFixed</a>, and <a class="el" href="class_snap_time_sync_dynamic.html#a266c93347cd6fb48d564c9d12ec26059">SnapTimeSyncDynamic</a>.</p>
 
 </div>
 </div>
@@ -187,6 +205,33 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &qu
 </table>
 </div><div class="memdoc">
 <p>Provides the effective delay to be used (Mesage buffer lag - decoding/playback time) </p>
+
+</div>
+</div>
+<a id="af8303d863006ab5b759a4e1fa8bb0e39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8303d863006ab5b759a4e1fa8bb0e39">&#9670;&nbsp;</a></span>setInterval()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setInterval </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>interval</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Defines the interval that is used to adjust the sample rate: 10 means every 10 updates. </p>
 
 </div>
 </div>

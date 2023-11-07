@@ -184,8 +184,8 @@ $(function() {
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="comment">// do nothing</span></div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> doLoop() {}</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> getTimeSync() {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordflow">return</span> p_snap_time_sync;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; snapTimeSync() {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordflow">return</span> *p_snap_time_sync;</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  }</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keyword">protected</span>:</div>
@@ -233,60 +233,61 @@ $(function() {
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keyword">auto</span> delay_ms = <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>();</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordflow">if</span> (!is_sync_started) {</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      snap_time_sync.begin(audio_info.sample_rate);</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="comment">// start audio when first package in the future becomes valid</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      result = synchronizeOnStart(delay_ms);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <span class="comment">// calculate avg delay</span></div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      snap_time_sync.addDelay(delay_ms);</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      <span class="keywordflow">if</span> (snap_time_sync.isSync()) {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="comment">// update speed</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordtype">float</span> current_factor = <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>();</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordtype">float</span> new_factor = snap_time_sync.getFactor();</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">if</span> (new_factor != current_factor) {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;          <span class="comment">//setPlaybackFactor(new_factor);</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      }</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  <span class="keywordtype">bool</span> synchronizeOnStart(<span class="keywordtype">int</span> delay_ms) {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">if</span> (delay_ms &lt; 0) {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;      <span class="comment">// ignore the data and report it as processed</span></div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;audio data expired: delay %d&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      result = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (delay_ms &gt; 100000) {</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;invalid delay: %d ms&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      result = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      <span class="comment">// wait for the audio to become valid</span></div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;starting after %d ms&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      delay(delay_ms);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      is_sync_started = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;      result = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  }</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno"><a class="line" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">  235</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>() {</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keyword">auto</span> msg_time = snap_time.toMillis(header.sec, header.usec);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keyword">auto</span> server_time = snap_time.<a class="code" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>();</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="comment">// wait for the audio to become valid</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">int</span> diff_ms = msg_time - server_time;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">int</span> delay_ms = diff_ms + p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">getStartDelay</a>();</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordflow">return</span> delay_ms;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  }</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;};</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; ts = *p_snap_time_sync;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">if</span> (!is_sync_started) {</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      ts.begin(audio_info.sample_rate);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      <span class="comment">// start audio when first package in the future becomes valid</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      result = synchronizeOnStart(delay_ms);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <span class="comment">// calculate avg delay</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      ts.<a class="code" href="class_snap_time_sync.html#a57a79141a526db26aff2964f31b60a06">addDelay</a>(delay_ms);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      <span class="keywordflow">if</span> (ts.isSync()) {</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="comment">// update speed</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordtype">float</span> current_factor = <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>();</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordtype">float</span> new_factor = p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">getFactor</a>();</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        <span class="keywordflow">if</span> (new_factor != current_factor) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;          <a class="code" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">setPlaybackFactor</a>(new_factor);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keywordtype">bool</span> synchronizeOnStart(<span class="keywordtype">int</span> delay_ms) {</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">if</span> (delay_ms &lt; 0) {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;      <span class="comment">// ignore the data and report it as processed</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;audio data expired: delay %d&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;      result = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (delay_ms &gt; 100000) {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;invalid delay: %d ms&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;      result = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      <span class="comment">// wait for the audio to become valid</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;starting after %d ms&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      delay(delay_ms);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;      is_sync_started = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;      result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  }</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno"><a class="line" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">  236</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>() {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keyword">auto</span> msg_time = snap_time.toMillis(header.sec, header.usec);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keyword">auto</span> server_time = snap_time.<a class="code" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>();</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="comment">// wait for the audio to become valid</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">int</span> diff_ms = msg_time - server_time;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordtype">int</span> delay_ms = diff_ms + p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">getStartDelay</a>();</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">return</span> delay_ms;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  }</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;};</div>
 <div class="ttc" id="aclass_snap_output_html"><div class="ttname"><a href="class_snap_output.html">SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:22</div></div>
 <div class="ttc" id="aclass_snap_output_html_a06bd6bff6dee7be92784189ff0fae5fb"><div class="ttname"><a href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">SnapOutput::audioBegin</a></div><div class="ttdeci">bool audioBegin(uint32_t sample_rate, uint8_t channels, uint8_t bits)</div><div class="ttdoc">setup of all audio objects</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:94</div></div>
-<div class="ttc" id="aclass_snap_output_html_a10297964d6abd0cffcb68332fff761b5"><div class="ttname"><a href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">SnapOutput::getDelayMs</a></div><div class="ttdeci">int getDelayMs()</div><div class="ttdoc">Calculate the delay in ms.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:235</div></div>
+<div class="ttc" id="aclass_snap_output_html_a10297964d6abd0cffcb68332fff761b5"><div class="ttname"><a href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">SnapOutput::getDelayMs</a></div><div class="ttdeci">int getDelayMs()</div><div class="ttdoc">Calculate the delay in ms.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:236</div></div>
 <div class="ttc" id="aclass_snap_output_html_a1d59a107c6918cdc9a17b92f6cd4e136"><div class="ttname"><a href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">SnapOutput::volume</a></div><div class="ttdeci">float volume()</div><div class="ttdoc">provides the actual volume</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:67</div></div>
 <div class="ttc" id="aclass_snap_output_html_a27459cee4bd97a6ac4a09aec45cd3bbd"><div class="ttname"><a href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">SnapOutput::setMute</a></div><div class="ttdeci">void setMute(bool mute)</div><div class="ttdoc">mute / unmute</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:70</div></div>
 <div class="ttc" id="aclass_snap_output_html_a35c7533999826a3706e97f99442d4c7e"><div class="ttname"><a href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">SnapOutput::setVolume</a></div><div class="ttdeci">void setVolume(float vol)</div><div class="ttdoc">Adjust the volume.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:60</div></div>
@@ -304,9 +305,11 @@ $(function() {
 <div class="ttc" id="aclass_snap_output_html_af8e0a63ec718201627220299012e654f"><div class="ttname"><a href="class_snap_output.html#af8e0a63ec718201627220299012e654f">SnapOutput::end</a></div><div class="ttdeci">virtual void end(void)</div><div class="ttdoc">Ends the processing and releases the memory.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:57</div></div>
 <div class="ttc" id="aclass_snap_time_html"><div class="ttname"><a href="class_snap_time.html">SnapTime</a></div><div class="ttdoc">We use the the sys/time functions to represent the server time. The local time will be measured with ...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:15</div></div>
 <div class="ttc" id="aclass_snap_time_html_a2d46ea8f99a7fe6583f6d72a5f9c9afa"><div class="ttname"><a href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">SnapTime::serverMillis</a></div><div class="ttdeci">uint32_t serverMillis()</div><div class="ttdoc">Provides the current server time in ms.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:56</div></div>
-<div class="ttc" id="aclass_snap_time_sync_dynamic_html"><div class="ttname"><a href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a></div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:94</div></div>
-<div class="ttc" id="aclass_snap_time_sync_html"><div class="ttname"><a href="class_snap_time_sync.html">SnapTimeSync</a></div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:15</div></div>
-<div class="ttc" id="aclass_snap_time_sync_html_a8a84aacea77de2dfdc9827cb7f71c735"><div class="ttname"><a href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">SnapTimeSync::getStartDelay</a></div><div class="ttdeci">int getStartDelay()</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:61</div></div>
+<div class="ttc" id="aclass_snap_time_sync_dynamic_html"><div class="ttname"><a href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a></div><div class="ttdoc">Dynamically adjusts the effective playback sample rate.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:98</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html"><div class="ttname"><a href="class_snap_time_sync.html">SnapTimeSync</a></div><div class="ttdoc">Abstract Time Synchronization The delay has a big variablility: therefore we calculate the avg.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:14</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_a47e677c2396350208f1a2499fced812a"><div class="ttname"><a href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">SnapTimeSync::getFactor</a></div><div class="ttdeci">virtual float getFactor()=0</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_a57a79141a526db26aff2964f31b60a06"><div class="ttname"><a href="class_snap_time_sync.html#a57a79141a526db26aff2964f31b60a06">SnapTimeSync::addDelay</a></div><div class="ttdeci">void addDelay(int delay)</div><div class="ttdoc">Register the delay.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:33</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_a8a84aacea77de2dfdc9827cb7f71c735"><div class="ttname"><a href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">SnapTimeSync::getStartDelay</a></div><div class="ttdeci">int getStartDelay()</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:69</div></div>
 <div class="ttc" id="astruct_snap_audio_header_html"><div class="ttname"><a href="struct_snap_audio_header.html">SnapAudioHeader</a></div><div class="ttdoc">Information about the next bucket.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

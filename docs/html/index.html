@@ -83,7 +83,7 @@ Description</h2>
 <p>I have converted the <a href="https://github.com/jorgenkraghjakobsen/snapclient">snapclient</a> from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Example Arduino Sketch</h2>
-<p>Here is an example Arduino sketch that uses the Opus codec and outputs the audio with I2S:</p>
+<p>Here is an example Arduino sketch that uses the Wifi as communication API, the Opus codec and outputs the audio with I2S:</p>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">#include &quot;AudioTools.h&quot;</div>
 <div class="line">#include &quot;SnapClient.h&quot;</div>
@@ -93,7 +93,8 @@ Example Arduino Sketch</h2>
 <div class="line"> </div>
 <div class="line">OpusAudioDecoder opus;</div>
 <div class="line">I2SStream out;</div>
-<div class="line">SnapClient client(out, opus);</div>
+<div class="line">WiFiClient wifi;</div>
+<div class="line">SnapClient client(wifi, out, opus);</div>
 <div class="line"> </div>
 <div class="line">void setup() {</div>
 <div class="line">  Serial.begin(115200);</div>

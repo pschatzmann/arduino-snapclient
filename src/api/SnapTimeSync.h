@@ -3,15 +3,14 @@
 #include "SnapLogger.h"
 #include "SnapTime.h"
 
-/***
- * @brief Abstract time synchonrization class: The reported delays have have a
- * big variablility: Therefore we use the avarage delay to calculate the
- * speed-up/slow-down resampling factor.
+/**
+ * @brief Abstract Time Synchronization
+ * The delay has a big variablility: therefore we calculate the avg.
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
  * @copyright Copyright (c) 2023
- */
+*/
 class SnapTimeSync {
 public:
   SnapTimeSync(int processingLag = CONFIG_PLAYBACK_LAG_MS, int interval = 10) {
@@ -89,14 +88,13 @@ protected:
   int avgDelay() { return (delay_total / delay_count) - getStartDelay(); }
 };
 
-/***
+/**
  * @brief Dynamically adjusts the effective playback sample rate
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
  * @copyright Copyright (c) 2023
- */
-
+ **/
 class SnapTimeSyncDynamic : public SnapTimeSync {
 public:
   SnapTimeSyncDynamic(int processingLag = CONFIG_PLAYBACK_LAG_MS,
@@ -113,14 +111,13 @@ public:
   }
 };
 
-/***
+/**
  * @brief Uses predefined fixed factor
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
  * @copyright Copyright (c) 2023
- */
-
+ **/
 class SnapTimeSyncFixed : public SnapTimeSync {
 public:
   SnapTimeSyncFixed(float factor = 1.0,
