@@ -152,8 +152,8 @@ protected:
   bool is_mute = false;
   SnapAudioHeader header;
   SnapTime &snap_time = SnapTime::instance();
-  SnapTimeSyncFixed time_sync_dynamic;
-  SnapTimeSync *p_snap_time_sync = &time_sync_dynamic;
+  SnapTimeSyncDynamic time_sync_default;
+  SnapTimeSync *p_snap_time_sync = &time_sync_default;
   bool is_sync_started = false;
 
   /// to speed up or slow down playback
@@ -198,8 +198,6 @@ protected:
       // start audio when first package in the future becomes valid
       result = synchronizeOnStart(delay_ms);
     } else {
-      // calculate avg delay
-      ts.addDelay(delay_ms);
 
       if (ts.isSync()) {
         // update speed

@@ -27,6 +27,16 @@ struct SnapAudioHeader {
   }
 };
 
+struct SnapTimePoints {
+  uint32_t local_ms = millis();
+  uint32_t server_ms;
+  SnapTimePoints() = default;
+  SnapTimePoints(uint32_t serverMs){
+    server_ms = serverMs;
+  }
+};
+
+
 inline void checkHeap() {
 #if CONFIG_CHECK_HEAP && defined(ESP32)
   heap_caps_check_integrity_all(true);

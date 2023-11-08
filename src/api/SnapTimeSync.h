@@ -4,8 +4,7 @@
 #include "SnapTime.h"
 
 /**
- * @brief Abstract Time Synchronization
- * The delay has a big variablility: therefore we calculate the avg.
+ * @brief Abstract (Common) Time Synchronization Logic
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -19,35 +18,27 @@ public:
   }
 
   void begin(int rate) {
-    delay_count = 0;
+    update_count = 0;
     sample_rate = rate;
-    delays.resize(interval);
-    is_active = false;
+  }
+
+  void updateServerTime(uint32_t serverMillis) {
+    update_count++;
+    active = true;
+    SnapTimePoints tp{serverMillis};
+    if (time_points.size()>=interval){
+      time_points.pop_front();
+    }
+    time_points.push_back(tp);
   }
 
   /// Calculate the resampling factor: with a positive delay we play too fast
   /// and need to slow down
   virtual float getFactor() = 0;
 
-  /// Register the delay
-  void addDelay(int delay) {
-    if (abs(delay) > 5000)
-      return;
-    // ESP_LOGD(TAG, "delay: %d", delay);
-    if (is_active){
-      delays[delay_count % interval] = delay;
-    }
-    delay_count++;
-    // ignore first
-    if (!is_active && delay_count > 50) {
-      is_active = true;
-      delay_count = 0;
-    }
-  }
-  // returns true when we need to update the rate: we update at fixed interval
-  // times
   bool isSync() {
-    bool result = is_active && delay_count > 0 && delay_count % interval == 0;
+    bool result = active && update_count > 2 && update_count % interval == 0;
+    active = false;
     return result;
   }
 
@@ -65,7 +56,7 @@ public:
   /// every 10 updates.
   void setInterval(int interval) { this->interval = interval; }
 
-  /// Provides the effective delay to be used (Mesage buffer lag -
+  /// Provides the effective delay to be used (Message buffer lag -
   /// decoding/playback time)
   int getStartDelay() {
     int delay = std::max(0, message_buffer_delay_ms - processing_lag);
@@ -75,27 +66,20 @@ public:
 
 protected:
   const char *TAG = "SnapTimeSync";
-  uint64_t delay_count = 0;
+  uint64_t update_count = 0;
   float sample_rate = 48000;
   int interval = 10;
-  bool is_active = false;
-  Vector<int> delays;
+  bool active = false;
+  Vector<SnapTimePoints> time_points;
   // start delay
   uint16_t processing_lag = 0;
   uint16_t message_buffer_delay_ms = 0;
 
-  // provides the effective avg delay corrected by the start delay (so that the
-  // to be avg is 0)
-  int avgDelay() { 
-    int64_t delay_total = 0;
-    for (int j=0;j<interval; j++){
-      delay_total += delays[j];
-    }
-    return (delay_total / interval) - getStartDelay(); }
 };
 
 /**
- * @brief Dynamically adjusts the effective playback sample rate
+ * @brief Dynamically adjusts the effective playback sample rate based on the differences
+ * of the local and server clock.
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -106,13 +90,16 @@ public:
   SnapTimeSyncDynamic(int processingLag = CONFIG_PROCESSING_TIME_MS,
                       int interval = 10)
       : SnapTimeSync(processingLag, interval) {}
-  /// Calculate the resampling factor: with a positive delay we play too fast
-  /// and need to slow down
+
   float getFactor() {
-    int delay = avgDelay();
-    float samples_diff = sample_rate * delay / 1000.0;
-    float result_factor = sample_rate / (sample_rate + samples_diff);
-    ESP_LOGI(TAG, "delay ms: %d -> factor: %f", delay, result_factor);
+    int last_idx = time_points.size()-1;
+    if (last_idx <=1) return 1.0;
+    float timespan_local_ms = time_points[last_idx].local_ms - time_points[0].local_ms;
+    float timespan_server_ms = time_points[last_idx].server_ms - time_points[0].server_ms;
+    if (timespan_local_ms == 0) return 1.0;
+    // if server time span is smaller then local, local runs faster and needs to be slowed down
+    float result_factor = timespan_server_ms / timespan_local_ms;    
+    ESP_LOGI(TAG, "=> adjusting playback speed by factor: %f", result_factor);
     return result_factor;
   }
 };

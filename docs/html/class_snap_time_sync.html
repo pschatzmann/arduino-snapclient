@@ -63,7 +63,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_snap_time_sync-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -71,7 +70,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Abstract Time Synchronization The delay has a big variablility: therefore we calculate the avg.  
+<p>Abstract (Common) Time Synchronization Logic.  
  <a href="class_snap_time_sync.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_snap_time_sync_8h_source.html">SnapTimeSync.h</a>&gt;</code></p>
@@ -81,20 +80,16 @@ Inheritance diagram for SnapTimeSync:</div>
  <div class="center">
   <img src="class_snap_time_sync.png" usemap="#SnapTimeSync_map" alt=""/>
   <map id="SnapTimeSync_map" name="SnapTimeSync_map">
-<area href="class_snap_time_sync_dynamic.html" title="Dynamically adjusts the effective playback sample rate." alt="SnapTimeSyncDynamic" shape="rect" coords="0,56,145,80"/>
+<area href="class_snap_time_sync_dynamic.html" title="Dynamically adjusts the effective playback sample rate based on the differences of the local and serv..." alt="SnapTimeSyncDynamic" shape="rect" coords="0,56,145,80"/>
 <area href="class_snap_time_sync_fixed.html" title="Uses predefined fixed factor." alt="SnapTimeSyncFixed" shape="rect" coords="155,56,300,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae52af1cc32e1d133bcf97f384ac30cf6"><td class="memItemLeft" align="right" valign="top"><a id="ae52af1cc32e1d133bcf97f384ac30cf6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SnapTimeSync</b> (int processingLag=CONFIG_PLAYBACK_LAG_MS, int interval=10)</td></tr>
-<tr class="separator:ae52af1cc32e1d133bcf97f384ac30cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57a79141a526db26aff2964f31b60a06"><td class="memItemLeft" align="right" valign="top"><a id="a57a79141a526db26aff2964f31b60a06"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a57a79141a526db26aff2964f31b60a06">addDelay</a> (int delay)</td></tr>
-<tr class="memdesc:a57a79141a526db26aff2964f31b60a06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the delay. <br /></td></tr>
-<tr class="separator:a57a79141a526db26aff2964f31b60a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32db50c17138a0d10596390971ced55"><td class="memItemLeft" align="right" valign="top"><a id="aa32db50c17138a0d10596390971ced55"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SnapTimeSync</b> (int processingLag=CONFIG_PROCESSING_TIME_MS, int interval=10)</td></tr>
+<tr class="separator:aa32db50c17138a0d10596390971ced55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4574307f85a0f36e8f25910d3361f84e"><td class="memItemLeft" align="right" valign="top"><a id="a4574307f85a0f36e8f25910d3361f84e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> (int rate)</td></tr>
 <tr class="separator:a4574307f85a0f36e8f25910d3361f84e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,27 +108,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:ac43c3135fd435d8006a5d48d2b13625c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a263ff3a9232682c353a845a6f87fcbf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a263ff3a9232682c353a845a6f87fcbf6">setProcessingLag</a> (int lag)</td></tr>
 <tr class="separator:a263ff3a9232682c353a845a6f87fcbf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:afc9a229f5d95a18bb45dbb2093f2aff3"><td class="memItemLeft" align="right" valign="top"><a id="afc9a229f5d95a18bb45dbb2093f2aff3"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>avgDelay</b> ()</td></tr>
-<tr class="separator:afc9a229f5d95a18bb45dbb2093f2aff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac6bf283da9abee1cd6814d5f6ba8a6a"><td class="memItemLeft" align="right" valign="top"><a id="aac6bf283da9abee1cd6814d5f6ba8a6a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>updateServerTime</b> (uint32_t serverMillis)</td></tr>
+<tr class="separator:aac6bf283da9abee1cd6814d5f6ba8a6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:aa930da9844af61eddde5b87bf883f4bb"><td class="memItemLeft" align="right" valign="top"><a id="aa930da9844af61eddde5b87bf883f4bb"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>delay_count</b> = 0</td></tr>
-<tr class="separator:aa930da9844af61eddde5b87bf883f4bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa60006ddd00340ca5e7d5450d5ecd0ac"><td class="memItemLeft" align="right" valign="top"><a id="aa60006ddd00340ca5e7d5450d5ecd0ac"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>delay_total</b> = 0</td></tr>
-<tr class="separator:aa60006ddd00340ca5e7d5450d5ecd0ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03c996f9fcf0e10baeb3e700be0c409a"><td class="memItemLeft" align="right" valign="top"><a id="a03c996f9fcf0e10baeb3e700be0c409a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>active</b> = false</td></tr>
+<tr class="separator:a03c996f9fcf0e10baeb3e700be0c409a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0c690118932b32ef40a74bb6a259acd"><td class="memItemLeft" align="right" valign="top"><a id="ae0c690118932b32ef40a74bb6a259acd"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>interval</b> = 10</td></tr>
 <tr class="separator:ae0c690118932b32ef40a74bb6a259acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a407c3efba665d276a38229f905bef352"><td class="memItemLeft" align="right" valign="top"><a id="a407c3efba665d276a38229f905bef352"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_active</b> = false</td></tr>
-<tr class="separator:a407c3efba665d276a38229f905bef352"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4faa2d902943bcfcd29cdadd84a43799"><td class="memItemLeft" align="right" valign="top"><a id="a4faa2d902943bcfcd29cdadd84a43799"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>message_buffer_delay_ms</b> = 0</td></tr>
 <tr class="separator:a4faa2d902943bcfcd29cdadd84a43799"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,9 +132,15 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>sample_rate</b> = 48
 <tr class="memitem:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memItemLeft" align="right" valign="top"><a id="a5a85b9c772bbeb480b209a3e6ea92b4c"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapTimeSync&quot;</td></tr>
 <tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecd2d2495edbbf0df7c303b6eb5010d1"><td class="memItemLeft" align="right" valign="top"><a id="aecd2d2495edbbf0df7c303b6eb5010d1"></a>
+Vector&lt; <a class="el" href="struct_snap_time_points.html">SnapTimePoints</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>time_points</b></td></tr>
+<tr class="separator:aecd2d2495edbbf0df7c303b6eb5010d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a492bcf651e98b8619b46aec57290174f"><td class="memItemLeft" align="right" valign="top"><a id="a492bcf651e98b8619b46aec57290174f"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>update_count</b> = 0</td></tr>
+<tr class="separator:a492bcf651e98b8619b46aec57290174f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract Time Synchronization The delay has a big variablility: therefore we calculate the avg. </p>
+<div class="textblock"><p>Abstract (Common) Time Synchronization Logic. </p>
 <dl class="section author"><dt>Author</dt><dd>Phil Schatzmann </dd></dl>
 <dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-10-28 </dd></dl>
@@ -204,7 +196,7 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &qu
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Provides the effective delay to be used (Mesage buffer lag - decoding/playback time) </p>
+<p>Provides the effective delay to be used (Message buffer lag - decoding/playback time) </p>
 
 </div>
 </div>

@@ -379,9 +379,15 @@ protected:
       return false;
     }
     switch (codec_from_server) {
+    case FLAC:
+    case OGG:
+    case VORBIS:
     case OPUS:
     case PCM:
       wireChunk(wire_chunk_message);
+      break;
+    case NO_CODEC:
+      ESP_LOGE(TAG, "Invalid codedc");
       break;
     }
     //wire_chunk_message_free(&wire_chunk_message);
@@ -456,7 +462,12 @@ protected:
     trx.tv_sec = base_message.received.sec;
     trx.tv_usec = base_message.received.usec;
     
+    // for time management
     snap_time.updateServerTime(trx);
+    // for synchronization
+    p_snap_output->snapTimeSync().updateServerTime(snap_time.toMillis(trx));
+    
+
     int64_t time_diff = snap_time.timeDifferenceMs(trx, ttx);
     uint32_t time_diff_int = time_diff;
     assert(time_diff_int==time_diff);
