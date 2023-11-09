@@ -19,18 +19,9 @@ public:
 
   void begin(int rate) {
     update_count = 0;
-    sample_rate = rate;
   }
 
-  void updateServerTime(uint32_t serverMillis) {
-    update_count++;
-    active = true;
-    SnapTimePoints tp{serverMillis};
-    if (time_points.size()>=interval){
-      time_points.pop_front();
-    }
-    time_points.push_back(tp);
-  }
+  virtual void updateServerTime(uint32_t serverMillis) = 0;
 
   /// Calculate the resampling factor: with a positive delay we play too fast
   /// and need to slow down
@@ -66,11 +57,10 @@ public:
 
 protected:
   const char *TAG = "SnapTimeSync";
+  // resampling speed
   uint64_t update_count = 0;
-  float sample_rate = 48000;
   int interval = 10;
   bool active = false;
-  Vector<SnapTimePoints> time_points;
   // start delay
   uint16_t processing_lag = 0;
   uint16_t message_buffer_delay_ms = 0;
@@ -79,7 +69,7 @@ protected:
 
 /**
  * @brief Dynamically adjusts the effective playback sample rate based on the differences
- * of the local and server clock.
+ * of the local and server clock between the different intervals
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -90,6 +80,16 @@ public:
   SnapTimeSyncDynamic(int processingLag = CONFIG_PROCESSING_TIME_MS,
                       int interval = 10)
       : SnapTimeSync(processingLag, interval) {}
+
+  void updateServerTime(uint32_t serverMillis) override {
+    update_count++;
+    active = true;
+    SnapTimePoints tp{serverMillis};
+    if (time_points.size()>=interval){
+      time_points.pop_front();
+    }
+    time_points.push_back(tp);
+  }
 
   float getFactor() {
     int last_idx = time_points.size()-1;
@@ -102,7 +102,50 @@ public:
     ESP_LOGI(TAG, "=> adjusting playback speed by factor: %f", result_factor);
     return result_factor;
   }
+protected:
+  Vector<SnapTimePoints> time_points;
 };
+
+/**
+ * @brief Dynamically adjusts the effective playback sample rate based on the differences
+ * of the local and server clock since the start
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2023-10-28
+ * @copyright Copyright (c) 2023
+ **/
+class SnapTimeSyncDynamicSinceStart : public SnapTimeSync {
+public:
+  SnapTimeSyncDynamicSinceStart(int processingLag = CONFIG_PROCESSING_TIME_MS,
+                      int interval = 10)
+      : SnapTimeSync(processingLag, interval) {}
+
+  void updateServerTime(uint32_t serverMillis) override {
+    if (update_count == 0){
+      start_time = SnapTimePoints(serverMillis)
+    }
+    current_time = SnapTimePoints(serverMillis)
+    update_count++;
+    active = true;
+  }
+
+  float getFactor() {
+    int last_idx = time_points.size()-1;
+    if (last_idx <=1) return 1.0;
+    float timespan_local_ms = current_time.local_ms - start_time.local_ms;
+    float timespan_server_ms = current_time.server_ms - start_time.server_ms;
+    if (timespan_local_ms == 0) return 1.0;
+    // if server time span is smaller then local, local runs faster and needs to be slowed down
+    float result_factor = timespan_server_ms / timespan_local_ms;    
+    ESP_LOGI(TAG, "=> adjusting playback speed by factor: %f", result_factor);
+    return result_factor;
+  }
+protected:
+  Vector<SnapTimePoints> time_points;
+  SnapTimePoints start_time;
+  SnapTimePoints current_time;
+};
+
 
 /**
  * @brief Uses predefined fixed factor
@@ -119,6 +162,9 @@ public:
       : SnapTimeSync(processingLag, interval) {
     resample_factor = factor;
   }
+
+  void updateServerTime(uint32_t serverMillis) override {}
+
   float getFactor() { return resample_factor; }
 
 protected:
