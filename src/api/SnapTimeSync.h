@@ -122,9 +122,9 @@ public:
 
   void updateServerTime(uint32_t serverMillis) override {
     if (update_count == 0){
-      start_time = SnapTimePoints(serverMillis)
+      start_time = SnapTimePoints(serverMillis);
     }
-    current_time = SnapTimePoints(serverMillis)
+    current_time = SnapTimePoints(serverMillis);
     update_count++;
     active = true;
   }
