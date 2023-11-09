@@ -4,7 +4,9 @@
 #include "SnapTime.h"
 
 /**
- * @brief Abstract (Common) Time Synchronization Logic
+ * @brief Abstract (Common) Time Synchronization Logic which consists of the
+ * startup synchronization and the local to server clock synchronization which
+ * adjusts the sampling rate.
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -17,16 +19,19 @@ public:
     setProcessingLag(processingLag);
   }
 
+  /// Starts the processing
   void begin(int rate) {
     update_count = 0;
   }
 
+  /// Records the actual server time in millisecondes
   virtual void updateServerTime(uint32_t serverMillis) = 0;
 
   /// Calculate the resampling factor: with a positive delay we play too fast
   /// and need to slow down
   virtual float getFactor() = 0;
 
+  /// Returns true if a synchronization (update of the sampling rate) is needed.
   bool isSync() {
     bool result = active && update_count > 2 && update_count % interval == 0;
     active = false;
@@ -96,7 +101,10 @@ public:
     if (last_idx <=1) return 1.0;
     float timespan_local_ms = time_points[last_idx].local_ms - time_points[0].local_ms;
     float timespan_server_ms = time_points[last_idx].server_ms - time_points[0].server_ms;
-    if (timespan_local_ms == 0) return 1.0;
+    if (timespan_local_ms == 0.0 || timespan_server_ms == 0.0) {
+      ESP_LOGE(TAG, "Could not determine clock differences");
+      return 1.0;
+    }
     // if server time span is smaller then local, local runs faster and needs to be slowed down
     float result_factor = timespan_server_ms / timespan_local_ms;    
     ESP_LOGI(TAG, "=> adjusting playback speed by factor: %f", result_factor);
@@ -130,18 +138,18 @@ public:
   }
 
   float getFactor() {
-    int last_idx = time_points.size()-1;
-    if (last_idx <=1) return 1.0;
     float timespan_local_ms = current_time.local_ms - start_time.local_ms;
     float timespan_server_ms = current_time.server_ms - start_time.server_ms;
-    if (timespan_local_ms == 0) return 1.0;
+    if (timespan_local_ms == 0.0 || timespan_server_ms == 0.0) {
+      ESP_LOGE(TAG, "Could not determine clock differences");
+      return 1.0;
+    }
     // if server time span is smaller then local, local runs faster and needs to be slowed down
     float result_factor = timespan_server_ms / timespan_local_ms;    
     ESP_LOGI(TAG, "=> adjusting playback speed by factor: %f", result_factor);
     return result_factor;
   }
 protected:
-  Vector<SnapTimePoints> time_points;
   SnapTimePoints start_time;
   SnapTimePoints current_time;
 };

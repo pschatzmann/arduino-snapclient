@@ -5,8 +5,9 @@
 #include <sys/time.h>
 
 /**
- * @brief We use the the sys/time functions to represent the server time.
+ * @brief The the sys/time functions are used to represent the server time.
  * The local time will be measured with the help of the Arduino millis() method.
+ * This class provides the basic functionality to translate between local and server time.
  * @author Phil Schatzmann
  * @version 0.1
  * @date 2023-10-28
@@ -16,22 +17,7 @@ class SnapTime {
 public:
   static SnapTime &instance() {
     static SnapTime self;
-
     return self;
-  }
-
-  // Calculat the difference between 2 timeval
-  timeval timeDifference(timeval t1, timeval t2) {
-    timeval result;
-    timersub(&t1, &t2, &result);
-    return result;
-  }
-
-  // Calculat the difference between 2 timeval -> result in ms
-  uint32_t timeDifferenceMs(timeval t1, timeval t2) {
-    timeval result;
-    timersub(&t1, &t2, &result);
-    return toMillis(result);
   }
 
   /// Provides the actual time as timeval
@@ -44,12 +30,6 @@ public:
       result.tv_usec = (ms - (result.tv_sec * 1000)) * 1000;
     }
     return result;
-  }
-
-  /// Record the last time difference between client and server
-  void setTimeDifferenceClientServerMs(uint32_t diff) {
-    time_diff = diff;
-    time_update_count++;
   }
 
   /// Provides the current server time in ms
@@ -83,10 +63,30 @@ public:
     return true;
   }
 
+  /// Record the last time difference between client and server
+  void setTimeDifferenceClientServerMs(uint32_t diff) {
+    time_diff = diff;
+    time_update_count++;
+  }
+
   // updates the time difference between the local and server time
   void updateServerTime(timeval &server) {
     server_ms = millis();
     server_time = server;
+  }
+
+  // Calculat the difference between 2 timeval
+  timeval timeDifference(timeval t1, timeval t2) {
+    timeval result;
+    timersub(&t1, &t2, &result);
+    return result;
+  }
+
+  // Calculat the difference between 2 timeval -> result in ms
+  uint32_t timeDifferenceMs(timeval t1, timeval t2) {
+    timeval result;
+    timersub(&t1, &t2, &result);
+    return toMillis(result);
   }
 
 #ifdef ESP32
