@@ -205,7 +205,7 @@ enum MessageType {
   SNAPCAST_MESSAGE_LAST = SNAPCAST_MESSAGE_STREAM_TAGS
 };
 
-/// @brief sec & usec
+/// @brief Time as sec & usec
 struct tv_t {
   int32_t sec;
   int32_t usec;
