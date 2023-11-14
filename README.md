@@ -6,6 +6,7 @@
 
 ### Feature list
 
+- Header only C++ implementation
 - Opus and PCM decoding are currently supported
 - Auto connect to snapcast server on network
 - The functionality has been tested on an ESP32

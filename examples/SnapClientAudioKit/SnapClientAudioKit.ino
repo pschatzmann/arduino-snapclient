@@ -18,6 +18,7 @@ AudioKitStream out;
 //WAVDecoder pcm;
 OpusAudioDecoder opus;
 WiFiClient wifi;
+SnapTimeSyncDynamic synch(172, 10); // optional configuratioin
 SnapClient client(wifi, out, opus);
 
 void setup() {
@@ -38,7 +39,7 @@ void setup() {
   out.setVolume(1.0);
 
   // start snap client
-  client.begin();
+  client.begin(synch);
 }
 
 void loop() {

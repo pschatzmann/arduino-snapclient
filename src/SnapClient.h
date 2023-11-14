@@ -79,6 +79,12 @@ public:
   }
 
   /// Starts the processing
+  bool begin(SnapTimeSync &timeSync) {
+    setSnapTimeSync(timeSync);
+    return begin();
+  }
+
+  /// Starts the processing
   bool begin() {
 #if defined(ESP32)
     if (WiFi.status() != WL_CONNECTED) {
