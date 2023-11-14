@@ -1,5 +1,5 @@
 /**
- * Global Shard Objects
+ * Global Shared Objects
  */
 
 #pragma once

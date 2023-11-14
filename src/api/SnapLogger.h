@@ -1,3 +1,7 @@
+/**
+ * Logging: on the ESP32 we use the provided logger. On other platforms we write to stderr
+ */
+
 #pragma once
 
 #ifdef ESP32

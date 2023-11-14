@@ -1,3 +1,7 @@
+/**
+ * Snapcast Protocol
+ */
+
 #pragma once
 
 #include "SnapConfig.h"
