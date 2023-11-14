@@ -92,8 +92,8 @@ protected:
   int16_t frame_size = 512;
   uint16_t channels = 2;
   codec_type codec_from_server = NO_CODEC;
-  base_message_t base_message;
-  time_message_t time_message;
+  SnapMessageBase base_message;
+  SnapMessageTime time_message;
   uint32_t client_state_muted = 0;
   char *start = nullptr;
   int size = 0;
@@ -225,7 +225,7 @@ protected:
     base_message.size = 0x0;
 
     // setup hello_message
-    hello_message_t hello_message;
+    SnapMessageHallo hello_message;
     hello_message.mac = mac_address;
     hello_message.hostname = CONFIG_SNAPCAST_CLIENT_NAME;
     hello_message.version = "0.0.2";
@@ -299,7 +299,7 @@ protected:
 
   bool processMessageCodecHeader() {
     ESP_LOGD(TAG, "start");
-    codec_header_message_t codec_header_message;
+    SnapMessageCodecHeader codec_header_message;
     start = &send_receive_buffer[0];
     int result = codec_header_message.deserialize(start, size);
     if (result) {
@@ -357,7 +357,7 @@ protected:
   bool processMessageWireChunk() {
     ESP_LOGD(TAG, "start");
     start = &send_receive_buffer[0];
-    wire_chunk_message_t wire_chunk_message;
+    SnapMessageWireChunk wire_chunk_message;
     memset(&wire_chunk_message, 0, sizeof(wire_chunk_message));
     int result = wire_chunk_message.deserialize(start, size);
     if (result) {
@@ -380,7 +380,7 @@ protected:
     return true;
   }
 
-  bool wireChunk(wire_chunk_message_t &wire_chunk_message) {
+  bool wireChunk(SnapMessageWireChunk &wire_chunk_message) {
     ESP_LOGD(TAG, "start");
     SnapAudioHeader header;
     header.size = wire_chunk_message.size;
@@ -401,7 +401,7 @@ protected:
 
   bool processMessageServerSettings() {
     ESP_LOGD(TAG, "start");
-    server_settings_message_t server_settings_message;
+    SnapMessageServerSettings server_settings_message;
 
     // The first 4 bytes in the buffer are the size of the string.
     // We don't need this, so we'll shift the entire buffer over 4 bytes

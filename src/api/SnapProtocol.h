@@ -13,7 +13,8 @@
 #define TIME_MESSAGE_SIZE 8
 #define MAX_JSON_LEN 256
 
-struct read_buffer_t {
+/// @brief Buffer to read different data types
+struct SnapReadBuffer {
   const char *buffer;
   size_t size, index;
 
@@ -100,7 +101,8 @@ struct read_buffer_t {
   }
 };
 
-struct write_buffer_t {
+/// @brief Buffer to write different data types
+struct SnapWriteBuffer {
   char *buffer;
   size_t size, index;
 
@@ -187,7 +189,7 @@ struct write_buffer_t {
   }
 };
 
-enum message_type {
+enum MessageType {
   SNAPCAST_MESSAGE_BASE = 0,
   SNAPCAST_MESSAGE_CODEC_HEADER = 1,
   SNAPCAST_MESSAGE_WIRE_CHUNK = 2,
@@ -199,12 +201,14 @@ enum message_type {
   SNAPCAST_MESSAGE_LAST = SNAPCAST_MESSAGE_STREAM_TAGS
 };
 
+/// @brief sec & usec
 struct tv_t {
   int32_t sec;
   int32_t usec;
 };
 
-struct base_message_t {
+/// @brief Snapcast Base Message
+struct SnapMessageBase {
   uint16_t type;
   uint16_t id;
   uint16_t refersTo;
@@ -213,7 +217,7 @@ struct base_message_t {
   uint32_t size;
 
   int serialize(char *data, uint32_t size) {
-    write_buffer_t buffer;
+    SnapWriteBuffer buffer;
     int result = 0;
 
     buffer.begin(data, size);
@@ -231,7 +235,7 @@ struct base_message_t {
   }
 
   int deserialize(const char *data, uint32_t size) {
-    read_buffer_t buffer;
+    SnapReadBuffer buffer;
     int result = 0;
 
     buffer.begin(data, size);
@@ -249,22 +253,9 @@ struct base_message_t {
   }
 };
 
-/**
- *  Sample Hello message
-{
-    "Arch": "x86_64",
-    "ClientName": "Snapclient",
-    "HostName": "my_hostname",
-    "ID": "00:11:22:33:44:55",
-    "Instance": 1,
-    "MAC": "00:11:22:33:44:55",
-    "OS": "Arch Linux",
-    "SnapStreamProtocolVersion": 2,
-    "Version": "0.17.1"
-}
-*/
 
-struct hello_message_t {
+/// @brief Snapcast Hallo Message
+struct SnapMessageHallo {
   const char *mac;
   const char *hostname;
   const char *version;
@@ -301,7 +292,7 @@ struct hello_message_t {
 protected:
   char result[MAX_JSON_LEN];
   char* json_result = result + 4;
-  const char *TAG = "hello_message_t";
+  const char *TAG = "SnapMessageHallo";
   // Removed dependency to json library because of the overhead: this should be good enough!
   // e.g {"MAC":"A8:48:FA:0B:93:40","HostName":"arduino-snapclient","Version":"0.0.2","ClientName":"libsnapcast","OS":"esp32","Arch":"xtensa","Instance":1,"ID":"A8:48:FA:0B:93:40","SnapStreamProtocolVersion":2}
   void to_json() {
@@ -314,7 +305,8 @@ protected:
   }
 };
 
-struct server_settings_message_t {
+/// @brief Snapcast Server Settings Message
+struct SnapMessageServerSettings {
   int32_t buffer_ms = 0;
   int32_t latency = 0;
   uint32_t volume = 0;
@@ -323,7 +315,7 @@ struct server_settings_message_t {
   int deserialize(const char *json) {
     if (json == nullptr)
       return 1;
-    ESP_LOGD("server_settings_message_t", "%s", json);
+    ESP_LOGD("SnapMessageServerSettings", "%s", json);
 
     // Removed dependency to json library: this should be good enough!
     audio_tools::Str json_str(json);
@@ -354,7 +346,8 @@ struct server_settings_message_t {
   }
 };
 
-struct codec_header_message_t {
+/// @brief Snapcast Codec Header Message
+struct SnapMessageCodecHeader {
   std::vector<char> v_codec;
   uint32_t size;
   std::vector<char> v_payload;
@@ -363,7 +356,7 @@ struct codec_header_message_t {
   char *codec() { return &v_codec[0]; }
 
   int deserialize(const char *data, uint32_t size) {
-    read_buffer_t buffer;
+    SnapReadBuffer buffer;
     uint32_t string_size;
     int result = 0;
 
@@ -399,13 +392,14 @@ struct codec_header_message_t {
   }
 };
 
-struct wire_chunk_message_t {
+/// @brief Snapcast Wire Chunk Message
+struct SnapMessageWireChunk {
   tv_t timestamp;
   uint32_t size;
   char *payload = nullptr;
 
   int deserialize(const char *data, uint32_t size) {
-    read_buffer_t buffer;
+    SnapReadBuffer buffer;
     int result = 0;
 
     buffer.begin(data, size);
@@ -430,11 +424,12 @@ struct wire_chunk_message_t {
   }
 };
 
-struct time_message_t {
+/// @brief Snapcast Time Message
+struct SnapMessageTime {
   tv_t latency;
 
   int serialize(char *data, uint32_t size) {
-    write_buffer_t buffer;
+    SnapWriteBuffer buffer;
     int result = 0;
 
     buffer.begin(data, size);
@@ -446,7 +441,7 @@ struct time_message_t {
   }
 
   int deserialize(const char *data, uint32_t size) {
-    read_buffer_t buffer;
+    SnapReadBuffer buffer;
     int result = 0;
 
     buffer.begin(data, size);

@@ -27,6 +27,7 @@ struct SnapAudioHeader {
   }
 };
 
+/// Recording of local_ms and server_ms
 struct SnapTimePoints {
   uint32_t local_ms = millis();
   uint32_t server_ms;

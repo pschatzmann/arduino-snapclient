@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['_7esnapclient_45',['~SnapClient',['../class_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f',1,'SnapClient']]]
+  ['write_55',['write',['../class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f',1,'SnapOutput::write()'],['../class_snap_output_tasks.html#abd01521d9ce6f1eb9caefdcf6260f6da',1,'SnapOutputTasks::write()']]],
+  ['writeheader_56',['writeHeader',['../class_snap_output.html#a86e635e425cf8781cb707183a1648f35',1,'SnapOutput::writeHeader()'],['../class_snap_output_tasks.html#aa7f33a70aea12f712a86ec2725de36e6',1,'SnapOutputTasks::writeHeader()']]]
 ];

@@ -80,7 +80,7 @@ Inheritance diagram for SnapTimeSyncFixed:</div>
  <div class="center">
   <img src="class_snap_time_sync_fixed.png" usemap="#SnapTimeSyncFixed_map" alt=""/>
   <map id="SnapTimeSyncFixed_map" name="SnapTimeSyncFixed_map">
-<area href="class_snap_time_sync.html" title="Abstract (Common) Time Synchronization Logic." alt="SnapTimeSync" shape="rect" coords="0,0,127,24"/>
+<area href="class_snap_time_sync.html" title="Abstract (Common) Time Synchronization Logic which consists of the startup synchronization and the lo..." alt="SnapTimeSync" shape="rect" coords="0,0,127,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -90,14 +90,16 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SnapTimeSyncFixed</b> (float factor=1.0, int processingLag=CONFIG_PROCESSING_TIME_MS, int interval=10)</td></tr>
 <tr class="separator:a154795f8e0efb2fa613cbc59273b4393"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4574307f85a0f36e8f25910d3361f84e"><td class="memItemLeft" align="right" valign="top"><a id="a4574307f85a0f36e8f25910d3361f84e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> (int rate)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a4574307f85a0f36e8f25910d3361f84e">begin</a> (int rate)</td></tr>
+<tr class="memdesc:a4574307f85a0f36e8f25910d3361f84e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the processing. <br /></td></tr>
 <tr class="separator:a4574307f85a0f36e8f25910d3361f84e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a266c93347cd6fb48d564c9d12ec26059"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync_fixed.html#a266c93347cd6fb48d564c9d12ec26059">getFactor</a> ()</td></tr>
 <tr class="separator:a266c93347cd6fb48d564c9d12ec26059"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a84aacea77de2dfdc9827cb7f71c735"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">getStartDelay</a> ()</td></tr>
 <tr class="separator:a8a84aacea77de2dfdc9827cb7f71c735"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae361c9a0939daff16cd8652325124905"><td class="memItemLeft" align="right" valign="top"><a id="ae361c9a0939daff16cd8652325124905"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isSync</b> ()</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905">isSync</a> ()</td></tr>
+<tr class="memdesc:ae361c9a0939daff16cd8652325124905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if a synchronization (update of the sampling rate) is needed. <br /></td></tr>
 <tr class="separator:ae361c9a0939daff16cd8652325124905"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8303d863006ab5b759a4e1fa8bb0e39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#af8303d863006ab5b759a4e1fa8bb0e39">setInterval</a> (int interval)</td></tr>
 <tr class="separator:af8303d863006ab5b759a4e1fa8bb0e39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -107,9 +109,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:ac43c3135fd435d8006a5d48d2b13625c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a263ff3a9232682c353a845a6f87fcbf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync.html#a263ff3a9232682c353a845a6f87fcbf6">setProcessingLag</a> (int lag)</td></tr>
 <tr class="separator:a263ff3a9232682c353a845a6f87fcbf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac6bf283da9abee1cd6814d5f6ba8a6a"><td class="memItemLeft" align="right" valign="top"><a id="aac6bf283da9abee1cd6814d5f6ba8a6a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateServerTime</b> (uint32_t serverMillis)</td></tr>
-<tr class="separator:aac6bf283da9abee1cd6814d5f6ba8a6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d7b0aa7af23a93851e1a4245939696"><td class="memItemLeft" align="right" valign="top"><a id="ae8d7b0aa7af23a93851e1a4245939696"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_time_sync_fixed.html#ae8d7b0aa7af23a93851e1a4245939696">updateServerTime</a> (uint32_t serverMillis) override</td></tr>
+<tr class="memdesc:ae8d7b0aa7af23a93851e1a4245939696"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records the actual server time in millisecondes. <br /></td></tr>
+<tr class="separator:ae8d7b0aa7af23a93851e1a4245939696"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -128,15 +131,9 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>processing_lag</b
 <tr class="memitem:a938bdef54b2f9b6338078195b7fab6b9"><td class="memItemLeft" align="right" valign="top"><a id="a938bdef54b2f9b6338078195b7fab6b9"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>resample_factor</b></td></tr>
 <tr class="separator:a938bdef54b2f9b6338078195b7fab6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63433fe701b4e06f2cfdd50509e660db"><td class="memItemLeft" align="right" valign="top"><a id="a63433fe701b4e06f2cfdd50509e660db"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>sample_rate</b> = 48000</td></tr>
-<tr class="separator:a63433fe701b4e06f2cfdd50509e660db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memItemLeft" align="right" valign="top"><a id="a5a85b9c772bbeb480b209a3e6ea92b4c"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapTimeSync&quot;</td></tr>
 <tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecd2d2495edbbf0df7c303b6eb5010d1"><td class="memItemLeft" align="right" valign="top"><a id="aecd2d2495edbbf0df7c303b6eb5010d1"></a>
-Vector&lt; <a class="el" href="struct_snap_time_points.html">SnapTimePoints</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>time_points</b></td></tr>
-<tr class="separator:aecd2d2495edbbf0df7c303b6eb5010d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a492bcf651e98b8619b46aec57290174f"><td class="memItemLeft" align="right" valign="top"><a id="a492bcf651e98b8619b46aec57290174f"></a>
 uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>update_count</b> = 0</td></tr>
 <tr class="separator:a492bcf651e98b8619b46aec57290174f"><td class="memSeparator" colspan="2">&#160;</td></tr>
