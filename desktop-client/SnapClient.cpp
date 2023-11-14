@@ -8,10 +8,10 @@
 #include "AudioLibs/MiniAudioStream.h"
 #include "AudioCodecs/CodecOpus.h"
 
-//PortAudioStream out;
-MiniAudioStream out;                         // Output to MiniAudioStream
+MiniAudioStream out;
 OpusAudioDecoder opus;
-SnapClient client(out, opus);
+WiFiClient wifi;
+SnapClient client(wifi, out, opus);
 
 void setup() {
   Serial.begin(115200);
