@@ -284,11 +284,11 @@ $(function() {
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <a class="code" href="structtv__t.html">tv_t</a> received;</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  uint32_t size;</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordtype">int</span> serialize(<span class="keywordtype">char</span> *data, uint32_t size) {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordtype">int</span> serialize(<span class="keywordtype">char</span> *data, uint32_t reqSize) {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <a class="code" href="struct_snap_write_buffer.html">SnapWriteBuffer</a> buffer;</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">int</span> result = 0;</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    buffer.begin(data, size);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    buffer.begin(data, reqSize);</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    result |= buffer.write_uint16(this-&gt;type);</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    result |= buffer.write_uint16(this-&gt;<span class="keywordtype">id</span>);</div>
@@ -302,11 +302,11 @@ $(function() {
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  }</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t size) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t reqSize) {</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <a class="code" href="struct_snap_read_buffer.html">SnapReadBuffer</a> buffer;</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">int</span> result = 0;</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    buffer.begin(data, size);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    buffer.begin(data, reqSize);</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    result |= buffer.read_uint16(&amp;(this-&gt;type));</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    result |= buffer.read_uint16(&amp;(this-&gt;<span class="keywordtype">id</span>));</div>
@@ -420,12 +420,12 @@ $(function() {
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;  <span class="keywordtype">char</span> *payload() { <span class="keywordflow">return</span> &amp;v_payload[0]; }</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;  <span class="keywordtype">char</span> *codec() { <span class="keywordflow">return</span> &amp;v_codec[0]; }</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t size) {</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t reqSize) {</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <a class="code" href="struct_snap_read_buffer.html">SnapReadBuffer</a> buffer;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    uint32_t string_size;</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordtype">int</span> result = 0;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    buffer.begin(data, size);</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    </div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    buffer.begin(data, reqSize);</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    result |= buffer.read_uint32(&amp;string_size);</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keywordflow">if</span> (result) {</div>
@@ -449,8 +449,8 @@ $(function() {
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;      <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    }</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160; </div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordflow">if</span> (v_payload.size() &lt; size)</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;      v_payload.resize(size);</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordflow">if</span> (v_payload.size() &lt; reqSize)</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;      v_payload.resize(reqSize);</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    result |= buffer.read(payload(), this-&gt;size);</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keywordflow">return</span> result;</div>
@@ -462,11 +462,11 @@ $(function() {
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  uint32_t size;</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  <span class="keywordtype">char</span> *payload = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t size) {</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, uint32_t reqSize) {</div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <a class="code" href="struct_snap_read_buffer.html">SnapReadBuffer</a> buffer;</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="keywordtype">int</span> result = 0;</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160; </div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    buffer.begin(data, size);</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    buffer.begin(data, reqSize);</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
 <div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    result |= buffer.read_int32(&amp;(this-&gt;timestamp.sec));</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    result |= buffer.read_int32(&amp;(this-&gt;timestamp.usec));</div>

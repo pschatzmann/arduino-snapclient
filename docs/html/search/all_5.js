@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['http_5fget_5ftask_7',['http_get_task',['../class_snap_processor_tasks.html#a315d1900a872af248ea9c8470f82071e',1,'SnapProcessorTasks']]]
+  ['ismute_7',['isMute',['../class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0',1,'SnapOutput']]],
+  ['issync_8',['isSync',['../class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905',1,'SnapTimeSync']]]
 ];

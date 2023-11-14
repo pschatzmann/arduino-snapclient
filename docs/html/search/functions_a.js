@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['updateservertime_110',['updateServerTime',['../class_snap_time_sync.html#af8923b482e191076bb12d2285f39ae09',1,'SnapTimeSync::updateServerTime()'],['../class_snap_time_sync_dynamic.html#ae8d7b0aa7af23a93851e1a4245939696',1,'SnapTimeSyncDynamic::updateServerTime()'],['../class_snap_time_sync_dynamic_since_start.html#ae8d7b0aa7af23a93851e1a4245939696',1,'SnapTimeSyncDynamicSinceStart::updateServerTime()'],['../class_snap_time_sync_fixed.html#ae8d7b0aa7af23a93851e1a4245939696',1,'SnapTimeSyncFixed::updateServerTime()']]]
+  ['volume_105',['volume',['../class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136',1,'SnapOutput::volume()'],['../class_snap_processor.html#a92937495d01c777a843b576f7fd02145',1,'SnapProcessor::volume()'],['../class_snap_client.html#a92937495d01c777a843b576f7fd02145',1,'SnapClient::volume()']]]
 ];
