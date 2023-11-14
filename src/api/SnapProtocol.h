@@ -220,11 +220,11 @@ struct SnapMessageBase {
   tv_t received;
   uint32_t size;
 
-  int serialize(char *data, uint32_t size) {
+  int serialize(char *data, uint32_t reqSize) {
     SnapWriteBuffer buffer;
     int result = 0;
 
-    buffer.begin(data, size);
+    buffer.begin(data, reqSize);
 
     result |= buffer.write_uint16(this->type);
     result |= buffer.write_uint16(this->id);
@@ -238,11 +238,11 @@ struct SnapMessageBase {
     return result;
   }
 
-  int deserialize(const char *data, uint32_t size) {
+  int deserialize(const char *data, uint32_t reqSize) {
     SnapReadBuffer buffer;
     int result = 0;
 
-    buffer.begin(data, size);
+    buffer.begin(data, reqSize);
 
     result |= buffer.read_uint16(&(this->type));
     result |= buffer.read_uint16(&(this->id));
@@ -359,12 +359,12 @@ struct SnapMessageCodecHeader {
   char *payload() { return &v_payload[0]; }
   char *codec() { return &v_codec[0]; }
 
-  int deserialize(const char *data, uint32_t size) {
+  int deserialize(const char *data, uint32_t reqSize) {
     SnapReadBuffer buffer;
     uint32_t string_size;
     int result = 0;
-
-    buffer.begin(data, size);
+    
+    buffer.begin(data, reqSize);
 
     result |= buffer.read_uint32(&string_size);
     if (result) {
@@ -388,8 +388,8 @@ struct SnapMessageCodecHeader {
       return 1;
     }
 
-    if (v_payload.size() < size)
-      v_payload.resize(size);
+    if (v_payload.size() < reqSize)
+      v_payload.resize(reqSize);
 
     result |= buffer.read(payload(), this->size);
     return result;
@@ -402,11 +402,11 @@ struct SnapMessageWireChunk {
   uint32_t size;
   char *payload = nullptr;
 
-  int deserialize(const char *data, uint32_t size) {
+  int deserialize(const char *data, uint32_t reqSize) {
     SnapReadBuffer buffer;
     int result = 0;
 
-    buffer.begin(data, size);
+    buffer.begin(data, reqSize);
 
     result |= buffer.read_int32(&(this->timestamp.sec));
     result |= buffer.read_int32(&(this->timestamp.usec));
