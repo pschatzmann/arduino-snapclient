@@ -187,9 +187,10 @@ protected:
   /// ignored - update playback speed
   bool synchronizePlayback() {
     bool result = true;
-
-    auto delay_ms = getDelayMs();
     SnapTimeSync& ts = *p_snap_time_sync;
+
+    // calculate how long we need to wait to playback the audio
+    auto delay_ms = getDelayMs();
 
     if (!is_sync_started) {
 
@@ -198,6 +199,8 @@ protected:
       // start audio when first package in the future becomes valid
       result = synchronizeOnStart(delay_ms);
     } else {
+      // provide the actual delay to the synch 
+      ts.updateActualDelay(delay_ms);
 
       if (ts.isSync()) {
         // update speed

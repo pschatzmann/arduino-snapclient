@@ -27,6 +27,9 @@ public:
   /// Records the actual server time in millisecondes
   virtual void updateServerTime(uint32_t serverMillis) = 0;
 
+  /// Records the actual playback delay (currently not used)
+  virtual void updateActualDelay(int delay) {}
+
   /// Calculate the resampling factor: with a positive delay we play too fast
   /// and need to slow down
   virtual float getFactor() = 0;
