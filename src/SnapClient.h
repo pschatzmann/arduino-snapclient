@@ -40,7 +40,7 @@ public:
   }
 
   SnapClient(Client &client, AudioStream &stream, StreamingDecoder &decoder,
-             int bufferSize = 5 * 1024) {
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
     p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
     output_adapter.setStream(stream);
     p_snapprocessor->setOutput(output_adapter);
@@ -55,7 +55,7 @@ public:
   }
 
   SnapClient(Client &client, AudioOutput &output, StreamingDecoder &decoder,
-             int bufferSize = 5 * 1024) {
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
     p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
     p_snapprocessor->setOutput(output);
     p_snapprocessor->setDecoder(*p_decoder_adapter);
@@ -69,8 +69,11 @@ public:
     end();
   }
 
-  /// Defines an alternative comminucation client (default is WiFiClient)
+  /// Defines an alternative commnuication client (default is WiFiClient)
   void setClient(Client &client) { p_snapprocessor->setClient(client); }
+
+  // /// Defines the sample rate, channels and bits
+  // void setAudioInfo(AudioInfo info){ p_snapprocessor->setAudioInfo(info);}
 
 
   /// Defines the time synchronization logic

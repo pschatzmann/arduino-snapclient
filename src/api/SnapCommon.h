@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <ctime>
 
-enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS, VORBIS };
+enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 static const char *TAG="COMMON";
 /**
  * @brief Information about the next bucket

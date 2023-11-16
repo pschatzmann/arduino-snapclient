@@ -81,6 +81,10 @@ public:
   /// Defines an alternative client to the WiFiClient
   void setClient(Client &client) { p_client = &client; }
 
+  void setAudioInfo(AudioInfo info) {
+    p_snap_output->setAudioInfo(info);
+  }
+
 protected:
   const char *TAG = "SnapProcessor";
   //  WiFiClient default_client;
@@ -103,7 +107,7 @@ protected:
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
   const char *mac_address = "00-00-00-00-00";
-  bool output_start = true;
+  bool output_start = false;
   bool http_task_start = true;
   bool header_received = false;
   bool is_time_set = false;
@@ -317,8 +321,8 @@ protected:
     } else if (strcmp(codec_header_message.codec(), "flac") == 0) {
       if (!processMessageCodecHeaderExt(FLAC))
         return false;
-    } else if (strcmp(codec_header_message.codec(), "vorbis") == 0) {
-      if (!processMessageCodecHeaderExt(VORBIS))
+    } else if (strcmp(codec_header_message.codec(), "ogg") == 0) {
+      if (!processMessageCodecHeaderExt(OGG))
         return false;
     } else if (strcmp(codec_header_message.codec(), "pcm") == 0) {
       if (!processMessageCodecHeaderExt(PCM))
@@ -343,7 +347,9 @@ protected:
     memcpy(&bits, start + 8, sizeof(bits));
     memcpy(&channels, start + 10, sizeof(channels));
     // notify output about format
-    audioConfig(rate, channels, bits);
+    AudioInfo info(rate, channels, bits);
+    setAudioInfo(info);
+    audioBegin();
     codec_from_server = codecType;
     return true;
   }
@@ -351,6 +357,9 @@ protected:
   bool processMessageCodecHeaderExt(codec_type codecType) {
     ESP_LOGD(TAG, "start");
     codec_from_server = codecType;
+    audioBegin();
+    // send the data to the codec
+    p_snap_output->audioWrite((const uint8_t*)start, size);
     return true;
   }
 
@@ -367,7 +376,6 @@ protected:
     switch (codec_from_server) {
     case FLAC:
     case OGG:
-    case VORBIS:
     case OPUS:
     case PCM:
       wireChunk(wire_chunk_message);
@@ -384,7 +392,7 @@ protected:
     ESP_LOGD(TAG, "start");
     SnapAudioHeader header;
     header.size = wire_chunk_message.size;
-    ;
+    
     header.sec = wire_chunk_message.timestamp.sec;
     header.usec = wire_chunk_message.timestamp.usec;
     header.codec = codec_from_server;
@@ -394,7 +402,7 @@ protected:
     if ((chunk_res = writeAudio((const uint8_t *)wire_chunk_message.payload,
                                 wire_chunk_message.size)) !=
         wire_chunk_message.size) {
-      ESP_LOGW(TAG, "Error writing data to ring buffer: %zu", chunk_res);
+      ESP_LOGW(TAG, "Error writing audio chunk: %zu -> %zu",(size_t)wire_chunk_message.size, chunk_res);
     }
     return true;
   }
@@ -417,7 +425,7 @@ protected:
     // log mute state, buffer, latency
     ESP_LOGI(TAG, "Message Buff.ms:%d", server_settings_message.buffer_ms);
     ESP_LOGI(TAG, "Latency:        %d", server_settings_message.latency);
-    ESP_LOGI(TAG, "Mute:           %d", server_settings_message.muted);
+    ESP_LOGI(TAG, "Mute:           %s", server_settings_message.muted ? "true":"false");
     ESP_LOGI(TAG, "Setting volume: %d", server_settings_message.volume);
 
     // define the start delay from the server settings
@@ -516,10 +524,6 @@ protected:
   void setVolume(float vol) { p_snap_output->setVolume(vol); }
 
   bool audioBegin() { return p_snap_output->begin(); }
-
-  void audioConfig(int rate, uint8_t channels, uint8_t bits) {
-    p_snap_output->audioBegin(rate, channels, bits);
-  }
 
   void audioEnd() { p_snap_output->end(); }
 

@@ -14,7 +14,7 @@
 
 AudioKitStream out;
 //FLACDecoder flac;
-//VorbisDecoder vorbis;
+//VorbisDecoder ogg;
 //WAVDecoder pcm;
 OpusAudioDecoder opus;
 WiFiClient wifi;

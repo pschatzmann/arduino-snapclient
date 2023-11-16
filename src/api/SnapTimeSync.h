@@ -167,8 +167,7 @@ protected:
  **/
 class SnapTimeSyncFixed : public SnapTimeSync {
 public:
-  SnapTimeSyncFixed(float factor = 1.0,
-                    int processingLag = CONFIG_PROCESSING_TIME_MS,
+  SnapTimeSyncFixed(int processingLag = CONFIG_PROCESSING_TIME_MS, float factor = 1.0,
                     int interval = 10)
       : SnapTimeSync(processingLag, interval) {
     resample_factor = factor;

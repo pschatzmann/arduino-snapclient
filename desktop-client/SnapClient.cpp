@@ -7,9 +7,12 @@
 #include "SnapClient.h"
 #include "AudioLibs/MiniAudioStream.h"
 #include "AudioCodecs/CodecOpus.h"
+//#include "AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
 
+//CsvOutput<int16_t> out;
 MiniAudioStream out;
 OpusAudioDecoder opus;
+//FLACDecoder flac;
 WiFiClient wifi;
 SnapClient client(wifi, out, opus);
 
