@@ -89,7 +89,8 @@ public:
     this->out = &output; // final output
     resample.setStream(output);
     vol_stream.setStream(resample);        // adjust volume
-    decoder_stream.setStream(&vol_stream); // decode to pcm
+    timed_stream.setStream(vol_stream);
+    decoder_stream.setStream(&timed_stream); // decode to pcm
   }
 
   /// Defines the decoder class
@@ -103,6 +104,7 @@ public:
     if (is_audio_begin_called){
       vol_stream.setAudioInfo(info);
       out->setAudioInfo(info);
+      timed_stream.setAudioInfo(info);
     }
   }
 
@@ -129,6 +131,7 @@ protected:
   EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
   ResampleStream resample;
+  TimedStream timed_stream;
   float vol = 1.0;        // volume in the range 0.0 - 1.0
   float vol_factor = 1.0; //
   bool is_mute = false;
@@ -149,8 +152,6 @@ protected:
     auto vol_cfg = vol_stream.defaultConfig();
     vol_cfg.copyFrom(audio_info);
     vol_cfg.allow_boost = true;
-    vol_cfg.channels = 2;
-    vol_cfg.bits_per_sample = 16;
     vol_stream.begin(vol_cfg);
 
     // open final output
@@ -168,6 +169,9 @@ protected:
     res_cfg.step_size = 1.009082;
     res_cfg.copyFrom(audio_info);
     resample.begin(res_cfg);
+
+    // set up timed stream
+    timed_stream.begin(audio_info);
 
     ESP_LOGD(TAG, "end");
     is_audio_begin_called = true;
@@ -245,7 +249,8 @@ protected:
     } else {
       // wait for the audio to become valid
       ESP_LOGI(TAG, "starting after %d ms", delay_ms);
-      delay(delay_ms);
+      // replaced delay(delay_ms); with timed_stream
+      timed_stream.setStartMs(delay_ms);
       is_sync_started = true;
       result = true;
     }

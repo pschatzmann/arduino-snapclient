@@ -7,7 +7,7 @@
 ### Feature list
 
 - Header only C++ implementation
-- PCM, Opus and FLAC decoding are supported
+- PCM, Opus, FLAC and Ogg decoding is supported
 - Auto connect to snapcast server on network
 - The functionality has been tested on an ESP32
 - Memory efficient implementation, so that PSRAM is not needed

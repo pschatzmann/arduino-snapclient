@@ -6,18 +6,23 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
 #include "AudioLibs/MiniAudioStream.h"
-#include "AudioCodecs/CodecOpus.h"
+//#include "AudioCodecs/CodecOpus.h"
 //#include "AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
+#include "AudioCodecs/CodecVorbis.h" //https://github.com/pschatzmann/arduino-libvorbis-idec
+#include "AudioLibs/StdioStream.h"
 
 //CsvOutput<int16_t> out;
+//StdioStream out;
 MiniAudioStream out;
-OpusAudioDecoder opus;
+//OpusAudioDecoder opus;
+VorbisDecoder ogg;
 //FLACDecoder flac;
 WiFiClient wifi;
-SnapClient client(wifi, out, opus);
+SnapClient client(wifi, out, ogg);
 
 void setup() {
   Serial.begin(115200);
+  //AudioLogger::instance().begin(Serial, AudioLogger::Info);  
   // login to wifi
   WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
   Serial.print("Connecting to WiFi ..");
@@ -29,6 +34,7 @@ void setup() {
   // print ip address
   Serial.println();
   Serial.println(WiFi.localIP());
+
 
   // start snap client
   client.begin();

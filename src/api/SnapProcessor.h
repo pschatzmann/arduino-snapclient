@@ -7,7 +7,6 @@
 #include "SnapProcessor.h"
 #include "SnapProtocol.h"
 #include "SnapTime.h"
-#include "opus.h"
 #include "vector"
 
 /**
@@ -367,7 +366,7 @@ protected:
     ESP_LOGD(TAG, "start");
     start = &send_receive_buffer[0];
     SnapMessageWireChunk wire_chunk_message;
-    memset(&wire_chunk_message, 0, sizeof(wire_chunk_message));
+    memset((void*)&wire_chunk_message, 0, sizeof(wire_chunk_message));
     int result = wire_chunk_message.deserialize(start, size);
     if (result) {
       ESP_LOGI(TAG, "Failed to read wire chunk: %d", result);
