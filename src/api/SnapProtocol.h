@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #define BASE_MESSAGE_SIZE 26
 #define TIME_MESSAGE_SIZE 8
