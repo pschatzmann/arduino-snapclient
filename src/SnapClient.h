@@ -72,9 +72,9 @@ public:
   /// Defines an alternative commnuication client (default is WiFiClient)
   void setClient(Client &client) { p_snapprocessor->setClient(client); }
 
-  // /// Defines the sample rate, channels and bits
-  // void setAudioInfo(AudioInfo info){ p_snapprocessor->setAudioInfo(info);}
-
+  /// @brief Defines the Snapcast Server IP address
+  /// @param address 
+  void setServerIP(IPAddress address) { p_snapprocessor->setServerIP(address); }
 
   /// Defines the time synchronization logic
   void setSnapTimeSync(SnapTimeSync &timeSync){
