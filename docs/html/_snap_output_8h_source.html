@@ -81,234 +81,263 @@ $(function() {
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;sys/time.h&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="class_snap_output.html">   22</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_output.html">SnapOutput</a> {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="comment">// singleton: only access via instance class method</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="class_snap_output.html">SnapOutput</a>() {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    audio_info.sample_rate = 48000;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    audio_info.channels = 2;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    audio_info.bits_per_sample = 16;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">   34</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">begin</a>() {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    is_sync_started = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">   40</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">write</a>(<span class="keyword">const</span> uint8_t *data, <span class="keywordtype">size_t</span> size) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;%zu&quot;</span>, size);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>()) {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="keywordflow">return</span> size;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">return</span> audioWrite(data, size);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">   51</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">writeHeader</a>(<a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> &amp;header) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    this-&gt;header = header;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_snap_output.html#af8e0a63ec718201627220299012e654f">   57</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#af8e0a63ec718201627220299012e654f">end</a>(<span class="keywordtype">void</span>) {}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">   60</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">setVolume</a>(<span class="keywordtype">float</span> vol) {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    this-&gt;vol = vol / 100.0;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;Volume: %f&quot;</span>, this-&gt;vol);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    vol_stream.setVolume(this-&gt;vol * vol_factor);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">   67</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">volume</a>() { <span class="keywordflow">return</span> vol; }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">   70</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">setMute</a>(<span class="keywordtype">bool</span> mute) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    is_mute = mute;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    vol_stream.setVolume(mute ? 0 : vol);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    audioWriteSilence();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">   77</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">isMute</a>() { <span class="keywordflow">return</span> is_mute; }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">   80</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(<span class="keywordtype">float</span> fact) { vol_factor = fact; }</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">   83</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a>(AudioOutput &amp;output) {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    this-&gt;out = &amp;output; <span class="comment">// final output</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    resample.setStream(output);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    vol_stream.setStream(resample);        <span class="comment">// adjust volume</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    decoder_stream.setStream(&amp;vol_stream); <span class="comment">// decode to pcm</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">   91</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">setDecoder</a>(AudioDecoder &amp;dec) { decoder_stream.setDecoder(&amp;dec); }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">   94</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">audioBegin</a>(uint32_t sample_rate, uint8_t channels, uint8_t bits) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;sample_rate: %d, channels: %d, bits: %d&quot;</span>, sample_rate,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;             channels, bits);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">if</span> (out == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    audio_info.sample_rate = sample_rate;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    audio_info.bits_per_sample = bits;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    audio_info.channels = channels;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="comment">// open volume control: allow amplification</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keyword">auto</span> vol_cfg = vol_stream.defaultConfig();</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    vol_cfg.copyFrom(audio_info);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    vol_cfg.allow_boost = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    vol_cfg.channels = 2;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    vol_cfg.bits_per_sample = 16;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    vol_stream.begin(vol_cfg);</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="comment">// open final output</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    out-&gt;setAudioInfo(audio_info);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    out-&gt;begin();</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="comment">// open decoder</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keyword">auto</span> dec_cfg = decoder_stream.defaultConfig();</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    dec_cfg.copyFrom(audio_info);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    decoder_stream.begin(dec_cfg);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="comment">// open resampler</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">auto</span> res_cfg = resample.defaultConfig();</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    res_cfg.step_size = 1.009082;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    res_cfg.copyFrom(audio_info);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    resample.begin(res_cfg);</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_processor.html">SnapProcessor</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="class_snap_output.html">   23</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_output.html">SnapOutput</a> : <span class="keyword">public</span> AudioInfoSupport {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">friend</span> <a class="code" href="class_snap_processor.html">SnapProcessor</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// singleton: only access via instance class method</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <a class="code" href="class_snap_output.html">SnapOutput</a>() {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="comment">// audio_info.sample_rate = 48000;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">// audio_info.channels = 2;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">// audio_info.bits_per_sample = 16;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  }</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">   35</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">begin</a>() {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    is_sync_started = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_snap_output.html#ab7f75dcf2fef63819309c44bca400074">audioBegin</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">   41</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">write</a>(<span class="keyword">const</span> uint8_t *data, <span class="keywordtype">size_t</span> size) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;%zu&quot;</span>, size);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="comment">// only start to proces data after we received codec header</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">if</span> (!is_audio_begin_called){</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>()) {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">return</span> size;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">return</span> audioWrite(data, size);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">   56</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">writeHeader</a>(<a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> &amp;header) {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    this-&gt;header = header;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="class_snap_output.html#af8e0a63ec718201627220299012e654f">   62</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#af8e0a63ec718201627220299012e654f">end</a>(<span class="keywordtype">void</span>) {}</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">   65</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">setVolume</a>(<span class="keywordtype">float</span> vol) {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    this-&gt;vol = vol / 100.0;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;Volume: %f&quot;</span>, this-&gt;vol);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    vol_stream.setVolume(this-&gt;vol * vol_factor);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">   72</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">volume</a>() { <span class="keywordflow">return</span> vol; }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">   75</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">setMute</a>(<span class="keywordtype">bool</span> mute) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    is_mute = mute;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    vol_stream.setVolume(mute ? 0 : vol);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    audioWriteSilence();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">   82</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">isMute</a>() { <span class="keywordflow">return</span> is_mute; }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">   85</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(<span class="keywordtype">float</span> fact) { vol_factor = fact; }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">   88</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a>(AudioOutput &amp;output) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    this-&gt;out = &amp;output; <span class="comment">// final output</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    resample.setStream(output);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    vol_stream.setStream(resample);        <span class="comment">// adjust volume</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    timed_stream.setStream(vol_stream);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    decoder_stream.setStream(&amp;timed_stream); <span class="comment">// decode to pcm</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">   97</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">setDecoder</a>(AudioDecoder &amp;dec) { decoder_stream.setDecoder(&amp;dec); }</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="class_snap_output.html#a5e283a9495aaf265739336829d45e215">  100</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a5e283a9495aaf265739336829d45e215">setAudioInfo</a>(AudioInfo info) {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;sample_rate: %d, channels: %d, bits: %d&quot;</span>, info.sample_rate,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;             info.channels, info.bits_per_sample);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    audio_info = info;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">if</span> (is_audio_begin_called){</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      vol_stream.setAudioInfo(info);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      out-&gt;setAudioInfo(info);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      timed_stream.setAudioInfo(info);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  AudioInfo audioInfo(){</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">return</span> audio_info;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">  116</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(<a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync){</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    p_snap_time_sync = &amp;timeSync;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="comment">// do nothing</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> doLoop() {}</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; snapTimeSync() {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">return</span> *p_snap_time_sync;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  }</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;end&quot;</span>);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">  132</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(<a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync){</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    p_snap_time_sync = &amp;timeSync;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="comment">// do nothing</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> doLoop() {}</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; snapTimeSync() {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordflow">return</span> *p_snap_time_sync;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapOutput&quot;</span>;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  AudioOutput *out = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  AudioInfo audio_info;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  EncodedAudioStream decoder_stream;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  VolumeStream vol_stream;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  ResampleStream resample;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="keywordtype">float</span> vol = 1.0;        <span class="comment">// volume in the range 0.0 - 1.0</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">float</span> vol_factor = 1.0; <span class="comment">//</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <span class="keywordtype">bool</span> is_mute = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> header;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <a class="code" href="class_snap_time.html">SnapTime</a> &amp;snap_time = SnapTime::instance();</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a> time_sync_default;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> *p_snap_time_sync = &amp;time_sync_default;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">bool</span> is_sync_started = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">  160</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">setPlaybackFactor</a>(<span class="keywordtype">float</span> fact) { resample.setStepSize(fact); }</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">  163</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>() { <span class="keywordflow">return</span> resample.getStepSize(); }</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  <span class="keywordtype">void</span> audioWriteSilence() {</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 50; j++) {</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      out-&gt;writeSilence(1024);</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  }</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordtype">void</span> audioEnd() {</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordflow">if</span> (out == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    out-&gt;end();</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  }</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="comment">// writes the audio data to the decoder</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="keywordtype">size_t</span> audioWrite(<span class="keyword">const</span> <span class="keywordtype">void</span> *src, <span class="keywordtype">size_t</span> size) {</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;%zu&quot;</span>, size);</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordtype">size_t</span> result = decoder_stream.write((<span class="keyword">const</span> uint8_t *)src, size);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  }</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
-<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">  188</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>() {</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keyword">auto</span> delay_ms = <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>();</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; ts = *p_snap_time_sync;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapOutput&quot;</span>;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  AudioOutput *out = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  AudioInfo audio_info;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  EncodedAudioStream decoder_stream;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  VolumeStream vol_stream;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  ResampleStream resample;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  TimedStream timed_stream;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <span class="keywordtype">float</span> vol = 1.0;        <span class="comment">// volume in the range 0.0 - 1.0</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">float</span> vol_factor = 1.0; <span class="comment">//</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keywordtype">bool</span> is_mute = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> header;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <a class="code" href="class_snap_time.html">SnapTime</a> &amp;snap_time = SnapTime::instance();</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <a class="code" href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a> time_sync_default;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> *p_snap_time_sync = &amp;time_sync_default;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <span class="keywordtype">bool</span> is_sync_started = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordtype">bool</span> is_audio_begin_called = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="class_snap_output.html#ab7f75dcf2fef63819309c44bca400074">  146</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#ab7f75dcf2fef63819309c44bca400074">audioBegin</a>() {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">if</span> (out == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="comment">// open volume control: allow amplification</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">auto</span> vol_cfg = vol_stream.defaultConfig();</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    vol_cfg.copyFrom(audio_info);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    vol_cfg.allow_boost = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    vol_stream.begin(vol_cfg);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// open final output</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    out-&gt;setAudioInfo(audio_info);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    out-&gt;begin();</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="comment">// open decoder</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keyword">auto</span> dec_cfg = decoder_stream.defaultConfig();</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    dec_cfg.copyFrom(audio_info);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    decoder_stream.begin(dec_cfg);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    decoder_stream.setNotifyAudioChange(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="comment">// open resampler</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keyword">auto</span> res_cfg = resample.defaultConfig();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    res_cfg.step_size = 1.009082;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    res_cfg.copyFrom(audio_info);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    resample.begin(res_cfg);</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">// set up timed stream</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    timed_stream.begin(audio_info);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;end&quot;</span>);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    is_audio_begin_called = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  }</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">  183</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">setPlaybackFactor</a>(<span class="keywordtype">float</span> fact) { resample.setStepSize(fact); }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno"><a class="line" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">  186</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>() { <span class="keywordflow">return</span> resample.getStepSize(); }</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="keywordtype">void</span> audioWriteSilence() {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 50; j++) {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;      out-&gt;writeSilence(1024);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    }</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  }</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">if</span> (!is_sync_started) {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      ts.<a class="code" href="class_snap_time_sync.html#a4574307f85a0f36e8f25910d3361f84e">begin</a>(audio_info.sample_rate);</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      <span class="comment">// start audio when first package in the future becomes valid</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      result = synchronizeOnStart(delay_ms);</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <span class="keywordflow">if</span> (ts.<a class="code" href="class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905">isSync</a>()) {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="comment">// update speed</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keywordtype">float</span> current_factor = <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>();</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordtype">float</span> new_factor = p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">getFactor</a>();</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordflow">if</span> (new_factor != current_factor) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;          <a class="code" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">setPlaybackFactor</a>(new_factor);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    }</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  <span class="keywordtype">bool</span> synchronizeOnStart(<span class="keywordtype">int</span> delay_ms) {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordflow">if</span> (delay_ms &lt; 0) {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;      <span class="comment">// ignore the data and report it as processed</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;audio data expired: delay %d&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;      result = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (delay_ms &gt; 100000) {</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;invalid delay: %d ms&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      result = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;      <span class="comment">// wait for the audio to become valid</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;starting after %d ms&quot;</span>, delay_ms);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      delay(delay_ms);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      is_sync_started = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      result = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00234"></a><span class="lineno"><a class="line" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">  234</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>() {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keyword">auto</span> msg_time = snap_time.toMillis(header.sec, header.usec);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keyword">auto</span> server_time = snap_time.<a class="code" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>();</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="comment">// wait for the audio to become valid</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordtype">int</span> diff_ms = msg_time - server_time;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">int</span> delay_ms = diff_ms + p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">getStartDelay</a>();</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">return</span> delay_ms;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;};</div>
-<div class="ttc" id="aclass_snap_output_html"><div class="ttname"><a href="class_snap_output.html">SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:22</div></div>
-<div class="ttc" id="aclass_snap_output_html_a06bd6bff6dee7be92784189ff0fae5fb"><div class="ttname"><a href="class_snap_output.html#a06bd6bff6dee7be92784189ff0fae5fb">SnapOutput::audioBegin</a></div><div class="ttdeci">bool audioBegin(uint32_t sample_rate, uint8_t channels, uint8_t bits)</div><div class="ttdoc">setup of all audio objects</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:94</div></div>
-<div class="ttc" id="aclass_snap_output_html_a10297964d6abd0cffcb68332fff761b5"><div class="ttname"><a href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">SnapOutput::getDelayMs</a></div><div class="ttdeci">int getDelayMs()</div><div class="ttdoc">Calculate the delay in ms.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:234</div></div>
-<div class="ttc" id="aclass_snap_output_html_a1d59a107c6918cdc9a17b92f6cd4e136"><div class="ttname"><a href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">SnapOutput::volume</a></div><div class="ttdeci">float volume()</div><div class="ttdoc">provides the actual volume</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:67</div></div>
-<div class="ttc" id="aclass_snap_output_html_a27459cee4bd97a6ac4a09aec45cd3bbd"><div class="ttname"><a href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">SnapOutput::setMute</a></div><div class="ttdeci">void setMute(bool mute)</div><div class="ttdoc">mute / unmute</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:70</div></div>
-<div class="ttc" id="aclass_snap_output_html_a35c7533999826a3706e97f99442d4c7e"><div class="ttname"><a href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">SnapOutput::setVolume</a></div><div class="ttdeci">void setVolume(float vol)</div><div class="ttdoc">Adjust the volume.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:60</div></div>
-<div class="ttc" id="aclass_snap_output_html_a50f45551c10ca30a0bc7f447e70188b1"><div class="ttname"><a href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">SnapOutput::begin</a></div><div class="ttdeci">virtual bool begin()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:34</div></div>
-<div class="ttc" id="aclass_snap_output_html_a5f985ca872c6ce5fb8fe126cf9a0a01f"><div class="ttname"><a href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">SnapOutput::write</a></div><div class="ttdeci">virtual size_t write(const uint8_t *data, size_t size)</div><div class="ttdoc">Writes audio data to the queue.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:40</div></div>
-<div class="ttc" id="aclass_snap_output_html_a6f02241f9435b0062580626d1894a573"><div class="ttname"><a href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">SnapOutput::playbackFactor</a></div><div class="ttdeci">float playbackFactor()</div><div class="ttdoc">determine actual playback speed</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:163</div></div>
-<div class="ttc" id="aclass_snap_output_html_a6f9488e045147706a13387c0c6a634ea"><div class="ttname"><a href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">SnapOutput::setDecoder</a></div><div class="ttdeci">void setDecoder(AudioDecoder &amp;dec)</div><div class="ttdoc">Defines the decoder class.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:91</div></div>
-<div class="ttc" id="aclass_snap_output_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapOutput::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:80</div></div>
-<div class="ttc" id="aclass_snap_output_html_a86e635e425cf8781cb707183a1648f35"><div class="ttname"><a href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">SnapOutput::writeHeader</a></div><div class="ttdeci">virtual bool writeHeader(SnapAudioHeader &amp;header)</div><div class="ttdoc">Provides info about the audio data.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:51</div></div>
-<div class="ttc" id="aclass_snap_output_html_a87ac62f6f14d8579e2cb3bbc8d705a89"><div class="ttname"><a href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">SnapOutput::setPlaybackFactor</a></div><div class="ttdeci">void setPlaybackFactor(float fact)</div><div class="ttdoc">to speed up or slow down playback</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:160</div></div>
-<div class="ttc" id="aclass_snap_output_html_aa0d3775308edf58cac6e7f763edbb96a"><div class="ttname"><a href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">SnapOutput::setOutput</a></div><div class="ttdeci">void setOutput(AudioOutput &amp;output)</div><div class="ttdoc">Defines the audio output chain to the final output.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:83</div></div>
-<div class="ttc" id="aclass_snap_output_html_aa6f1c80ac878b7c454a49f0f16f2bfb0"><div class="ttname"><a href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">SnapOutput::isMute</a></div><div class="ttdeci">bool isMute()</div><div class="ttdoc">checks if volume is mute</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:77</div></div>
-<div class="ttc" id="aclass_snap_output_html_aac98818fc690c70b6413fc52fc6b82f7"><div class="ttname"><a href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">SnapOutput::synchronizePlayback</a></div><div class="ttdeci">bool synchronizePlayback()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:188</div></div>
-<div class="ttc" id="aclass_snap_output_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapOutput::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:132</div></div>
-<div class="ttc" id="aclass_snap_output_html_af8e0a63ec718201627220299012e654f"><div class="ttname"><a href="class_snap_output.html#af8e0a63ec718201627220299012e654f">SnapOutput::end</a></div><div class="ttdeci">virtual void end(void)</div><div class="ttdoc">Ends the processing and releases the memory.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:57</div></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="keywordtype">void</span> audioEnd() {</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordflow">if</span> (out == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    out-&gt;end();</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  }</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="comment">// writes the audio data to the decoder</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  <span class="keywordtype">size_t</span> audioWrite(<span class="keyword">const</span> <span class="keywordtype">void</span> *src, <span class="keywordtype">size_t</span> size) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;%zu&quot;</span>, size);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordtype">size_t</span> result = decoder_stream.write((<span class="keyword">const</span> uint8_t *)src, size);</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  }</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
+<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">  211</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>() {</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a>&amp; ts = *p_snap_time_sync;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="comment">// calculate how long we need to wait to playback the audio</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keyword">auto</span> delay_ms = <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>();</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">if</span> (!is_sync_started) {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      ts.<a class="code" href="class_snap_time_sync.html#a4574307f85a0f36e8f25910d3361f84e">begin</a>(audio_info.sample_rate);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      <span class="comment">// start audio when first package in the future becomes valid</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      result = synchronizeOnStart(delay_ms);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      <span class="comment">// provide the actual delay to the synch </span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      ts.<a class="code" href="class_snap_time_sync.html#a159ed048ebe13885c54954aa2a78546b">updateActualDelay</a>(delay_ms);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      <span class="keywordflow">if</span> (ts.<a class="code" href="class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905">isSync</a>()) {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="comment">// update speed</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordtype">float</span> current_factor = <a class="code" href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">playbackFactor</a>();</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="keywordtype">float</span> new_factor = p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">getFactor</a>();</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <span class="keywordflow">if</span> (new_factor != current_factor) {</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;          <a class="code" href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">setPlaybackFactor</a>(new_factor);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;      }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    }</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  }</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keywordtype">bool</span> synchronizeOnStart(<span class="keywordtype">int</span> delay_ms) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">if</span> (delay_ms &lt; 0) {</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;      <span class="comment">// ignore the data and report it as processed</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;audio data expired: delay %d&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      result = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (delay_ms &gt; 100000) {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;invalid delay: %d ms&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      result = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      <span class="comment">// wait for the audio to become valid</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;starting after %d ms&quot;</span>, delay_ms);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      <span class="comment">// replaced delay(delay_ms); with timed_stream</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      timed_stream.setStartMs(delay_ms);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      is_sync_started = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  }</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">  261</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">getDelayMs</a>() {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">auto</span> msg_time = snap_time.toMillis(header.sec, header.usec);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">auto</span> server_time = snap_time.<a class="code" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>();</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="comment">// wait for the audio to become valid</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordtype">int</span> diff_ms = msg_time - server_time;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordtype">int</span> delay_ms = diff_ms + p_snap_time_sync-&gt;<a class="code" href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">getStartDelay</a>();</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordflow">return</span> delay_ms;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;};</div>
+<div class="ttc" id="aclass_snap_output_html"><div class="ttname"><a href="class_snap_output.html">SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:23</div></div>
+<div class="ttc" id="aclass_snap_output_html_a10297964d6abd0cffcb68332fff761b5"><div class="ttname"><a href="class_snap_output.html#a10297964d6abd0cffcb68332fff761b5">SnapOutput::getDelayMs</a></div><div class="ttdeci">int getDelayMs()</div><div class="ttdoc">Calculate the delay in ms.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:261</div></div>
+<div class="ttc" id="aclass_snap_output_html_a1d59a107c6918cdc9a17b92f6cd4e136"><div class="ttname"><a href="class_snap_output.html#a1d59a107c6918cdc9a17b92f6cd4e136">SnapOutput::volume</a></div><div class="ttdeci">float volume()</div><div class="ttdoc">provides the actual volume</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:72</div></div>
+<div class="ttc" id="aclass_snap_output_html_a27459cee4bd97a6ac4a09aec45cd3bbd"><div class="ttname"><a href="class_snap_output.html#a27459cee4bd97a6ac4a09aec45cd3bbd">SnapOutput::setMute</a></div><div class="ttdeci">void setMute(bool mute)</div><div class="ttdoc">mute / unmute</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:75</div></div>
+<div class="ttc" id="aclass_snap_output_html_a35c7533999826a3706e97f99442d4c7e"><div class="ttname"><a href="class_snap_output.html#a35c7533999826a3706e97f99442d4c7e">SnapOutput::setVolume</a></div><div class="ttdeci">void setVolume(float vol)</div><div class="ttdoc">Adjust the volume.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:65</div></div>
+<div class="ttc" id="aclass_snap_output_html_a50f45551c10ca30a0bc7f447e70188b1"><div class="ttname"><a href="class_snap_output.html#a50f45551c10ca30a0bc7f447e70188b1">SnapOutput::begin</a></div><div class="ttdeci">virtual bool begin()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:35</div></div>
+<div class="ttc" id="aclass_snap_output_html_a5e283a9495aaf265739336829d45e215"><div class="ttname"><a href="class_snap_output.html#a5e283a9495aaf265739336829d45e215">SnapOutput::setAudioInfo</a></div><div class="ttdeci">void setAudioInfo(AudioInfo info)</div><div class="ttdoc">setup of all audio objects</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:100</div></div>
+<div class="ttc" id="aclass_snap_output_html_a5f985ca872c6ce5fb8fe126cf9a0a01f"><div class="ttname"><a href="class_snap_output.html#a5f985ca872c6ce5fb8fe126cf9a0a01f">SnapOutput::write</a></div><div class="ttdeci">virtual size_t write(const uint8_t *data, size_t size)</div><div class="ttdoc">Writes audio data to the queue.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:41</div></div>
+<div class="ttc" id="aclass_snap_output_html_a6f02241f9435b0062580626d1894a573"><div class="ttname"><a href="class_snap_output.html#a6f02241f9435b0062580626d1894a573">SnapOutput::playbackFactor</a></div><div class="ttdeci">float playbackFactor()</div><div class="ttdoc">determine actual playback speed</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:186</div></div>
+<div class="ttc" id="aclass_snap_output_html_a6f9488e045147706a13387c0c6a634ea"><div class="ttname"><a href="class_snap_output.html#a6f9488e045147706a13387c0c6a634ea">SnapOutput::setDecoder</a></div><div class="ttdeci">void setDecoder(AudioDecoder &amp;dec)</div><div class="ttdoc">Defines the decoder class.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:97</div></div>
+<div class="ttc" id="aclass_snap_output_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="class_snap_output.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapOutput::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:85</div></div>
+<div class="ttc" id="aclass_snap_output_html_a86e635e425cf8781cb707183a1648f35"><div class="ttname"><a href="class_snap_output.html#a86e635e425cf8781cb707183a1648f35">SnapOutput::writeHeader</a></div><div class="ttdeci">virtual bool writeHeader(SnapAudioHeader &amp;header)</div><div class="ttdoc">Provides info about the audio data.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:56</div></div>
+<div class="ttc" id="aclass_snap_output_html_a87ac62f6f14d8579e2cb3bbc8d705a89"><div class="ttname"><a href="class_snap_output.html#a87ac62f6f14d8579e2cb3bbc8d705a89">SnapOutput::setPlaybackFactor</a></div><div class="ttdeci">void setPlaybackFactor(float fact)</div><div class="ttdoc">to speed up or slow down playback</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:183</div></div>
+<div class="ttc" id="aclass_snap_output_html_aa0d3775308edf58cac6e7f763edbb96a"><div class="ttname"><a href="class_snap_output.html#aa0d3775308edf58cac6e7f763edbb96a">SnapOutput::setOutput</a></div><div class="ttdeci">void setOutput(AudioOutput &amp;output)</div><div class="ttdoc">Defines the audio output chain to the final output.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:88</div></div>
+<div class="ttc" id="aclass_snap_output_html_aa6f1c80ac878b7c454a49f0f16f2bfb0"><div class="ttname"><a href="class_snap_output.html#aa6f1c80ac878b7c454a49f0f16f2bfb0">SnapOutput::isMute</a></div><div class="ttdeci">bool isMute()</div><div class="ttdoc">checks if volume is mute</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:82</div></div>
+<div class="ttc" id="aclass_snap_output_html_aac98818fc690c70b6413fc52fc6b82f7"><div class="ttname"><a href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">SnapOutput::synchronizePlayback</a></div><div class="ttdeci">bool synchronizePlayback()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:211</div></div>
+<div class="ttc" id="aclass_snap_output_html_ab7f75dcf2fef63819309c44bca400074"><div class="ttname"><a href="class_snap_output.html#ab7f75dcf2fef63819309c44bca400074">SnapOutput::audioBegin</a></div><div class="ttdeci">bool audioBegin()</div><div class="ttdoc">setup of all audio objects</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:146</div></div>
+<div class="ttc" id="aclass_snap_output_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapOutput::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:116</div></div>
+<div class="ttc" id="aclass_snap_output_html_af8e0a63ec718201627220299012e654f"><div class="ttname"><a href="class_snap_output.html#af8e0a63ec718201627220299012e654f">SnapOutput::end</a></div><div class="ttdeci">virtual void end(void)</div><div class="ttdoc">Ends the processing and releases the memory.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:62</div></div>
+<div class="ttc" id="aclass_snap_processor_html"><div class="ttname"><a href="class_snap_processor.html">SnapProcessor</a></div><div class="ttdoc">Snap Processor implementation which does not rely on FreeRTOS.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:19</div></div>
 <div class="ttc" id="aclass_snap_time_html"><div class="ttname"><a href="class_snap_time.html">SnapTime</a></div><div class="ttdoc">The the sys/time functions are used to represent the server time. The local time will be measured wit...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:16</div></div>
 <div class="ttc" id="aclass_snap_time_html_a2d46ea8f99a7fe6583f6d72a5f9c9afa"><div class="ttname"><a href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">SnapTime::serverMillis</a></div><div class="ttdeci">uint32_t serverMillis()</div><div class="ttdoc">Provides the current server time in ms.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:36</div></div>
-<div class="ttc" id="aclass_snap_time_sync_dynamic_html"><div class="ttname"><a href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a></div><div class="ttdoc">Dynamically adjusts the effective playback sample rate based on the differences of the local and serv...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:83</div></div>
+<div class="ttc" id="aclass_snap_time_sync_dynamic_html"><div class="ttname"><a href="class_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a></div><div class="ttdoc">Dynamically adjusts the effective playback sample rate based on the differences of the local and serv...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:86</div></div>
 <div class="ttc" id="aclass_snap_time_sync_html"><div class="ttname"><a href="class_snap_time_sync.html">SnapTimeSync</a></div><div class="ttdoc">Abstract (Common) Time Synchronization Logic which consists of the startup synchronization and the lo...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:15</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_a159ed048ebe13885c54954aa2a78546b"><div class="ttname"><a href="class_snap_time_sync.html#a159ed048ebe13885c54954aa2a78546b">SnapTimeSync::updateActualDelay</a></div><div class="ttdeci">virtual void updateActualDelay(int delay)</div><div class="ttdoc">Records the actual playback delay (currently not used)</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:31</div></div>
 <div class="ttc" id="aclass_snap_time_sync_html_a4574307f85a0f36e8f25910d3361f84e"><div class="ttname"><a href="class_snap_time_sync.html#a4574307f85a0f36e8f25910d3361f84e">SnapTimeSync::begin</a></div><div class="ttdeci">void begin(int rate)</div><div class="ttdoc">Starts the processing.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:23</div></div>
 <div class="ttc" id="aclass_snap_time_sync_html_a47e677c2396350208f1a2499fced812a"><div class="ttname"><a href="class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a">SnapTimeSync::getFactor</a></div><div class="ttdeci">virtual float getFactor()=0</div></div>
-<div class="ttc" id="aclass_snap_time_sync_html_a8a84aacea77de2dfdc9827cb7f71c735"><div class="ttname"><a href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">SnapTimeSync::getStartDelay</a></div><div class="ttdeci">int getStartDelay()</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:57</div></div>
-<div class="ttc" id="aclass_snap_time_sync_html_ae361c9a0939daff16cd8652325124905"><div class="ttname"><a href="class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905">SnapTimeSync::isSync</a></div><div class="ttdeci">bool isSync()</div><div class="ttdoc">Returns true if a synchronization (update of the sampling rate) is needed.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:35</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_a8a84aacea77de2dfdc9827cb7f71c735"><div class="ttname"><a href="class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735">SnapTimeSync::getStartDelay</a></div><div class="ttdeci">int getStartDelay()</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:60</div></div>
+<div class="ttc" id="aclass_snap_time_sync_html_ae361c9a0939daff16cd8652325124905"><div class="ttname"><a href="class_snap_time_sync.html#ae361c9a0939daff16cd8652325124905">SnapTimeSync::isSync</a></div><div class="ttdeci">bool isSync()</div><div class="ttdoc">Returns true if a synchronization (update of the sampling rate) is needed.</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:38</div></div>
 <div class="ttc" id="astruct_snap_audio_header_html"><div class="ttname"><a href="struct_snap_audio_header.html">SnapAudioHeader</a></div><div class="ttdoc">Information about the next bucket.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

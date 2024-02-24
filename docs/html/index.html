@@ -73,7 +73,7 @@ Snapcast Audio Streaming Client for Arduino</h2>
 Feature list</h2>
 <ul>
 <li>Header only C++ implementation</li>
-<li>Opus and PCM decoding are currently supported</li>
+<li>PCM, Opus, FLAC and Ogg decoding is supported</li>
 <li>Auto connect to snapcast server on network</li>
 <li>The functionality has been tested on an ESP32</li>
 <li>Memory efficient implementation, so that PSRAM is not needed</li>
@@ -81,21 +81,18 @@ Feature list</h2>
 </ul>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Description</h2>
-<p>I have converted the <a href="https://github.com/jorgenkraghjakobsen/snapclient">snapclient</a> from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.</p>
+<p>I have rewritten the <a href="https://github.com/jorgenkraghjakobsen/snapclient">snapclient</a> from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Example Arduino Sketch</h2>
-<p>Here is an example Arduino sketch that uses the Wifi as communication API, the Opus codec and outputs the audio with I2S:</p>
+<p>Here is an example Arduino sketch that uses the Wifi as communication API, the WAVs codec and outputs the audio with I2S:</p>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">#include &quot;AudioTools.h&quot;</div>
 <div class="line">#include &quot;SnapClient.h&quot;</div>
-<div class="line">#include &quot;AudioCodecs/CodecOpus.h&quot;</div>
 <div class="line"> </div>
-<div class="line">#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)</div>
-<div class="line"> </div>
-<div class="line">OpusAudioDecoder opus;</div>
-<div class="line">I2SStream out;</div>
+<div class="line">WAVDecoder pcm;</div>
 <div class="line">WiFiClient wifi;</div>
-<div class="line">SnapClient client(wifi, out, opus);</div>
+<div class="line">I2SStream out;</div>
+<div class="line">SnapClient client(wifi, out, pcm);</div>
 <div class="line"> </div>
 <div class="line">void setup() {</div>
 <div class="line">  Serial.begin(115200);</div>
@@ -125,21 +122,26 @@ Example Arduino Sketch</h2>
 <div class="line">void loop() {</div>
 <div class="line">  client.doLoop();</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>You can test your sketch e.g. with <code>ffmpeg -i <a href="http://stream.srg-ssr.ch/m/rsj/mp3_128">http://stream.srg-ssr.ch/m/rsj/mp3_128</a> -f s16le -ar 48000 /tmp/snapfifo</code></p>
+</div><!-- fragment --><p> Change the snapserver.conf to define <code>codec = pcm</code> and restart the snapserver with <code>sudo service snapserver restart</code>. You can test now your sketch e.g. with <code>ffmpeg -i <a href="http://stream.srg-ssr.ch/m/rsj/mp3_128">http://stream.srg-ssr.ch/m/rsj/mp3_128</a> -f s16le -ar 48000 /tmp/snapfifo</code></p>
+<p>For further information on codecs please check the information in the Wiki!</p>
 <h2><a class="anchor" id="autotoc_md5"></a>
+Documentation</h2>
+<p>For further information</p><ul>
+<li>consult the <a href="https://pschatzmann.github.io/arduino-snapclient/html/annotated.html">class documentation</a> or</li>
+<li>the <a href="examples/">examples</a></li>
+<li>the Wiki</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md6"></a>
 Dependencies</h2>
 <ul>
-<li><a href="https://github.com/pschatzmann/arduino-audio-tools">Audio Tools</a></li>
+<li><a href="https://github.com/pschatzmann/arduino-audio-tools">Audio Tools</a> (mandatory)</li>
 <li><a href="https://github.com/pschatzmann/arduino-libopus">LibOpus</a> (optional)</li>
 <li><a href="https://github.com/pschatzmann/arduino-libflac">LibFLAC.h</a> (optinal)</li>
 <li><a href="https://github.com/pschatzmann/arduino-libvorbis-idec">CodecVorbis</a> (optional)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md6"></a>
-Configuration</h2>
-<p>Configuration settings can be found in <a href="https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h">SnapConfig.h</a></p>
 <h2><a class="anchor" id="autotoc_md7"></a>
-Documentation</h2>
-<p>For further information consult the <a href="https://pschatzmann.github.io/arduino-snapclient/html/annotated.html">class documentation</a> or the <a href="examples/">examples</a>. </p>
+Configuration</h2>
+<p>Configuration settings can be found in <a href="https://github.com/pschatzmann/arduino-snapcast/blob/main/src/SnapConfig.h">SnapConfig.h</a> </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

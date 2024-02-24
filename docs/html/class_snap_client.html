@@ -81,15 +81,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aad05ede1ef981ed8ac7f5542b4d1d8cb"><td class="memItemLeft" align="right" valign="top"><a id="aad05ede1ef981ed8ac7f5542b4d1d8cb"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioOutput &amp;output, AudioDecoder &amp;decoder)</td></tr>
 <tr class="separator:aad05ede1ef981ed8ac7f5542b4d1d8cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b29f95e95f59d903e961384ab405df1"><td class="memItemLeft" align="right" valign="top"><a id="a1b29f95e95f59d903e961384ab405df1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioOutput &amp;output, StreamingDecoder &amp;decoder, int bufferSize=5 *1024)</td></tr>
-<tr class="separator:a1b29f95e95f59d903e961384ab405df1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cf6828733474b03884ff32b0a130e4a"><td class="memItemLeft" align="right" valign="top"><a id="a9cf6828733474b03884ff32b0a130e4a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioOutput &amp;output, StreamingDecoder &amp;decoder, int bufferSize=(12 *1024))</td></tr>
+<tr class="separator:a9cf6828733474b03884ff32b0a130e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58fed9bc29b41a73ec9bb0077d668d64"><td class="memItemLeft" align="right" valign="top"><a id="a58fed9bc29b41a73ec9bb0077d668d64"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioStream &amp;stream, AudioDecoder &amp;decoder)</td></tr>
 <tr class="separator:a58fed9bc29b41a73ec9bb0077d668d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397ec9be1e6c10a10397e125d2e3236f"><td class="memItemLeft" align="right" valign="top"><a id="a397ec9be1e6c10a10397e125d2e3236f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioStream &amp;stream, StreamingDecoder &amp;decoder, int bufferSize=5 *1024)</td></tr>
-<tr class="separator:a397ec9be1e6c10a10397e125d2e3236f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96627a6a44b35f13e920f92c539597e8"><td class="memItemLeft" align="right" valign="top"><a id="a96627a6a44b35f13e920f92c539597e8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SnapClient</b> (Client &amp;client, AudioStream &amp;stream, StreamingDecoder &amp;decoder, int bufferSize=(12 *1024))</td></tr>
+<tr class="separator:a96627a6a44b35f13e920f92c539597e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33755d7beaca179dfbdb2c7ef7e1943f"><td class="memItemLeft" align="right" valign="top"><a id="a33755d7beaca179dfbdb2c7ef7e1943f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">~SnapClient</a> ()</td></tr>
 <tr class="memdesc:a33755d7beaca179dfbdb2c7ef7e1943f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
@@ -112,8 +112,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a081b5c662ecee58405a543518f699d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="memItemLeft" align="right" valign="top"><a id="aa4dbb35cfcc65d0c880983d78edd8ac3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a> (Client &amp;client)</td></tr>
-<tr class="memdesc:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines an alternative comminucation client (default is WiFiClient) <br /></td></tr>
+<tr class="memdesc:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines an alternative commnuication client (default is WiFiClient) <br /></td></tr>
 <tr class="separator:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a21f2f277801b095decd7c6373dbd7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_client.html#a3a21f2f277801b095decd7c6373dbd7a">setServerIP</a> (IPAddress address)</td></tr>
+<tr class="memdesc:a3a21f2f277801b095decd7c6373dbd7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the Snapcast Server IP address.  <a href="class_snap_client.html#a3a21f2f277801b095decd7c6373dbd7a">More...</a><br /></td></tr>
+<tr class="separator:a3a21f2f277801b095decd7c6373dbd7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5fb69c578b675cd8239d80832eaf45f"><td class="memItemLeft" align="right" valign="top"><a id="aa5fb69c578b675cd8239d80832eaf45f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">setSnapProcessor</a> (<a class="el" href="class_snap_processor.html">SnapProcessor</a> &amp;processor)</td></tr>
 <tr class="memdesc:aa5fb69c578b675cd8239d80832eaf45f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines an alternative Processor. <br /></td></tr>
@@ -184,7 +187,43 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &qu
 <dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-10-28 </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3a21f2f277801b095decd7c6373dbd7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a21f2f277801b095decd7c6373dbd7a">&#9670;&nbsp;</a></span>setServerIP()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setServerIP </td>
+          <td>(</td>
+          <td class="paramtype">IPAddress&#160;</td>
+          <td class="paramname"><em>address</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Defines the Snapcast Server IP address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">address</td><td><br  />
+ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="_snap_client_8h_source.html">SnapClient.h</a></li>
 </ul>
 </div><!-- contents -->

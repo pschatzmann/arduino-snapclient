@@ -94,6 +94,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</t
 <tr class="memitem:a9030af8438e533d3c08e0b9d887de3ce"><td class="memItemLeft" align="right" valign="top"><a id="a9030af8438e533d3c08e0b9d887de3ce"></a>
 <a class="el" href="structtv__t.html">tv_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getLatency</b> ()</td></tr>
 <tr class="separator:a9030af8438e533d3c08e0b9d887de3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e283a9495aaf265739336829d45e215"><td class="memItemLeft" align="right" valign="top"><a id="a5e283a9495aaf265739336829d45e215"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setAudioInfo</b> (AudioInfo info)</td></tr>
+<tr class="separator:a5e283a9495aaf265739336829d45e215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="memItemLeft" align="right" valign="top"><a id="aa4dbb35cfcc65d0c880983d78edd8ac3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a> (Client &amp;client)</td></tr>
 <tr class="memdesc:aa4dbb35cfcc65d0c880983d78edd8ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines an alternative client to the WiFiClient. <br /></td></tr>
@@ -142,9 +145,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab7f75dcf2fef63819309c44bca400074"><td class="memItemLeft" align="right" valign="top"><a id="ab7f75dcf2fef63819309c44bca400074"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>audioBegin</b> ()</td></tr>
 <tr class="separator:ab7f75dcf2fef63819309c44bca400074"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a552ed4f979c3905f6824c3840ae3bedd"><td class="memItemLeft" align="right" valign="top"><a id="a552ed4f979c3905f6824c3840ae3bedd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>audioConfig</b> (int rate, uint8_t channels, uint8_t bits)</td></tr>
-<tr class="separator:a552ed4f979c3905f6824c3840ae3bedd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memItemLeft" align="right" valign="top"><a id="ae82d3c5e5c41bc2f58d73026888d177f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>audioEnd</b> ()</td></tr>
 <tr class="separator:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -257,7 +257,7 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>mac_address</
 timeval&#160;</td><td class="memItemRight" valign="bottom"><b>now</b></td></tr>
 <tr class="separator:a87a75a5997c44dc44be950c88a2f476c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a230755f34c5e523e8151fc0cddb6e1b1"><td class="memItemLeft" align="right" valign="top"><a id="a230755f34c5e523e8151fc0cddb6e1b1"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>output_start</b> = true</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>output_start</b> = false</td></tr>
 <tr class="separator:a230755f34c5e523e8151fc0cddb6e1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefb8abfc559dba7f270c0fa8d3484758"><td class="memItemLeft" align="right" valign="top"><a id="aefb8abfc559dba7f270c0fa8d3484758"></a>
 Client *&#160;</td><td class="memItemRight" valign="bottom"><b>p_client</b> = nullptr</td></tr>
