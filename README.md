@@ -32,7 +32,8 @@ SnapClient client(wifi, out, pcm);
 
 void setup() {
   Serial.begin(115200);
-  // login to wifi
+  
+  // login to wifi -> Define values in SnapConfig.h or replace them here
   WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
   Serial.print("Connecting to WiFi ..");
   while (WiFi.status() != WL_CONNECTED) {
