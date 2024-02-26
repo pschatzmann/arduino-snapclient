@@ -23,6 +23,13 @@ public:
     p_snap_output = &output;
   }
 
+  SnapProcessor() {
+    // default setup
+    static SnapOutput snap_output;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+    p_snap_output = &snap_output;
+  }
+
   virtual bool begin() {
     bool result = false;
     if (output_start) {
@@ -40,7 +47,7 @@ public:
   }
 
   virtual void end() {
-    ESP_LOGD(TAG, "start");
+    ESP_LOGD(TAG, "end");
     audioEnd();
     send_receive_buffer.resize(0);
     base_message_serialized.resize(0);
@@ -112,17 +119,6 @@ protected:
   bool is_time_set = false;
   SnapTime &snap_time = SnapTime::instance();
 
-  void processLoop(void *pvParameters = nullptr) {
-    ESP_LOGI(TAG, "processLoop");
-
-    while (true) {
-      ESP_LOGD(TAG, "startig new connection");
-      if (!processLoopStep()) {
-        return;
-      }
-    }
-  }
-
   bool processLoopStep() {
     if (connectClient()) {
       ESP_LOGI(TAG, "... connected");
@@ -133,13 +129,14 @@ protected:
 
     now = snap_time.time();
 
-    if (!writeHallo())
+    if (!writeHallo()){
+      ESP_LOGI(TAG, "writeHallo");
       return false;
+    }
 
     bool rc = true;
     while (rc) {
       rc = processMessageLoop();
-      p_snap_output->doLoop();
       logHeap();
       checkHeap();
     }
@@ -151,26 +148,27 @@ protected:
       logHeap();
     }
     checkHeap();
+    delay(1);
     return true;
   }
 
   bool resizeData() {
-    ESP_LOGD(TAG, "start");
     audio.resize(frame_size);
     send_receive_buffer.resize(CONFIG_SNAPCAST_BUFF_LEN);
     base_message_serialized.resize(BASE_MESSAGE_SIZE);
-    ESP_LOGD(TAG, "end!");
     return true;
   }
 
   bool processMessageLoop() {
-    ESP_LOGD(TAG, "start");
+    ESP_LOGD(TAG, "processMessageLoop");
 
     if (!readBaseMessage())
       return false;
+    delay(1);
 
     if (!readData())
       return false;
+    delay(1);
 
     switch (base_message.type) {
     case SNAPCAST_MESSAGE_CODEC_HEADER:
@@ -197,17 +195,21 @@ protected:
     default:
       ESP_LOGD(TAG, "Invalid Message: %u", base_message.type);
     }
+    delay(1);
 
     // If it's been a second or longer since our last time message was
     // sent, do so now
     if (!writeTimedMessage())
       return false;
 
+    delay(1);
+
     return true;
   }
 
   bool connectClient() {
     ESP_LOGD(TAG, "start");
+    if (p_client->connected()) return true;
     p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
     if (!p_client->connect(server_ip, server_port)) {
       ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
@@ -295,7 +297,7 @@ protected:
     }
     start = &send_receive_buffer[0];
     while (p_client->available() < base_message.size)
-      delay(100);
+      delay(10);
     size = p_client->readBytes(&(send_receive_buffer[0]), base_message.size);
     return true;
   }
@@ -526,7 +528,7 @@ protected:
 
   void audioEnd() { p_snap_output->end(); }
 
-  size_t writeAudio(const uint8_t *data, size_t size) {
+  virtual size_t writeAudio(const uint8_t *data, size_t size) {
     return p_snap_output->write(data, size);
   }
 

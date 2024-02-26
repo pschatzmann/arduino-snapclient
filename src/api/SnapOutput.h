@@ -1,16 +1,19 @@
 #pragma once
 
-#include "Arduino.h" // for ESP.getPsramSize()
+#include <stdint.h>
+#include <sys/time.h>
+
+#include "Arduino.h"  // for ESP.getPsramSize()
 #include "AudioTools.h"
 #include "SnapCommon.h"
 #include "SnapConfig.h"
 #include "SnapLogger.h"
 #include "SnapTime.h"
 #include "SnapTimeSync.h"
-#include <stdint.h>
-#include <sys/time.h>
 
 class SnapProcessor;
+class SnapProcessorRTOS;
+
 /**
  * @brief Simple Output Class which uses the AudioTools to build an output chain
  * with volume control and a resampler
@@ -21,18 +24,16 @@ class SnapProcessor;
  **/
 
 class SnapOutput : public AudioInfoSupport {
-friend SnapProcessor;
-public:
-  // singleton: only access via instance class method
-  SnapOutput() {
-    // audio_info.sample_rate = 48000;
-    // audio_info.channels = 2;
-    // audio_info.bits_per_sample = 16;
-  }
+  friend SnapProcessor;
+  friend SnapProcessorRTOS;
+
+ public:
+  SnapOutput() = default;
 
   /// Starts the processing which is also starting the the dsp_i2s_task_handler
   /// task
   virtual bool begin() {
+    ESP_LOGI(TAG, "begin");
     is_sync_started = false;
     return audioBegin();
   }
@@ -41,7 +42,8 @@ public:
   virtual size_t write(const uint8_t *data, size_t size) {
     ESP_LOGD(TAG, "%zu", size);
     // only start to proces data after we received codec header
-    if (!is_audio_begin_called){
+    if (!is_audio_begin_called) {
+      ESP_LOGI(TAG, "not started");
       return 0;
     }
 
@@ -86,45 +88,42 @@ public:
 
   /// Defines the audio output chain to the final output
   void setOutput(AudioOutput &output) {
-    this->out = &output; // final output
+    this->out = &output;  // final output
     resample.setStream(output);
-    vol_stream.setStream(resample);        // adjust volume
+    vol_stream.setStream(resample);  // adjust volume
     timed_stream.setStream(vol_stream);
-    decoder_stream.setStream(&timed_stream); // decode to pcm
+    decoder_stream.setStream(&timed_stream);  // decode to pcm
   }
+
+  AudioOutput &getOutput() { return *out; }
 
   /// Defines the decoder class
   void setDecoder(AudioDecoder &dec) { decoder_stream.setDecoder(&dec); }
+
+  AudioDecoder &getDecoder() { return decoder_stream.decoder(); }
 
   /// setup of all audio objects
   void setAudioInfo(AudioInfo info) {
     ESP_LOGI(TAG, "sample_rate: %d, channels: %d, bits: %d", info.sample_rate,
              info.channels, info.bits_per_sample);
     audio_info = info;
-    if (is_audio_begin_called){
+    if (is_audio_begin_called) {
       vol_stream.setAudioInfo(info);
       out->setAudioInfo(info);
       timed_stream.setAudioInfo(info);
     }
   }
 
-  AudioInfo audioInfo(){
-    return audio_info;
-  }
+  AudioInfo audioInfo() { return audio_info; }
 
   /// Defines the time synchronization logic
-  void setSnapTimeSync(SnapTimeSync &timeSync){
-    p_snap_time_sync = &timeSync;
-  }
+  void setSnapTimeSync(SnapTimeSync &timeSync) { p_snap_time_sync = &timeSync; }
 
-  // do nothing
-  virtual void doLoop() {}
+  SnapTimeSync &snapTimeSync() { return *p_snap_time_sync; }
 
-  SnapTimeSync& snapTimeSync() {
-    return *p_snap_time_sync;
-  }
+  bool isStarted() { return is_audio_begin_called; }
 
-protected:
+ protected:
   const char *TAG = "SnapOutput";
   AudioOutput *out = nullptr;
   AudioInfo audio_info;
@@ -132,8 +131,8 @@ protected:
   VolumeStream vol_stream;
   ResampleStream resample;
   TimedStream timed_stream;
-  float vol = 1.0;        // volume in the range 0.0 - 1.0
-  float vol_factor = 1.0; //
+  float vol = 1.0;         // volume in the range 0.0 - 1.0
+  float vol_factor = 1.0;  //
   bool is_mute = false;
   SnapAudioHeader header;
   SnapTime &snap_time = SnapTime::instance();
@@ -144,9 +143,10 @@ protected:
 
   /// setup of all audio objects
   bool audioBegin() {
-
-    if (out == nullptr)
+    if (out == nullptr) {
+      ESP_LOGI(TAG, "out is null");
       return false;
+    }
 
     // open volume control: allow amplification
     auto vol_cfg = vol_stream.defaultConfig();
@@ -178,7 +178,6 @@ protected:
     return true;
   }
 
-
   /// to speed up or slow down playback
   void setPlaybackFactor(float fact) { resample.setStepSize(fact); }
 
@@ -193,8 +192,7 @@ protected:
 
   void audioEnd() {
     ESP_LOGD(TAG, "start");
-    if (out == nullptr)
-      return;
+    if (out == nullptr) return;
     out->end();
   }
 
@@ -210,19 +208,18 @@ protected:
   /// ignored - update playback speed
   bool synchronizePlayback() {
     bool result = true;
-    SnapTimeSync& ts = *p_snap_time_sync;
+    SnapTimeSync &ts = *p_snap_time_sync;
 
     // calculate how long we need to wait to playback the audio
     auto delay_ms = getDelayMs();
 
     if (!is_sync_started) {
-
       ts.begin(audio_info.sample_rate);
 
       // start audio when first package in the future becomes valid
       result = synchronizeOnStart(delay_ms);
     } else {
-      // provide the actual delay to the synch 
+      // provide the actual delay to the synch
       ts.updateActualDelay(delay_ms);
 
       if (ts.isSync()) {

@@ -1,3 +1,4 @@
 .vscode/
 build/
 miniaudio.h
+arduino-snapclient.code-workspace

@@ -32,53 +32,52 @@
 class SnapClient {
 
 public:
-  SnapClient(Client &client,AudioStream &stream, AudioDecoder &decoder) {
+  SnapClient(Client &client, AudioStream &stream, AudioDecoder &decoder) {
+    static AdapterAudioStreamToAudioOutput output_adapter;
     output_adapter.setStream(stream);
-    p_snapprocessor->setOutput(output_adapter);
-    p_snapprocessor->setDecoder(decoder);
-    setClient(client);
+    p_decoder = &decoder;
+    p_output = &output_adapter;
+    p_client = &client;
   }
 
   SnapClient(Client &client, AudioStream &stream, StreamingDecoder &decoder,
              int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
-    p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
+    static DecoderFromStreaming decoder_adapter(decoder, bufferSize);
+    static AdapterAudioStreamToAudioOutput output_adapter;
+    p_decoder = &decoder_adapter;
     output_adapter.setStream(stream);
-    p_snapprocessor->setOutput(output_adapter);
-    p_snapprocessor->setDecoder(*p_decoder_adapter);
-    setClient(client);
+    p_output = &output_adapter;
+    p_client = &client;
   }
 
   SnapClient(Client &client, AudioOutput &output, AudioDecoder &decoder) {
-    p_snapprocessor->setOutput(output);
-    p_snapprocessor->setDecoder(decoder);
-    setClient(client);
+    p_decoder = &decoder;
+    p_output = &output;
+    p_client = &client;
   }
 
   SnapClient(Client &client, AudioOutput &output, StreamingDecoder &decoder,
              int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
-    p_decoder_adapter = new DecoderFromStreaming(decoder, bufferSize);
-    p_snapprocessor->setOutput(output);
-    p_snapprocessor->setDecoder(*p_decoder_adapter);
-    setClient(client);
+    p_decoder = new DecoderFromStreaming(decoder, bufferSize);
+    p_output = &output;
+    p_client = &client;
   }
 
   /// Destructor
   ~SnapClient() {
-    if (p_decoder_adapter != nullptr)
-      delete p_decoder_adapter;
     end();
   }
 
   /// Defines an alternative commnuication client (default is WiFiClient)
-  void setClient(Client &client) { p_snapprocessor->setClient(client); }
+  void setClient(Client &client) { p_client = &client; }
 
   /// @brief Defines the Snapcast Server IP address
   /// @param address 
-  void setServerIP(IPAddress address) { p_snapprocessor->setServerIP(address); }
+  void setServerIP(IPAddress ipAddress) { this->address = ipAddress; }
 
   /// Defines the time synchronization logic
   void setSnapTimeSync(SnapTimeSync &timeSync){
-    p_snapprocessor->snapOutput().setSnapTimeSync(timeSync);
+    p_time_sync = &timeSync;
   }
 
   /// Starts the processing
@@ -112,6 +111,12 @@ public:
     SnapTime::instance().setupSNTPTime();
 #endif
 
+    p_snapprocessor->setServerIP(address);
+    p_snapprocessor->setOutput(*p_output);
+    p_snapprocessor->snapOutput().setSnapTimeSync(*p_time_sync);
+    p_snapprocessor->setDecoder(*p_decoder);
+    p_snapprocessor->setClient(*p_client);
+
     // start tasks
     return p_snapprocessor->begin();
   }
@@ -136,18 +141,24 @@ public:
     p_snapprocessor = &processor;
   }
 
+  /// Defines the Snap output implementation to be used
+  void setSnapOutput(SnapOutput &out){
+    p_snapprocessor->setSnapOutput(out);
+  }
+
   /// Call from Arduino Loop (when no tasks are used)
   void doLoop() { p_snapprocessor->doLoop(); }
 
 protected:
   const char *TAG = "SnapClient";
-  AdapterAudioStreamToAudioOutput output_adapter;
-  DecoderFromStreaming *p_decoder_adapter = nullptr;
   SnapTime &snap_time = SnapTime::instance();
-  // default setup
-  SnapOutput snap_output;
-  SnapProcessor default_processor{snap_output};
+  SnapProcessor default_processor;
   SnapProcessor *p_snapprocessor = &default_processor;
+  AudioOutput *p_output = nullptr;
+  AudioDecoder *p_decoder = nullptr;
+  Client *p_client = nullptr;
+  SnapTimeSync *p_time_sync = nullptr;
+  IPAddress address;
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)
