@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['doloop_2',['doLoop',['../class_snap_processor.html#ae0d28a9842dd1a20e72bdf59f8892fb8',1,'SnapProcessor::doLoop()'],['../class_snap_client.html#a4ee9280c3692bb64624dbc933acae273',1,'SnapClient::doLoop()']]]
+  ['copy_3',['copy',['../class_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8',1,'SnapProcessorRTOS']]]
 ];

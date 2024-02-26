@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['getdelayms_4',['getDelayMs',['../class_snap_output.html#a10297964d6abd0cffcb68332fff761b5',1,'SnapOutput']]],
-  ['getfactor_5',['getFactor',['../class_snap_time_sync.html#a47e677c2396350208f1a2499fced812a',1,'SnapTimeSync::getFactor()'],['../class_snap_time_sync_dynamic.html#a266c93347cd6fb48d564c9d12ec26059',1,'SnapTimeSyncDynamic::getFactor()'],['../class_snap_time_sync_dynamic_since_start.html#a266c93347cd6fb48d564c9d12ec26059',1,'SnapTimeSyncDynamicSinceStart::getFactor()'],['../class_snap_time_sync_fixed.html#a266c93347cd6fb48d564c9d12ec26059',1,'SnapTimeSyncFixed::getFactor()']]],
-  ['getstartdelay_6',['getStartDelay',['../class_snap_time_sync.html#a8a84aacea77de2dfdc9827cb7f71c735',1,'SnapTimeSync']]]
+  ['end_5',['end',['../class_snap_output.html#af8e0a63ec718201627220299012e654f',1,'SnapOutput::end()'],['../class_snap_client.html#a081b5c662ecee58405a543518f699d31',1,'SnapClient::end()']]]
 ];

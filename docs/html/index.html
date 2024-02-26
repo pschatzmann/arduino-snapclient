@@ -96,7 +96,8 @@ Example Arduino Sketch</h2>
 <div class="line"> </div>
 <div class="line">void setup() {</div>
 <div class="line">  Serial.begin(115200);</div>
-<div class="line">  // login to wifi</div>
+<div class="line">  </div>
+<div class="line">  // login to wifi -&gt; Define values in SnapConfig.h or replace them here</div>
 <div class="line">  WiFi.begin(CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);</div>
 <div class="line">  Serial.print(&quot;Connecting to WiFi ..&quot;);</div>
 <div class="line">  while (WiFi.status() != WL_CONNECTED) {</div>

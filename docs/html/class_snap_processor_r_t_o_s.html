@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>arduino-snapclient: SnapProcessor Class Reference</title>
+<title>arduino-snapclient: SnapProcessorRTOS Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -64,42 +64,46 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="class_snap_processor-members.html">List of all members</a>  </div>
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
+<a href="class_snap_processor_r_t_o_s-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">SnapProcessor Class Reference</div>  </div>
+<div class="title">SnapProcessorRTOS Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Snap Processor implementation which does not rely on FreeRTOS.  
- <a href="class_snap_processor.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="_snap_processor_8h_source.html">SnapProcessor.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_snap_processor_r_t_o_s_8h_source.html">SnapProcessorRTOS.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for SnapProcessor:</div>
+Inheritance diagram for SnapProcessorRTOS:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="class_snap_processor.png" usemap="#SnapProcessor_map" alt=""/>
-  <map id="SnapProcessor_map" name="SnapProcessor_map">
-<area href="class_snap_processor_r_t_o_s.html" alt="SnapProcessorRTOS" shape="rect" coords="0,56,132,80"/>
+  <img src="class_snap_processor_r_t_o_s.png" usemap="#SnapProcessorRTOS_map" alt=""/>
+  <map id="SnapProcessorRTOS_map" name="SnapProcessorRTOS_map">
+<area href="class_snap_processor.html" title="Snap Processor implementation which does not rely on FreeRTOS." alt="SnapProcessor" shape="rect" coords="0,0,132,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a82a9227bc4b3084d94564c5b84ce82b1"><td class="memItemLeft" align="right" valign="top"><a id="a82a9227bc4b3084d94564c5b84ce82b1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SnapProcessor</b> (<a class="el" href="class_snap_output.html">SnapOutput</a> &amp;output)</td></tr>
-<tr class="separator:a82a9227bc4b3084d94564c5b84ce82b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50f45551c10ca30a0bc7f447e70188b1"><td class="memItemLeft" align="right" valign="top"><a id="a50f45551c10ca30a0bc7f447e70188b1"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> ()</td></tr>
-<tr class="separator:a50f45551c10ca30a0bc7f447e70188b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99a5d30c01881c1c3ce653efc8ca0a96"><td class="memItemLeft" align="right" valign="top"><a id="a99a5d30c01881c1c3ce653efc8ca0a96"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">SnapProcessorRTOS</a> (int buffer_size, int activationAtPercent=75)</td></tr>
+<tr class="memdesc:a99a5d30c01881c1c3ce653efc8ca0a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:a99a5d30c01881c1c3ce653efc8ca0a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a6f5078ba7dd396a62217562f934312"><td class="memItemLeft" align="right" valign="top"><a id="a6a6f5078ba7dd396a62217562f934312"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">SnapProcessorRTOS</a> (<a class="el" href="class_snap_output.html">SnapOutput</a> &amp;output, int buffer_size, int activationAtPercent=75)</td></tr>
+<tr class="memdesc:a6a6f5078ba7dd396a62217562f934312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:a6a6f5078ba7dd396a62217562f934312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acba365cc28eb702040c382646cfb0a7a"><td class="memItemLeft" align="right" valign="top"><a id="acba365cc28eb702040c382646cfb0a7a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () override</td></tr>
+<tr class="separator:acba365cc28eb702040c382646cfb0a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0d28a9842dd1a20e72bdf59f8892fb8"><td class="memItemLeft" align="right" valign="top"><a id="ae0d28a9842dd1a20e72bdf59f8892fb8"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor.html#ae0d28a9842dd1a20e72bdf59f8892fb8">doLoop</a> ()</td></tr>
 <tr class="memdesc:ae0d28a9842dd1a20e72bdf59f8892fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call via <a class="el" href="class_snap_client.html" title="Snap Client for ESP32 Arduino.">SnapClient</a> in Arduino Loop! <br /></td></tr>
 <tr class="separator:ae0d28a9842dd1a20e72bdf59f8892fb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc34417a19a7b70626d19c41072d72a5"><td class="memItemLeft" align="right" valign="top"><a id="adc34417a19a7b70626d19c41072d72a5"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</td></tr>
-<tr class="separator:adc34417a19a7b70626d19c41072d72a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a386fcc8e40337aba1bf316140e0f541a"><td class="memItemLeft" align="right" valign="top"><a id="a386fcc8e40337aba1bf316140e0f541a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> (void) override</td></tr>
+<tr class="separator:a386fcc8e40337aba1bf316140e0f541a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9030af8438e533d3c08e0b9d887de3ce"><td class="memItemLeft" align="right" valign="top"><a id="a9030af8438e533d3c08e0b9d887de3ce"></a>
 <a class="el" href="structtv__t.html">tv_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getLatency</b> ()</td></tr>
 <tr class="separator:a9030af8438e533d3c08e0b9d887de3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,9 +161,20 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>audioBegin</b> ()</td
 <tr class="memitem:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memItemLeft" align="right" valign="top"><a id="ae82d3c5e5c41bc2f58d73026888d177f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>audioEnd</b> ()</td></tr>
 <tr class="separator:ae82d3c5e5c41bc2f58d73026888d177f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cbdf6515e63a9997a9245cf7bc2929c"><td class="memItemLeft" align="right" valign="top"><a id="a8cbdf6515e63a9997a9245cf7bc2929c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a> ()</td></tr>
+<tr class="memdesc:a8cbdf6515e63a9997a9245cf7bc2929c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the buffer fill limit at which we start to process the data. <br /></td></tr>
+<tr class="separator:a8cbdf6515e63a9997a9245cf7bc2929c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66f87ab2cb4fc7994001ed5dad8af679"><td class="memItemLeft" align="right" valign="top"><a id="a66f87ab2cb4fc7994001ed5dad8af679"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>connectClient</b> ()</td></tr>
 <tr class="separator:a66f87ab2cb4fc7994001ed5dad8af679"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6c087511a52e64fc9ad92820c7c0a8"><td class="memItemLeft" align="right" valign="top"><a id="aaa6c087511a52e64fc9ad92820c7c0a8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">copy</a> ()</td></tr>
+<tr class="memdesc:aaa6c087511a52e64fc9ad92820c7c0a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the buffered data to the output. <br /></td></tr>
+<tr class="separator:aaa6c087511a52e64fc9ad92820c7c0a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cfd4f66cc2572a7a01a34eb62b2d53c"><td class="memItemLeft" align="right" valign="top"><a id="a2cfd4f66cc2572a7a01a34eb62b2d53c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init_rtos</b> (int buffer_size, int activationAtPercent)</td></tr>
+<tr class="separator:a2cfd4f66cc2572a7a01a34eb62b2d53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8200ad3a5318076b20e424deeee3651c"><td class="memItemLeft" align="right" valign="top"><a id="a8200ad3a5318076b20e424deeee3651c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>processLoopStep</b> ()</td></tr>
 <tr class="separator:a8200ad3a5318076b20e424deeee3651c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,9 +217,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setVolume</b> (float 
 <tr class="memitem:a63df7c1ee9179993aac755ec46d233a8"><td class="memItemLeft" align="right" valign="top"><a id="a63df7c1ee9179993aac755ec46d233a8"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>wireChunk</b> (<a class="el" href="struct_snap_message_wire_chunk.html">SnapMessageWireChunk</a> &amp;wire_chunk_message)</td></tr>
 <tr class="separator:a63df7c1ee9179993aac755ec46d233a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a458b8363394dcc719b7c76b65f81d9b0"><td class="memItemLeft" align="right" valign="top"><a id="a458b8363394dcc719b7c76b65f81d9b0"></a>
-virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><b>writeAudio</b> (const uint8_t *data, size_t size)</td></tr>
-<tr class="separator:a458b8363394dcc719b7c76b65f81d9b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af26d304c20113d4184aa61703aef6bc7"><td class="memItemLeft" align="right" valign="top"><a id="af26d304c20113d4184aa61703aef6bc7"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">writeAudio</a> (const uint8_t *data, size_t size) override</td></tr>
+<tr class="memdesc:af26d304c20113d4184aa61703aef6bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the encoded audio data to a queue. <br /></td></tr>
+<tr class="separator:af26d304c20113d4184aa61703aef6bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7a3c71cb87f8d4222ab0e453a05dd12"><td class="memItemLeft" align="right" valign="top"><a id="ad7a3c71cb87f8d4222ab0e453a05dd12"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>writeAudioInfo</b> (<a class="el" href="struct_snap_audio_header.html">SnapAudioHeader</a> &amp;header)</td></tr>
 <tr class="separator:ad7a3c71cb87f8d4222ab0e453a05dd12"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,8 +234,18 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>writeMessage</b> ()</
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>writeTimedMessage</b> ()</td></tr>
 <tr class="separator:a72b0fbbe59f71274ce7a4f660acc2fff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:a2725cad0984c9c469b19fd065371fe69"><td class="memItemLeft" align="right" valign="top"><a id="a2725cad0984c9c469b19fd065371fe69"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a> ()</td></tr>
+<tr class="memdesc:a2725cad0984c9c469b19fd065371fe69"><td class="mdescLeft">&#160;</td><td class="mdescRight">static method for rtos task: make sure we constantly output audio <br /></td></tr>
+<tr class="separator:a2725cad0984c9c469b19fd065371fe69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:af80fa5d79a68acc364ef5ba57b21d68d"><td class="memItemLeft" align="right" valign="top"><a id="af80fa5d79a68acc364ef5ba57b21d68d"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>active_percent</b></td></tr>
+<tr class="separator:af80fa5d79a68acc364ef5ba57b21d68d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7b57ec93f5b87d1d161e7c7fec104b0"><td class="memItemLeft" align="right" valign="top"><a id="ac7b57ec93f5b87d1d161e7c7fec104b0"></a>
 std::vector&lt; int16_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>audio</b></td></tr>
 <tr class="separator:ac7b57ec93f5b87d1d161e7c7fec104b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,6 +255,9 @@ std::vector&lt; int16_t &gt;&#160;</td><td class="memItemRight" valign="bottom">
 <tr class="memitem:a46d5776cf43be58410969734354e41be"><td class="memItemLeft" align="right" valign="top"><a id="a46d5776cf43be58410969734354e41be"></a>
 std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>base_message_serialized</b></td></tr>
 <tr class="separator:a46d5776cf43be58410969734354e41be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3368dff72c14428e280fc69cd4ee1cba"><td class="memItemLeft" align="right" valign="top"><a id="a3368dff72c14428e280fc69cd4ee1cba"></a>
+audio_tools::SynchronizedBufferRTOS&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> {1024 * 20}</td></tr>
+<tr class="separator:a3368dff72c14428e280fc69cd4ee1cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ac7822956f57069d76da865d6b33c55"><td class="memItemLeft" align="right" valign="top"><a id="a1ac7822956f57069d76da865d6b33c55"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels</b> = 2</td></tr>
 <tr class="separator:a1ac7822956f57069d76da865d6b33c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -283,6 +312,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>server_port</b> = CONF
 <tr class="memitem:a439227feff9d7f55384e8780cfc2eb82"><td class="memItemLeft" align="right" valign="top"><a id="a439227feff9d7f55384e8780cfc2eb82"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> = 0</td></tr>
 <tr class="separator:a439227feff9d7f55384e8780cfc2eb82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac04ff42d3697787f7535ba49494f60b1"><td class="memItemLeft" align="right" valign="top"><a id="ac04ff42d3697787f7535ba49494f60b1"></a>
+cpp_freertos::Queue&#160;</td><td class="memItemRight" valign="bottom"><b>size_queue</b> {200, sizeof(size_t)}</td></tr>
+<tr class="separator:ac04ff42d3697787f7535ba49494f60b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf3fa99a53bc456a46cd8e5e05be88bd"><td class="memItemLeft" align="right" valign="top"><a id="acf3fa99a53bc456a46cd8e5e05be88bd"></a>
 <a class="el" href="class_snap_time.html">SnapTime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>snap_time</b> = SnapTime::instance()</td></tr>
 <tr class="separator:acf3fa99a53bc456a46cd8e5e05be88bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -290,20 +322,31 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> = 0</td></tr>
 char *&#160;</td><td class="memItemRight" valign="bottom"><b>start</b> = nullptr</td></tr>
 <tr class="separator:ab40328f79e021050ac262dc0a6019667"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memItemLeft" align="right" valign="top"><a id="a5a85b9c772bbeb480b209a3e6ea92b4c"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapProcessor&quot;</td></tr>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><b>TAG</b> = &quot;SnapProcessorRTOS&quot;</td></tr>
 <tr class="separator:a5a85b9c772bbeb480b209a3e6ea92b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cd0230b38685457c3175dfe64307fe9"><td class="memItemLeft" align="right" valign="top"><a id="a8cd0230b38685457c3175dfe64307fe9"></a>
+cpp_freertos::Task&#160;</td><td class="memItemRight" valign="bottom"><b>task</b> {&quot;output&quot;, TASK_STACK_SIZE, 1, <a class="el" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>}</td></tr>
+<tr class="separator:a8cd0230b38685457c3175dfe64307fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a904b764496b5e553506267a3bedf434b"><td class="memItemLeft" align="right" valign="top"><a id="a904b764496b5e553506267a3bedf434b"></a>
+const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>TASK_STACK_SIZE</b> = 10 * 1024</td></tr>
+<tr class="separator:a904b764496b5e553506267a3bedf434b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96824a0831cbef6404ba272c2d6b0e40"><td class="memItemLeft" align="right" valign="top"><a id="a96824a0831cbef6404ba272c2d6b0e40"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>task_started</b> = false</td></tr>
+<tr class="separator:a96824a0831cbef6404ba272c2d6b0e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a47186a9fc3c702131beb37bb3d36f7"><td class="memItemLeft" align="right" valign="top"><a id="a3a47186a9fc3c702131beb37bb3d36f7"></a>
 <a class="el" href="struct_snap_message_time.html">SnapMessageTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>time_message</b></td></tr>
 <tr class="separator:a3a47186a9fc3c702131beb37bb3d36f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:a902c78a582f6d288a84db597e8a0ffd1"><td class="memItemLeft" align="right" valign="top"><a id="a902c78a582f6d288a84db597e8a0ffd1"></a>
+static <a class="el" href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>self</b> = nullptr</td></tr>
+<tr class="separator:a902c78a582f6d288a84db597e8a0ffd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Snap Processor implementation which does not rely on FreeRTOS. </p>
-<dl class="section author"><dt>Author</dt><dd>Phil Schatzmann </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2023-10-28 </dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
+<div class="textblock"><p>Processor for which the encoded output is buffered in a queue in order to prevent any buffer underruns. A RTOS task feeds the output from the queue. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/api/<a class="el" href="_snap_processor_8h_source.html">SnapProcessor.h</a></li>
+<li>src/api/<a class="el" href="_snap_processor_r_t_o_s_8h_source.html">SnapProcessorRTOS.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
