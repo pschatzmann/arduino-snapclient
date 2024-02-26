@@ -28,6 +28,12 @@ void setup() {
     delay(1000);
   }
 
+  // initialize output
+  auto cfg = out.defaultConfig();
+  //cfg.bufer_size = 512;
+  //cfg.buffer_count = 6;
+  out.begin(cfg);
+
   // print ip address
   Serial.println();
   Serial.println(WiFi.localIP());

@@ -30,6 +30,12 @@ void setup() {
   Serial.println();
   Serial.println(WiFi.localIP());
 
+  // initialize output
+  auto cfg = out.defaultConfig();
+  //cfg.bufer_size = 512;
+  //cfg.buffer_count = 6;
+  out.begin(cfg);
+
   // Define CONFIG_SNAPCAST_SERVER_HOST in SnapConfig.h or here
   // client.setServerIP(IPAddress(192,168,1,38));
 
