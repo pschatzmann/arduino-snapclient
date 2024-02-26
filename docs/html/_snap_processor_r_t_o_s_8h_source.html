@@ -105,7 +105,7 @@ $(function() {
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">const</span> uint16_t TASK_STACK_SIZE = 10 * 1024;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  cpp_freertos::Task task{<span class="stringliteral">&quot;output&quot;</span>, TASK_STACK_SIZE, 1, <a class="code" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>};</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  cpp_freertos::Queue size_queue{200, <span class="keyword">sizeof</span>(size_t)};</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  audio_tools::SynchronizedBufferRTOS&lt;uint8_t&gt; buffer{1024 * 20};</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  audio_tools::SynchronizedBufferRTOS&lt;uint8_t&gt; buffer{0};</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">bool</span> task_started = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">int</span> active_percent;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *<span class="keyword">self</span>;</div>

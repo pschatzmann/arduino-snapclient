@@ -146,7 +146,7 @@ public:
     p_snapprocessor->setSnapOutput(out);
   }
 
-  /// Call from Arduino Loop (when no tasks are used)
+  /// Call from Arduino Loop - to receive and process the audio data
   void doLoop() { p_snapprocessor->doLoop(); }
 
 protected:
