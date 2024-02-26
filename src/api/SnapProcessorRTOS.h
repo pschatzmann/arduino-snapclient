@@ -40,7 +40,7 @@ class SnapProcessorRTOS : public SnapProcessor {
   const uint16_t TASK_STACK_SIZE = 10 * 1024;
   cpp_freertos::Task task{"output", TASK_STACK_SIZE, 1, task_copy};
   cpp_freertos::Queue size_queue{200, sizeof(size_t)};
-  audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{1024 * 20};
+  audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{0};
   bool task_started = false;
   int active_percent;
   static SnapProcessorRTOS *self;

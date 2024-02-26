@@ -18,7 +18,7 @@
 #  define CONFIG_NVS_FLASH false
 #endif
 #ifndef CONFIG_CHECK_HEAP 
-#  define CONFIG_CHECK_HEAP true
+#  define CONFIG_CHECK_HEAP false
 #endif
 
 // snapcast parameters; 

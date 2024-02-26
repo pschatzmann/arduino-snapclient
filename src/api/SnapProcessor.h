@@ -49,6 +49,8 @@ public:
   virtual void end() {
     ESP_LOGD(TAG, "end");
     audioEnd();
+    // ESP_LOGI(TAG, "... done reading from socket");
+    p_client->stop();
     send_receive_buffer.resize(0);
     base_message_serialized.resize(0);
   }
@@ -141,8 +143,8 @@ protected:
       checkHeap();
     }
 
-    ESP_LOGI(TAG, "... done reading from socket");
-    p_client->stop();
+    // ESP_LOGI(TAG, "... done reading from socket");
+    // p_client->stop();
 
     if (id_counter % 100 == 0) {
       logHeap();
