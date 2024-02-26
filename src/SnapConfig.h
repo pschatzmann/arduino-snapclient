@@ -54,3 +54,12 @@
 #ifndef CONFIG_WIFI_PASSWORD
 #  define CONFIG_WIFI_PASSWORD "12341234"
 #endif
+
+// FreeRTOS - max number of entries in the queue
+#ifndef RTOS_MAX_QUEUE_ENTRY_COUNT 
+#   define RTOS_MAX_QUEUE_ENTRY_COUNT 200
+#endif
+
+#ifndef RTOS_STACK_SIZE 
+#   define RTOS_STACK_SIZE 10 * 1024
+#endif

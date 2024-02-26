@@ -3,8 +3,12 @@
 #include "freertos-all.h"  // https://github.com/pschatzmann/arduino-freertos-addons
 
 /**
- * Processor for which the encoded output is buffered in a queue in order to
+ * @brief Processor for which the encoded output is buffered in a queue in order to
  * prevent any buffer underruns. A RTOS task feeds the output from the queue.
+ * @author Phil Schatzmann
+ * @version 0.1
+ * @date 2024-02-26
+ * @copyright Copyright (c) 2023
  */
 class SnapProcessorRTOS : public SnapProcessor {
  public:
@@ -37,14 +41,14 @@ class SnapProcessorRTOS : public SnapProcessor {
 
  protected:
   const char *TAG = "SnapProcessorRTOS";
-  const uint16_t TASK_STACK_SIZE = 10 * 1024;
-  cpp_freertos::Task task{"output", TASK_STACK_SIZE, 1, task_copy};
-  cpp_freertos::Queue size_queue{200, sizeof(size_t)};
-  audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{0};
+  cpp_freertos::Task task{"output", RTOS_STACK_SIZE, 1, task_copy};
+  cpp_freertos::Queue size_queue{RTOS_MAX_QUEUE_ENTRY_COUNT, sizeof(size_t)};
+  audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{0}; // size defined in constructor
   bool task_started = false;
   int active_percent;
   static SnapProcessorRTOS *self;
 
+  /// store parameters provided by constructor
   void init_rtos(int buffer_size, int activationAtPercent) {
     self = this;
     active_percent = activationAtPercent;
@@ -69,6 +73,7 @@ class SnapProcessorRTOS : public SnapProcessor {
       ESP_LOGW(TAG, "size_queue full");
       return 0;
     }
+
     size_t size_written = buffer.writeArray(data, size);
     if (size_written != size) {
       ESP_LOGE(TAG, "buffer-overflow");
