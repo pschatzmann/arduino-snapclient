@@ -185,7 +185,7 @@ protected:
       // update addres information
       p_snapprocessor->setServerIP(server_ip);
       p_snapprocessor->setServerPort(server_port);
-      ESP_LOGI(TAG, "SNAPCAST ip: %s, port: %d", str_address, server_port);
+      ESP_LOGI(TAG, "MDNS: SNAPCAST ip: %s, port: %d", str_address, server_port);
 
     } else {
       ESP_LOGE(TAG, "SNAPCAST server not found");
