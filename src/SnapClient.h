@@ -38,6 +38,7 @@ public:
     p_decoder = &decoder;
     p_output = &output_adapter;
     p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
   }
 
   SnapClient(Client &client, AudioStream &stream, StreamingDecoder &decoder,
@@ -48,13 +49,15 @@ public:
     output_adapter.setStream(stream);
     p_output = &output_adapter;
     p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
   }
 
   SnapClient(Client &client, AudioOutput &output, AudioDecoder &decoder) {
     p_decoder = &decoder;
     p_output = &output;
     p_client = &client;
-  }
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+ }
 
   SnapClient(Client &client, AudioOutput &output, StreamingDecoder &decoder,
              int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
@@ -73,7 +76,7 @@ public:
 
   /// @brief Defines the Snapcast Server IP address
   /// @param address 
-  void setServerIP(IPAddress ipAddress) { this->address = ipAddress; }
+  void setServerIP(IPAddress ipAddress) { this->server_ip = ipAddress; }
 
   /// Defines the time synchronization logic
   void setSnapTimeSync(SnapTimeSync &timeSync){
@@ -111,7 +114,8 @@ public:
     SnapTime::instance().setupSNTPTime();
 #endif
 
-    p_snapprocessor->setServerIP(address);
+    p_snapprocessor->setServerIP(server_ip);
+    p_snapprocessor->setServerPort(server_port);
     p_snapprocessor->setOutput(*p_output);
     p_snapprocessor->snapOutput().setSnapTimeSync(*p_time_sync);
     p_snapprocessor->setDecoder(*p_decoder);
@@ -158,7 +162,8 @@ protected:
   AudioDecoder *p_decoder = nullptr;
   Client *p_client = nullptr;
   SnapTimeSync *p_time_sync = nullptr;
-  IPAddress address;
+  IPAddress server_ip;
+  int server_port = CONFIG_SNAPCAST_SERVER_PORT;
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)

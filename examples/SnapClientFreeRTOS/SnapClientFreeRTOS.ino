@@ -13,7 +13,7 @@ AudioBoardStream out(AudioKitEs8388V1);  // or replace with e.g. I2SStream out;
 //WAVDecoder pcm;
 OpusAudioDecoder opus;
 WiFiClient wifi;
-SnapProcessorRTOS rtos(1024*8);
+SnapProcessorRTOS rtos(1024*8); // define queue with 8 kbytes
 SnapTimeSyncDynamic synch(172, 10); // optional configuratioin
 SnapClient client(wifi, out, opus);
 
