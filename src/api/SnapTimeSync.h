@@ -58,7 +58,10 @@ public:
   /// Provides the effective delay to be used (Message buffer lag -
   /// decoding/playback time)
   int getStartDelay() {
-    int delay = std::max(0, message_buffer_delay_ms - processing_lag);
+    int delay = std::max(0, message_buffer_delay_ms + processing_lag);
+    if (message_buffer_delay_ms + processing_lag < 0){
+      LOGE("The processing lag can not be smaller then -%d", message_buffer_delay_ms);
+    }
     ESP_LOGD(TAG, "delay: %d", delay);
     return delay;
   }
