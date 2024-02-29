@@ -41,7 +41,7 @@ class SnapProcessorRTOS : public SnapProcessor {
 
  protected:
   const char *TAG = "SnapProcessorRTOS";
-  cpp_freertos::Task task{"output", RTOS_STACK_SIZE, 1, task_copy};
+  cpp_freertos::Task task{"output", RTOS_STACK_SIZE, RTOS_TASK_PRIORITY, task_copy};
   cpp_freertos::Queue size_queue{RTOS_MAX_QUEUE_ENTRY_COUNT, sizeof(size_t)};
   audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{0}; // size defined in constructor
   bool task_started = false;
