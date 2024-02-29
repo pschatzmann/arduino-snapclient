@@ -73,7 +73,7 @@ protected:
   int interval = 10;
   bool active = false;
   // start delay
-  uint16_t processing_lag = 0;
+  int processing_lag = 0;
   uint16_t message_buffer_delay_ms = 0;
 
 };
