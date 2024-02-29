@@ -63,3 +63,7 @@
 #ifndef RTOS_STACK_SIZE 
 #   define RTOS_STACK_SIZE 10 * 1024
 #endif
+
+#ifndef RTOS_TASK_PRIORITY
+#   define RTOS_TASK_PRIORITY 2
+#endif
