@@ -246,6 +246,7 @@ class SnapOutput : public AudioInfoSupport {
     } else {
       // wait for the audio to become valid
       ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+      setPlaybackFactor(p_snap_time_sync->getFactor());
       // replaced delay(delay_ms); with timed_stream
       timed_stream.setStartMs(delay_ms);
       is_sync_started = true;
