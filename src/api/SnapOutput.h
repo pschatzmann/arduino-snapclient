@@ -76,7 +76,7 @@ class SnapOutput : public AudioInfoSupport {
   /// mute / unmute
   void setMute(bool mute) {
     is_mute = mute;
-    vol_stream.setVolume(mute ? 0 : vol * vol_factor);
+    setVolume(mute ? 0.0f : vol);
     audioWriteSilence();
   }
 
