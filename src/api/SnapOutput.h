@@ -65,7 +65,7 @@ class SnapOutput : public AudioInfoSupport {
 
   /// Adjust the volume
   void setVolume(float vol) {
-    this->vol = vol / 100.0;
+    this->vol = vol;
     ESP_LOGI(TAG, "Volume: %f", this->vol);
     vol_stream.setVolume(this->vol * vol_factor);
   }
