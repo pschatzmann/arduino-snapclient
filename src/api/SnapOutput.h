@@ -76,7 +76,7 @@ class SnapOutput : public AudioInfoSupport {
   /// mute / unmute
   void setMute(bool mute) {
     is_mute = mute;
-    vol_stream.setVolume(mute ? 0 : vol);
+    vol_stream.setVolume(mute ? 0 : vol * vol_factor);
     audioWriteSilence();
   }
 
@@ -153,6 +153,7 @@ class SnapOutput : public AudioInfoSupport {
     vol_cfg.copyFrom(audio_info);
     vol_cfg.allow_boost = true;
     vol_stream.begin(vol_cfg);
+    vol_stream.setVolume(vol * vol_factor);
 
     // open final output
     out->setAudioInfo(audio_info);
@@ -246,8 +247,10 @@ class SnapOutput : public AudioInfoSupport {
     } else {
       // wait for the audio to become valid
       ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+      setPlaybackFactor(p_snap_time_sync->getFactor());
       // replaced delay(delay_ms); with timed_stream
       timed_stream.setStartMs(delay_ms);
+      timed_stream.begin();
       is_sync_started = true;
       result = true;
     }
