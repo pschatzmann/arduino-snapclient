@@ -250,6 +250,7 @@ class SnapOutput : public AudioInfoSupport {
       setPlaybackFactor(p_snap_time_sync->getFactor());
       // replaced delay(delay_ms); with timed_stream
       timed_stream.setStartMs(delay_ms);
+      timed_stream.begin();
       is_sync_started = true;
       result = true;
     }
