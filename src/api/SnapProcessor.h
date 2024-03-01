@@ -439,7 +439,7 @@ protected:
     if (header_received) {
       setMute(server_settings_message.muted);
     }
-    setVolume(server_settings_message.volume);
+    setVolume(0.01f * server_settings_message.volume);
 
     if (server_settings_message.muted != client_state_muted) {
       client_state_muted = server_settings_message.muted;
