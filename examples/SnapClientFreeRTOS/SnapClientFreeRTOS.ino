@@ -3,13 +3,9 @@
 #include "api/SnapProcessorRTOS.h" // install https://github.com/pschatzmann/arduino-freertos-addons
 #include "AudioLibs/AudioBoardStream.h" // install https://github.com/pschatzmann/arduino-audio-driver
 #include "AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
-//#include "AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
-//#include "AudioCodecs/CodecVorbis.h" //https://github.com/pschatzmann/arduino-libvorbis-idec
 
 
 AudioBoardStream out(AudioKitEs8388V1);  // or replace with e.g. I2SStream out;
-//FLACDecoder flac;
-//VorbisDecoder ogg;
 //WAVDecoder pcm;
 OpusAudioDecoder opus;
 WiFiClient wifi;

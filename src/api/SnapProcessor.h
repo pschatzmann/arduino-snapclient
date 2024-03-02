@@ -141,12 +141,10 @@ protected:
     bool rc = true;
     while (rc) {
       rc = processMessageLoop();
-      logHeap();
+      processExt();
+      //logHeap();
       checkHeap();
     }
-
-    // ESP_LOGI(TAG, "... done reading from socket");
-    // p_client->stop();
 
     if (id_counter % 100 == 0) {
       logHeap();
@@ -154,6 +152,11 @@ protected:
     checkHeap();
     delay(1);
     return true;
+  }
+
+  /// additional processing
+  void processExt() {
+    delay(5);
   }
 
   bool resizeData() {
@@ -165,14 +168,16 @@ protected:
 
   bool processMessageLoop() {
     ESP_LOGD(TAG, "processMessageLoop");
+    // Wait for data
+    if (p_client->available() < BASE_MESSAGE_SIZE) {
+      return true;
+    }
 
     if (!readBaseMessage())
       return false;
-    delay(1);
 
     if (!readData())
       return false;
-    delay(1);
 
     switch (base_message.type) {
     case SNAPCAST_MESSAGE_CODEC_HEADER:
@@ -199,14 +204,11 @@ protected:
     default:
       ESP_LOGD(TAG, "Invalid Message: %u", base_message.type);
     }
-    delay(1);
 
     // If it's been a second or longer since our last time message was
     // sent, do so now
     if (!writeTimedMessage())
       return false;
-
-    delay(1);
 
     return true;
   }
@@ -269,11 +271,6 @@ protected:
 
   bool readBaseMessage() {
     ESP_LOGD(TAG, "%d", BASE_MESSAGE_SIZE);
-    // Wait for timeout
-    // uint64_t end = millis() + CONFIG_WEBSOCKET_SERVER_TIMEOUT_SEC * 1000;
-    while (p_client->available() < BASE_MESSAGE_SIZE) {
-      delay(10);
-    }
 
     // Read Header Record with size
     size = p_client->readBytes(&send_receive_buffer[0], BASE_MESSAGE_SIZE);
