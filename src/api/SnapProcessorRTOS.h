@@ -66,7 +66,7 @@ class SnapProcessorRTOS : public SnapProcessor {
       stop();
     }
     
-    ESP_LOGI(TAG, "%zu", size);
+    ESP_LOGI(TAG, "size: %zu / buffer %d", size, buffer.available());
     if (!p_snap_output->isStarted() || size == 0) {
       ESP_LOGW(TAG, "not started");
       return 0;
@@ -93,6 +93,7 @@ class SnapProcessorRTOS : public SnapProcessor {
       task_started = true;
       task.Resume();
     }
+
     return size_written;
   }
 

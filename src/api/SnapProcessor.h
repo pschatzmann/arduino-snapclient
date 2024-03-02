@@ -393,7 +393,7 @@ protected:
       wireChunk(wire_chunk_message);
       break;
     case NO_CODEC:
-      ESP_LOGE(TAG, "Invalid codedc");
+      ESP_LOGE(TAG, "Invalid codec");
       break;
     }
     // wire_chunk_message_free(&wire_chunk_message);
