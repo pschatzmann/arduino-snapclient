@@ -7,11 +7,14 @@
 ### Feature list
 
 - Header only C++ implementation
-- PCM, Opus, FLAC and Ogg decoding is supported
+- PCM, Opus decoding is supported
 - Auto connect to snapcast server on network
 - The functionality has been tested on an ESP32
 - Memory efficient implementation, so that PSRAM is not needed
 - Use any output device or DSP chain suppored by the [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
+- Flexible design so that you can choose from different processor implementations and synchronizers.
+
+The disadvantage of these goals iw that you might need to fine tune the solution to have it working as you want. 
 
 ### Description
 
@@ -24,11 +27,13 @@ Here is an example Arduino sketch that uses the Wifi as communication API, the W
 ```C++
 #include "AudioTools.h"
 #include "SnapClient.h"
+#include "AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
+//#include "api/SnapProcessorRTOS.h" // install https://github.com/pschatzmann/arduino-freertos-addons
 
-WAVDecoder pcm;
+OpusAudioDecoder codec;
 WiFiClient wifi;
 I2SStream out;
-SnapClient client(wifi, out, pcm);
+SnapClient client(wifi, out, codec);
 
 void setup() {
   Serial.begin(115200);
@@ -50,7 +55,15 @@ void setup() {
   config.pin_bck = 14;
   config.pin_ws = 15;
   config.pin_data = 22;
+  // cfg.buffer_size = 512;
+  // cfg.buffer_count = 40;
   out.begin(cfg);
+
+  // Use FreeRTOS
+  //client.setSnapProcessor(rtos);
+
+  // Define CONFIG_SNAPCAST_SERVER_HOST in SnapConfig.h or here
+  // client.setServerIP(IPAddress(192,168,1,33));
 
   // start snap client
   client.begin();
@@ -61,7 +74,7 @@ void loop() {
 }
 
 ```
-Change the snapserver.conf to define ```codec = pcm``` and restart the snapserver with ```sudo service snapserver restart```.
+Change the snapserver.conf to define ```codec = opus``` and restart the snapserver with ```sudo service snapserver restart```.
 You can test now your sketch e.g. with ```ffmpeg -i http://stream.srg-ssr.ch/m/rsj/mp3_128 -f s16le -ar 48000 /tmp/snapfifo```
 
 For further information on codecs please check the information in the Wiki!
