@@ -25,8 +25,6 @@ class SnapProcessorRTOS : public SnapProcessor {
   }
 
   bool begin() override {
-    // we use a simple delay to delay the start
-    p_snap_output->setSynchronizeStartWithDelay(true);
     // regular begin logic
     bool result = SnapProcessor::begin();
     // empty buffer

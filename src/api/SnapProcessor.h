@@ -270,7 +270,7 @@ protected:
     // Wait for timeout
     // uint64_t end = millis() + CONFIG_WEBSOCKET_SERVER_TIMEOUT_SEC * 1000;
     while (p_client->available() < BASE_MESSAGE_SIZE) {
-      delay(100);
+      delay(10);
     }
 
     // Read Header Record with size
@@ -328,7 +328,7 @@ protected:
       if (!processMessageCodecHeaderExt(OGG))
         return false;
     } else if (strcmp(codec_header_message.codec(), "pcm") == 0) {
-      if (!processMessageCodecHeaderExt(PCM))
+      if (!processMessageCodecHeaderWav(PCM))
         return false;
     } else {
       ESP_LOGI(TAG, "Codec : %s not supported", codec_header_message.codec());
@@ -357,12 +357,21 @@ protected:
     return true;
   }
 
+  bool processMessageCodecHeaderWav(codec_type codecType) {
+    ESP_LOGD(TAG, "start");
+    codec_from_server = codecType;
+    audioBegin();
+    // send the wav header to the codec
+    p_snap_output->audioWrite((const uint8_t*)start, 44);
+    return true;
+  }
+
   bool processMessageCodecHeaderExt(codec_type codecType) {
     ESP_LOGD(TAG, "start");
     codec_from_server = codecType;
     audioBegin();
     // send the data to the codec
-    p_snap_output->audioWrite((const uint8_t*)start, size);
+    //p_snap_output->audioWrite((const uint8_t*)start, size);
     return true;
   }
 

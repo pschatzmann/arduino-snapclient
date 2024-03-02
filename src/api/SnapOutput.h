@@ -91,8 +91,7 @@ class SnapOutput : public AudioInfoSupport {
     this->out = &output;  // final output
     resample.setStream(output);
     vol_stream.setStream(resample);  // adjust volume
-    timed_stream.setStream(vol_stream);
-    decoder_stream.setStream(&timed_stream);  // decode to pcm
+    decoder_stream.setStream(&vol_stream);  // decode to pcm
   }
 
   AudioOutput &getOutput() { return *out; }
@@ -110,7 +109,6 @@ class SnapOutput : public AudioInfoSupport {
     if (is_audio_begin_called) {
       vol_stream.setAudioInfo(info);
       out->setAudioInfo(info);
-      timed_stream.setAudioInfo(info);
     }
   }
 
@@ -123,10 +121,6 @@ class SnapOutput : public AudioInfoSupport {
 
   bool isStarted() { return is_audio_begin_called; }
 
-  /// If set to true, the startup is using delay()
-  void setSynchronizeStartWithDelay(bool flag){
-    is_synchronize_with_delay = flag;
-  }
 
  protected:
   const char *TAG = "SnapOutput";
@@ -135,7 +129,6 @@ class SnapOutput : public AudioInfoSupport {
   EncodedAudioStream decoder_stream;
   VolumeStream vol_stream;
   ResampleStream resample;
-  TimedStream timed_stream;
   float vol = 1.0;         // volume in the range 0.0 - 1.0
   float vol_factor = 1.0;  //
   bool is_mute = false;
@@ -145,7 +138,6 @@ class SnapOutput : public AudioInfoSupport {
   SnapTimeSync *p_snap_time_sync = &time_sync_default;
   bool is_sync_started = false;
   bool is_audio_begin_called = false;
-  bool is_synchronize_with_delay = false;
 
   /// setup of all audio objects
   bool audioBegin() {
@@ -173,12 +165,9 @@ class SnapOutput : public AudioInfoSupport {
 
     // open resampler
     auto res_cfg = resample.defaultConfig();
-    res_cfg.step_size = p_snap_time_sync-;
+    res_cfg.step_size = p_snap_time_sync->getFactor();
     res_cfg.copyFrom(audio_info);
     resample.begin(res_cfg);
-
-    // set up timed stream
-    timed_stream.begin(audio_info);
 
     ESP_LOGD(TAG, "end");
     is_audio_begin_called = true;
@@ -254,17 +243,6 @@ class SnapOutput : public AudioInfoSupport {
       // wait for the audio to become valid
       ESP_LOGI(TAG, "starting after %d ms", delay_ms);
       setPlaybackFactor(p_snap_time_sync->getFactor());
-      // replaced delay(delay_ms); with timed_stream
-      if (is_synchronize_with_delay){
-        timed_stream.setStartMs(0);
-        timed_stream.begin();
-        // When we feed the data from a queue, delay is the best solution
-        delay(delay_ms);
-
-      } else {
-        timed_stream.setStartMs(delay_ms);
-        timed_stream.begin();
-      }
       is_sync_started = true;
       result = true;
     }
