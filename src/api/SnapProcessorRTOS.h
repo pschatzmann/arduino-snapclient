@@ -25,7 +25,11 @@ class SnapProcessorRTOS : public SnapProcessor {
   }
 
   bool begin() override {
+    // we use a simple delay to delay the start
+    p_snap_output->setSynchronizeStartWithDelay(true);
+    // regular begin logic
     bool result = SnapProcessor::begin();
+    // empty buffer
     size_queue.Flush();
     buffer.reset();
     return result;
@@ -59,6 +63,11 @@ class SnapProcessorRTOS : public SnapProcessor {
 
   /// Writes the encoded audio data to a queue
   size_t writeAudio(const uint8_t *data, size_t size) override {
+    if (size > buffer.size()){
+      ESP_LOGE(TAG, "The buffer is too small. Use a multiple of %d", size);
+      stop();
+    }
+    
     ESP_LOGI(TAG, "%zu", size);
     if (!p_snap_output->isStarted() || size == 0) {
       ESP_LOGW(TAG, "not started");
