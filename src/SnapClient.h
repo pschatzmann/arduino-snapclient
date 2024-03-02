@@ -22,6 +22,8 @@
 #include "api/SnapOutput.h"
 #include "api/SnapProcessor.h"
 
+namespace snap_arduino {
+
 /**
  * @brief Snap Client for ESP32 Arduino
  * @author Phil Schatzmann
@@ -229,3 +231,5 @@ protected:
 #endif
   }
 };
+
+}

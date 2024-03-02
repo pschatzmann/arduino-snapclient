@@ -67,3 +67,8 @@
 #ifndef RTOS_TASK_PRIORITY
 #   define RTOS_TASK_PRIORITY 2
 #endif
+
+#ifndef SNAP_NO_NAMESPACE
+namespace snap_arduino {}
+using namespace snap_arduino;
+#endif

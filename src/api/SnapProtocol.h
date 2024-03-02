@@ -18,6 +18,8 @@
 #define TIME_MESSAGE_SIZE 8
 #define MAX_JSON_LEN 256
 
+namespace snap_arduino {
+
 /// @brief Buffer to read different data types
 struct SnapReadBuffer {
   const char *buffer;
@@ -457,3 +459,5 @@ struct SnapMessageTime {
     return result;
   }
 };
+
+}

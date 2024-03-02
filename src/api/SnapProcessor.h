@@ -9,6 +9,8 @@
 #include "SnapTime.h"
 #include "vector"
 
+namespace snap_arduino {
+
 /**
  * @brief Snap Processor implementation which does not rely on FreeRTOS
  * @author Phil Schatzmann
@@ -547,3 +549,5 @@ protected:
     return p_snap_output->writeHeader(header);
   }
 };
+
+}

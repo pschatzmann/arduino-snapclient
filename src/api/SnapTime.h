@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <sys/time.h>
 
+namespace snap_arduino {
+
 /**
  * @brief The the sys/time functions are used to represent the server time.
  * The local time will be measured with the help of the Arduino millis() method.
@@ -118,3 +120,5 @@ protected:
   bool has_sntp_time = false;
   
 };
+
+}

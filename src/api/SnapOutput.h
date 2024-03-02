@@ -11,8 +11,9 @@
 #include "SnapTime.h"
 #include "SnapTimeSync.h"
 
+namespace snap_arduino {
+
 class SnapProcessor;
-class SnapProcessorRTOS;
 
 /**
  * @brief Simple Output Class which uses the AudioTools to build an output chain
@@ -24,8 +25,6 @@ class SnapProcessorRTOS;
  **/
 
 class SnapOutput : public AudioInfoSupport {
-  friend SnapProcessor;
-  friend SnapProcessorRTOS;
 
  public:
   SnapOutput() = default;
@@ -121,6 +120,43 @@ class SnapOutput : public AudioInfoSupport {
 
   bool isStarted() { return is_audio_begin_called; }
 
+  // writes the audio data to the decoder
+  size_t audioWrite(const void *src, size_t size) {
+    ESP_LOGD(TAG, "%zu", size);
+    size_t result = decoder_stream.write((const uint8_t *)src, size);
+
+    return result;
+  }
+
+  /// start to play audio only in valid server time: return false if to be
+  /// ignored - update playback speed
+  bool synchronizePlayback() {
+    bool result = true;
+    SnapTimeSync &ts = *p_snap_time_sync;
+
+    // calculate how long we need to wait to playback the audio
+    auto delay_ms = getDelayMs();
+
+    if (!is_sync_started) {
+      ts.begin(audio_info.sample_rate);
+
+      // start audio when first package in the future becomes valid
+      result = synchronizeOnStart(delay_ms);
+    } else {
+      // provide the actual delay to the synch
+      ts.updateActualDelay(delay_ms);
+
+      if (ts.isSync()) {
+        // update speed
+        float current_factor = playbackFactor();
+        float new_factor = p_snap_time_sync->getFactor();
+        if (new_factor != current_factor) {
+          setPlaybackFactor(new_factor);
+        }
+      }
+    }
+    return result;
+  }
 
  protected:
   const char *TAG = "SnapOutput";
@@ -192,43 +228,6 @@ class SnapOutput : public AudioInfoSupport {
     out->end();
   }
 
-  // writes the audio data to the decoder
-  size_t audioWrite(const void *src, size_t size) {
-    ESP_LOGD(TAG, "%zu", size);
-    size_t result = decoder_stream.write((const uint8_t *)src, size);
-
-    return result;
-  }
-
-  /// start to play audio only in valid server time: return false if to be
-  /// ignored - update playback speed
-  bool synchronizePlayback() {
-    bool result = true;
-    SnapTimeSync &ts = *p_snap_time_sync;
-
-    // calculate how long we need to wait to playback the audio
-    auto delay_ms = getDelayMs();
-
-    if (!is_sync_started) {
-      ts.begin(audio_info.sample_rate);
-
-      // start audio when first package in the future becomes valid
-      result = synchronizeOnStart(delay_ms);
-    } else {
-      // provide the actual delay to the synch
-      ts.updateActualDelay(delay_ms);
-
-      if (ts.isSync()) {
-        // update speed
-        float current_factor = playbackFactor();
-        float new_factor = p_snap_time_sync->getFactor();
-        if (new_factor != current_factor) {
-          setPlaybackFactor(new_factor);
-        }
-      }
-    }
-    return result;
-  }
 
   bool synchronizeOnStart(int delay_ms) {
     bool result = true;
@@ -259,3 +258,5 @@ class SnapOutput : public AudioInfoSupport {
     return delay_ms;
   }
 };
+
+}

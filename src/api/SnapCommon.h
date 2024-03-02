@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <ctime>
 
+namespace snap_arduino {
+
 enum codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };
 static const char *TAG="COMMON";
 /**
@@ -51,3 +53,4 @@ inline void logHeap() {
 #endif
 }
 
+}

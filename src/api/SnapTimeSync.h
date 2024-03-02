@@ -3,6 +3,8 @@
 #include "SnapLogger.h"
 #include "SnapTime.h"
 
+namespace snap_arduino {
+
 /**
  * @brief Abstract (Common) Time Synchronization Logic which consists of the
  * startup synchronization and the local to server clock synchronization which
@@ -184,3 +186,4 @@ protected:
   float resample_factor;
 };
 
+}

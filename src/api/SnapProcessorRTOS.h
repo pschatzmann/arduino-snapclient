@@ -2,6 +2,8 @@
 #include "SnapOutput.h"
 #include "freertos-all.h"  // https://github.com/pschatzmann/arduino-freertos-addons
 
+namespace snap_arduino {
+
 /**
  * @brief Processor for which the encoded output is buffered in a queue in order to
  * prevent any buffer underruns. A RTOS task feeds the output from the queue.
@@ -124,3 +126,5 @@ class SnapProcessorRTOS : public SnapProcessor {
 };
 
 SnapProcessorRTOS *SnapProcessorRTOS::self = nullptr;
+
+}
