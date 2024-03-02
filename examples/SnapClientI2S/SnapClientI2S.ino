@@ -35,7 +35,7 @@ void setup() {
   cfg.pin_bck = 14;
   cfg.pin_ws = 15;
   cfg.pin_data = 22;
-  //cfg.bufer_size = 512;
+  //cfg.buffer_size = 512;
   //cfg.buffer_count = 6;
   out.begin(cfg);
 

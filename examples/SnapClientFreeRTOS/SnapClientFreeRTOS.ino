@@ -30,7 +30,7 @@ void setup() {
 
   // initialize output
   auto cfg = out.defaultConfig();
-  //cfg.bufer_size = 512;
+  //cfg.buffer_size = 512;
   //cfg.buffer_count = 6;
   out.begin(cfg);
 
