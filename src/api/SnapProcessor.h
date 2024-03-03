@@ -66,6 +66,7 @@ public:
   tv_t getLatency() { return time_message.latency; }
 
   void setStartOutput(bool start) { output_start = start; }
+
   void setStartTask(bool flag) { http_task_start = flag; }
 
   /// Call via SnapClient in Arduino Loop!
@@ -155,7 +156,7 @@ protected:
   }
 
   /// additional processing
-  void processExt() {
+  virtual void processExt() {
     delay(5);
   }
 
