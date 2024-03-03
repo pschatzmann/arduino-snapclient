@@ -178,15 +178,12 @@ protected:
     // we just take the first address
     int nrOfServices = MDNS.queryService("snapcast", "tcp");
     if (nrOfServices > 0) {
-      IPAddress server_ip = MDNS.IP(0);
+      server_ip = MDNS.IP(0);
       char str_address[20] = {0};
       sprintf(str_address, "%d.%d.%d.%d", server_ip[0], server_ip[1],
               server_ip[2], server_ip[3]);
-      int server_port = MDNS.port(0);
+      server_port = MDNS.port(0);
 
-      // update addres information
-      p_snapprocessor->setServerIP(server_ip);
-      p_snapprocessor->setServerPort(server_port);
       ESP_LOGI(TAG, "MDNS: SNAPCAST ip: %s, port: %d", str_address, server_port);
 
     } else {
