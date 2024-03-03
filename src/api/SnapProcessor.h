@@ -109,6 +109,7 @@ protected:
   codec_type codec_from_server = NO_CODEC;
   SnapMessageBase base_message;
   SnapMessageTime time_message;
+  SnapMessageServerSettings server_settings_message;
   uint32_t client_state_muted = 0;
   char *start = nullptr;
   int size = 0;
@@ -142,6 +143,7 @@ protected:
     bool rc = true;
     while (rc) {
       rc = processMessageLoop();
+      // some additional processing while we wait for data
       processExt();
       //logHeap();
       checkHeap();
@@ -150,13 +152,14 @@ protected:
     if (id_counter % 100 == 0) {
       logHeap();
     }
-    checkHeap();
+    // For rtos, give audio output some space
     delay(1);
     return true;
   }
 
   /// additional processing
   virtual void processExt() {
+    // For rtos, give audio output some space
     delay(5);
   }
 
@@ -242,7 +245,7 @@ protected:
     hello_message.hostname = CONFIG_SNAPCAST_CLIENT_NAME;
     hello_message.version = "0.0.2";
     hello_message.client_name = "libsnapcast";
-    hello_message.os = "esp32";
+    hello_message.os = "arduino";
     hello_message.arch = "xtensa";
     hello_message.instance = 1;
     hello_message.id = mac_address;
@@ -421,11 +424,9 @@ protected:
 
   bool processMessageServerSettings() {
     ESP_LOGD(TAG, "start");
-    SnapMessageServerSettings server_settings_message;
-
     // The first 4 bytes in the buffer are the size of the string.
     // We don't need this, so we'll shift the entire buffer over 4 bytes
-    // and use the extra room to add a null character so cJSON can pares
+    // and use the extra room to add a null character so we can pares
     // it.
     memmove(start, start + 4, size - 4);
     start[size - 3] = '\0';

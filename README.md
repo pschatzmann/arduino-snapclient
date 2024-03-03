@@ -14,7 +14,7 @@
 - Use any output device or DSP chain suppored by the [Audio Tools](https://github.com/pschatzmann/arduino-audio-tools)
 - Flexible design so that you can choose from different processor implementations and synchronizers.
 
-The disadvantage of these goals iw that you might need to fine tune the solution to have it working as you want. 
+The disadvantage of these goals is, that you need to fine tune the solution to have it working as you want. 
 
 ### Description
 
