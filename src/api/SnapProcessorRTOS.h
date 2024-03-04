@@ -1,6 +1,6 @@
 #pragma once
 #include "SnapOutput.h"
-#include "freertos-all.h"  // https://github.com/pschatzmann/arduino-freertos-addons
+#include "Concurrency/Concurrency.h"
 
 namespace snap_arduino {
 
@@ -30,24 +30,25 @@ class SnapProcessorRTOS : public SnapProcessor {
     // regular begin logic
     bool result = SnapProcessor::begin();
     // empty buffer
-    size_queue.Flush();
+    size_queue.clear();
+    size_queue.setWriteMaxWait(5);
     buffer.reset();
     return result;
   }
 
   void end(void) override {
-    task.Suspend();
+    task.suspend();
     task_started = false;
-    size_queue.Flush();
+    size_queue.clear();
     buffer.reset();
     SnapProcessor::end();
   }
 
  protected:
   const char *TAG = "SnapProcessorRTOS";
-  cpp_freertos::Task task{"output", RTOS_STACK_SIZE, RTOS_TASK_PRIORITY, task_copy};
-  cpp_freertos::Queue size_queue{RTOS_MAX_QUEUE_ENTRY_COUNT, sizeof(size_t)};
-  audio_tools::SynchronizedBufferRTOS<uint8_t> buffer{0}; // size defined in constructor
+  audio_tools::Task task{"output", RTOS_STACK_SIZE, RTOS_TASK_PRIORITY, 1};
+  audio_tools::QueueRTOS<size_t> size_queue{RTOS_MAX_QUEUE_ENTRY_COUNT};
+  audio_tools::BufferRTOS<uint8_t> buffer{0}; // size defined in constructor
   bool task_started = false;
   int active_percent;
   static SnapProcessorRTOS *self;
@@ -57,12 +58,11 @@ class SnapProcessorRTOS : public SnapProcessor {
     self = this;
     active_percent = activationAtPercent;
     buffer.resize(buffer_size);
-    task.Start(1);
-    task.Suspend();
   }
 
   /// Writes the encoded audio data to a queue
   size_t writeAudio(const uint8_t *data, size_t size) override {
+
     if (size > buffer.size()){
       ESP_LOGE(TAG, "The buffer is too small. Use a multiple of %d", size);
       stop();
@@ -78,7 +78,7 @@ class SnapProcessorRTOS : public SnapProcessor {
       return size;
     }
 
-    if (!size_queue.Enqueue(&size, 5)) {
+    if (!size_queue.enqueue(size)) {
       ESP_LOGW(TAG, "size_queue full");
       return 0;
     }
@@ -93,7 +93,7 @@ class SnapProcessorRTOS : public SnapProcessor {
     if (!task_started && buffer.available() > bufferTaskActivationLimit()) {
       ESP_LOGI(TAG, "===> starting output task");
       task_started = true;
-      task.Resume();
+      task.start(task_copy);
     }
 
     return size_written;
@@ -107,7 +107,7 @@ class SnapProcessorRTOS : public SnapProcessor {
   /// Copy the buffered data to the output
   void copy() {
     size_t size = 0;
-    if (size_queue.Dequeue(&size)) {
+    if (size_queue.dequeue(size)) {
       uint8_t data[size];
       int read = buffer.readArray(data, size);
       assert(read == size);

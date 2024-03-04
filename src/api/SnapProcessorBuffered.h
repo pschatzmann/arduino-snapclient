@@ -1,6 +1,5 @@
 #pragma once
 #include "SnapOutput.h"
-#include "freertos-all.h"  // https://github.com/pschatzmann/arduino-freertos-addons
 
 namespace snap_arduino {
 
