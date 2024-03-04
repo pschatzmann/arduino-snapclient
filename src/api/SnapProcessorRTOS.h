@@ -29,10 +29,10 @@ class SnapProcessorRTOS : public SnapProcessor {
   bool begin() override {
     // regular begin logic
     bool result = SnapProcessor::begin();
-    // empty buffer
-    size_queue.clear();
+    // allocate buffer, so that we could use psram
+    size_queue.resize(RTOS_MAX_QUEUE_ENTRY_COUNT);
     size_queue.setWriteMaxWait(5);
-    buffer.reset();
+    buffer.resize(buffer_size);
     return result;
   }
 
@@ -47,17 +47,18 @@ class SnapProcessorRTOS : public SnapProcessor {
  protected:
   const char *TAG = "SnapProcessorRTOS";
   audio_tools::Task task{"output", RTOS_STACK_SIZE, RTOS_TASK_PRIORITY, 1};
-  audio_tools::QueueRTOS<size_t> size_queue{RTOS_MAX_QUEUE_ENTRY_COUNT};
+  audio_tools::QueueRTOS<size_t> size_queue{0};
   audio_tools::BufferRTOS<uint8_t> buffer{0}; // size defined in constructor
   bool task_started = false;
   int active_percent;
+  int buffer_size;
   static SnapProcessorRTOS *self;
 
   /// store parameters provided by constructor
-  void init_rtos(int buffer_size, int activationAtPercent) {
+  void init_rtos(int bufferSize, int activationAtPercent) {
     self = this;
     active_percent = activationAtPercent;
-    buffer.resize(buffer_size);
+    buffer_size = bufferSize;
   }
 
   /// Writes the encoded audio data to a queue
@@ -93,7 +94,7 @@ class SnapProcessorRTOS : public SnapProcessor {
     if (!task_started && buffer.available() > bufferTaskActivationLimit()) {
       ESP_LOGI(TAG, "===> starting output task");
       task_started = true;
-      task.start(task_copy);
+      task.begin(task_copy);
     }
 
     return size_written;

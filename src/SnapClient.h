@@ -110,8 +110,6 @@ public:
 
     setupMDNS();
 
-    setupPSRAM();
-
 #if CONFIG_SNAPCLIENT_SNTP_ENABLE
     SnapTime::instance().setupSNTPTime();
 #endif
@@ -208,16 +206,6 @@ protected:
 #endif
   }
 
-  void setupPSRAM() {
-#if CONFIG_USE_PSRAM && defined(ESP32)
-    if (ESP.getPsramSize() > 0) {
-      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);
-      ESP_LOGD(TAG, "PSRAM for allocations > %d bytes", CONFIG_PSRAM_LIMIT);
-    } else {
-      ESP_LOGW(TAG, "No PSRAM available or PSRAM not activated");
-    }
-#endif
-  }
 
   void setupMACAddress() {
 #ifdef ESP32

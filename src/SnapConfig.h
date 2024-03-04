@@ -2,12 +2,6 @@
 
 // activate extended functionality
 
-#ifndef CONFIG_USE_PSRAM 
-#  define CONFIG_USE_PSRAM true
-#endif
-#ifndef CONFIG_PSRAM_LIMIT 
-#  define CONFIG_PSRAM_LIMIT 512
-#endif
 #ifndef CONFIG_SNAPCLIENT_SNTP_ENABLE 
 #  define CONFIG_SNAPCLIENT_SNTP_ENABLE false
 #endif
