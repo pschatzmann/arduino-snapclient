@@ -13,6 +13,7 @@
 OpusAudioDecoder opus;
 I2SStream out;
 WiFiClient wifi;
+SnapTimeSyncDynamic synch(172, 10); // optional configuratioin
 SnapClient client(wifi, out, opus);
 
 void setup() {
@@ -43,7 +44,7 @@ void setup() {
   // client.setServerIP(IPAddress(192,168,1,38));
 
   // start snap client
-  client.begin();
+  client.begin(synch);
 }
 
 void loop() {
