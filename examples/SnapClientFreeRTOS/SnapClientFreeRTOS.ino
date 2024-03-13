@@ -41,7 +41,7 @@ void setup() {
   client.setSnapProcessor(rtos);
 
   // Define CONFIG_SNAPCAST_SERVER_HOST in SnapConfig.h or here
-  client.setServerIP(IPAddress(192,168,1,33));
+  //client.setServerIP(IPAddress(192,168,1,33));
 
   // start snap client
   client.begin(synch);
