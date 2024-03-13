@@ -161,7 +161,8 @@ protected:
   AudioOutput *p_output = nullptr;
   AudioDecoder *p_decoder = nullptr;
   Client *p_client = nullptr;
-  SnapTimeSync *p_time_sync = nullptr;
+  SnapTimeSyncDynamic time_sync_default;
+  SnapTimeSync *p_time_sync = &time_sync_default;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
 

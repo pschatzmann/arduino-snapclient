@@ -132,6 +132,8 @@ class SnapOutput : public AudioInfoSupport {
   /// ignored - update playback speed
   bool synchronizePlayback() {
     bool result = true;
+    assert(p_snap_time_sync!=nullptr);
+
     SnapTimeSync &ts = *p_snap_time_sync;
 
     // calculate how long we need to wait to playback the audio
@@ -170,8 +172,7 @@ class SnapOutput : public AudioInfoSupport {
   bool is_mute = false;
   SnapAudioHeader header;
   SnapTime &snap_time = SnapTime::instance();
-  SnapTimeSyncDynamic time_sync_default;
-  SnapTimeSync *p_snap_time_sync = &time_sync_default;
+  SnapTimeSync *p_snap_time_sync = nullptr;
   bool is_sync_started = false;
   bool is_audio_begin_called = false;
 
@@ -179,6 +180,10 @@ class SnapOutput : public AudioInfoSupport {
   bool audioBegin() {
     if (out == nullptr) {
       ESP_LOGI(TAG, "out is null");
+      return false;
+    }
+    if (p_snap_time_sync==nullptr){
+      ESP_LOGI(TAG, "p_snap_time_sync is null");
       return false;
     }
 
@@ -241,6 +246,7 @@ class SnapOutput : public AudioInfoSupport {
     } else {
       // wait for the audio to become valid
       ESP_LOGI(TAG, "starting after %d ms", delay_ms);
+      assert(p_snap_time_sync!=nullptr);
       setPlaybackFactor(p_snap_time_sync->getFactor());
       is_sync_started = true;
       result = true;
@@ -250,6 +256,7 @@ class SnapOutput : public AudioInfoSupport {
 
   /// Calculate the delay in ms
   int getDelayMs() {
+    assert(p_snap_time_sync!=nullptr);
     auto msg_time = snap_time.toMillis(header.sec, header.usec);
     auto server_time = snap_time.serverMillis();
     // wait for the audio to become valid
