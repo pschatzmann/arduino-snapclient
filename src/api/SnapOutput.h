@@ -202,7 +202,7 @@ class SnapOutput : public AudioInfoSupport {
     auto dec_cfg = decoder_stream.defaultConfig();
     dec_cfg.copyFrom(audio_info);
     decoder_stream.begin(dec_cfg);
-    decoder_stream.setNotifyAudioChange(*this);
+    decoder_stream.addNotifyAudioChange(*this);
 
     // open resampler
     auto res_cfg = resample.defaultConfig();
