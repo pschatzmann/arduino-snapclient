@@ -88,7 +88,7 @@ class SnapOutput : public AudioInfoSupport {
   /// Defines the audio output chain to the final output
   void setOutput(AudioOutput &output) {
     this->out = &output;  // final output
-    resample.setStream(output);
+    resample.setOutput(output);
     vol_stream.setStream(resample);  // adjust volume
     decoder_stream.setStream(&vol_stream);  // decode to pcm
   }
