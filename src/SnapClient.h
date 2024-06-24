@@ -177,7 +177,11 @@ protected:
     // we just take the first address
     int nrOfServices = MDNS.queryService("snapcast", "tcp");
     if (nrOfServices > 0) {
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+      server_ip = MDNS.address(0);
+#else
       server_ip = MDNS.IP(0);
+#endif
       char str_address[20] = {0};
       sprintf(str_address, "%d.%d.%d.%d", server_ip[0], server_ip[1],
               server_ip[2], server_ip[3]);
