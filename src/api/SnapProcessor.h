@@ -44,6 +44,7 @@ public:
       resizeData();
     }
     header_received = false;
+    loop_status = LoopStart;
 
     return result;
   }
@@ -70,7 +71,12 @@ public:
   void setStartTask(bool flag) { http_task_start = flag; }
 
   /// Call via SnapClient in Arduino Loop!
-  virtual void doLoop() { processLoopStep(); }
+  virtual void doLoop() { 
+    if (is_fast_loop)
+      processLoopStepFast();
+    else
+      processLoopStep();
+   }
 
   /// Defines the output class
   void setOutput(AudioOutput &output) { p_snap_output->setOutput(output); }
@@ -94,6 +100,11 @@ public:
 
   void setAudioInfo(AudioInfo info) {
     p_snap_output->setAudioInfo(info);
+  }
+
+  // Select loop processing with minimum delays
+  void setFastLoop(bool flag){
+    is_fast_loop = flag;
   }
 
 protected:
@@ -124,6 +135,53 @@ protected:
   bool header_received = false;
   bool is_time_set = false;
   SnapTime &snap_time = SnapTime::instance();
+  bool is_fast_loop = false;
+  enum loop_status_enum { LoopStart, LoopStep, LoopEnd };
+  loop_status_enum loop_status = LoopStart;
+
+  bool processLoopStepFast() {
+    switch (loop_status) {
+      case LoopStart: {
+        if (connectClient()) {
+          ESP_LOGI(TAG, "... connected");
+        } else {
+          delay(10);
+          return true;
+        }
+
+        now = snap_time.time();
+        if (!writeHallo()) {
+          ESP_LOGI(TAG, "writeHallo");
+          return false;
+        }
+        loop_status = LoopStep;
+        return true;
+      }
+
+      case LoopStep: {
+        if (!processMessageLoop()) {
+          loop_status = LoopEnd;
+        }
+        // some additional processing while we wait for data
+        processExt();
+        // logHeap();
+        checkHeap();
+        return true;
+      }
+
+      case LoopEnd: {
+        loop_status = LoopStart;
+        if (id_counter % 100 == 0) {
+          logHeap();
+        }
+        // For rtos, give audio output some space
+        delay(1);
+        return true;
+      }
+    }
+    // we should not get here
+    return false;
+  }
 
   bool processLoopStep() {
     if (connectClient()) {

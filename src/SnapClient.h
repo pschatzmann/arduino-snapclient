@@ -145,6 +145,11 @@ public:
     p_snapprocessor = &processor;
   }
 
+  /// Provides the actual processor
+  SnapProcessor& snapProcessor(){
+    return *p_snapprocessor;
+  }
+
   /// Defines the Snap output implementation to be used
   void setSnapOutput(SnapOutput &out){
     p_snapprocessor->setSnapOutput(out);
