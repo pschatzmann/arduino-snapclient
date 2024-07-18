@@ -19,6 +19,7 @@ IPAddress ip(192, 168, 1, 177);
 void setup() {
   Serial.begin(115200);
 
+  // The ESP32 supports a flexible definition of the SPI pins
   SPI.begin(ETH_SCLK, ETH_MISO, ETH_MOSI);
 
   // start the Ethernet connection:
@@ -37,7 +38,7 @@ void setup() {
 
   // start snap client
   if (!client.begin()) {
-    Serial.print("Connection error");
+    Serial.print("Could not connect to snap server");
     while (true);
   }
 }
