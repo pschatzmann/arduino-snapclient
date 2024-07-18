@@ -32,10 +32,17 @@ public:
     p_snap_output = &snap_output;
   }
 
+  /// Sets up the output and the client
   virtual bool begin() {
-    bool result = false;
+    bool result = true;
+    // start output chain
     if (output_start) {
       result = audioBegin();
+    }
+
+    // connect to snapcast server
+    if(!connectClient()){
+        result = false;
     }
 
     if (http_task_start) {
@@ -71,11 +78,11 @@ public:
   void setStartTask(bool flag) { http_task_start = flag; }
 
   /// Call via SnapClient in Arduino Loop!
-  virtual void doLoop() { 
+  bool doLoop() { 
     if (is_fast_loop)
-      processLoopStepFast();
+      return processLoopStepFast();
     else
-      processLoopStep();
+      return processLoopStep();
    }
 
   /// Defines the output class
@@ -146,7 +153,7 @@ protected:
           ESP_LOGI(TAG, "... connected");
         } else {
           delay(10);
-          return true;
+          return false;
         }
 
         now = snap_time.time();
@@ -188,7 +195,7 @@ protected:
       ESP_LOGI(TAG, "... connected");
     } else {
       delay(10);
-      return true;
+      return false;
     }
 
     now = snap_time.time();
@@ -275,9 +282,11 @@ protected:
     return true;
   }
 
+  /// connects to the server: returns true if we are connected
   bool connectClient() {
     ESP_LOGD(TAG, "start");
     if (p_client->connected()) return true;
+    p_client->stop(); // for Ethernet.h 
     p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
     if (!p_client->connect(server_ip, server_port)) {
       char str_address[50];

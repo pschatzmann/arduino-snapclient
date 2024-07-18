@@ -156,7 +156,7 @@ public:
   }
 
   /// Call from Arduino Loop - to receive and process the audio data
-  void doLoop() { p_snapprocessor->doLoop(); }
+  bool doLoop() { return p_snapprocessor->doLoop(); }
 
 protected:
   const char *TAG = "SnapClient";
