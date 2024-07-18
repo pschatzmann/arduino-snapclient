@@ -5,9 +5,10 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
 
-#define ETH_MISO  23
-#define ETH_MOSI  19
-#define ETH_SCLK  18
+// #define ETH_MISO  23
+// #define ETH_MOSI  19
+// #define ETH_SCLK  18
+// #define ETH_CS    5
 
 EthernetClient eth;
 HexDumpOutput out;  // final output
@@ -20,7 +21,9 @@ void setup() {
   Serial.begin(115200);
 
   // The ESP32 supports a flexible definition of the SPI pins
-  SPI.begin(ETH_SCLK, ETH_MISO, ETH_MOSI);
+  //SPI.begin(ETH_SCLK, ETH_MISO, ETH_MOSI, ETH_CS);
+
+  SPI.begin(); // use default pins
 
   // start the Ethernet connection:
   if (Ethernet.begin(mac) == 0) {
