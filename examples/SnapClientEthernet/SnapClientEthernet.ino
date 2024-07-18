@@ -1,17 +1,16 @@
-// We just test the output by providing a hex dump of the received data
+// Example for EthernetClient: We just test the output by providing a hex dump of the received data
 
-#include <Ethernet.h>
 #include <SPI.h>
+#include <Ethernet.h>
 #include "AudioTools.h"
 #include "SnapClient.h"
 
-// Example settings for RP2040
-#define ETH_MISO  0
-#define ETH_MOSI  3
-#define ETH_SCLK  2
+#define ETH_MISO  23
+#define ETH_MOSI  19
+#define ETH_SCLK  18
 
 EthernetClient eth;
-HexDumpOutput out;                   // final output
+HexDumpOutput out;  // final output
 CopyDecoder codec;
 SnapClient client(eth, out, codec);
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
@@ -20,15 +19,17 @@ IPAddress ip(192, 168, 1, 177);
 void setup() {
   Serial.begin(115200);
 
-  SPI.setRX(ETH_MISO);
-  SPI.setTX(ETH_MOSI);
-  SPI.setSCK(ETH_SCLK);
-  SPI.begin();
+  SPI.begin(ETH_SCLK, ETH_MISO, ETH_MOSI);
 
   // start the Ethernet connection:
-  if (!eth.begin(mac, ip)) {
-    Serial.print("Ethernet error");
-    while (true);
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    Ethernet.begin(mac, ip);
+  }  
+
+  // wait for link
+  while(Ethernet.linkStatus()!=LinkON){
+    delay(10);
   }
 
   // Define CONFIG_SNAPCAST_SERVER_HOST in SnapConfig.h or here
