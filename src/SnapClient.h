@@ -69,29 +69,6 @@ class SnapClient {
     p_client = &client;
   }
 
-  //
-  SnapClient(WiFiClient &client, AudioStream &stream, AudioDecoder &decoder)
-      : SnapClient((Client &)client, stream, decoder) {
-    is_wifi = true;
-  }
-
-  SnapClient(WiFiClient &client, AudioStream &stream, StreamingDecoder &decoder,
-             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER)
-      : SnapClient((Client &)client, stream, decoder, bufferSize) {
-    is_wifi = true;
-  }
-
-  SnapClient(WiFiClient &client, AudioOutput &output, AudioDecoder &decoder)
-      : SnapClient((Client &)client, output, decoder) {
-    is_wifi = true;
-  }
-
-  SnapClient(WiFiClient &client, AudioOutput &output, StreamingDecoder &decoder,
-             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER)
-      : SnapClient((Client &)client, output, decoder, bufferSize) {
-    is_wifi = true;
-  }
-
   /// Destructor
   ~SnapClient() { end(); }
 
