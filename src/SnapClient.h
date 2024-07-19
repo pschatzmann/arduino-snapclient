@@ -5,11 +5,10 @@
  */
 
 #include "AudioTools.h"
+#include "Client.h"
 #include "SnapConfig.h"
 #include "api/SnapCommon.h"
 #include "api/SnapLogger.h"
-#include "Client.h"
-
 
 #if CONFIG_NVS_FLASH
 #include "nvs_flash.h"
@@ -35,8 +34,7 @@ namespace snap_arduino {
  * @copyright Copyright (c) 2023
  */
 class SnapClient {
-
-public:
+ public:
   SnapClient(Client &client, AudioStream &stream, AudioDecoder &decoder) {
     static AdapterAudioStreamToAudioOutput output_adapter;
     output_adapter.setStream(stream);
@@ -62,7 +60,7 @@ public:
     p_output = &output;
     p_client = &client;
     server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
- }
+  }
 
   SnapClient(Client &client, AudioOutput &output, StreamingDecoder &decoder,
              int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
@@ -71,62 +69,41 @@ public:
     p_client = &client;
   }
 
-//
-  SnapClient(WiFiClient &client, AudioStream &stream, AudioDecoder &decoder) {
+  //
+  SnapClient(WiFiClient &client, AudioStream &stream, AudioDecoder &decoder)
+      : SnapClient((Client &)client, stream, decoder) {
     is_wifi = true;
-    static AdapterAudioStreamToAudioOutput output_adapter;
-    output_adapter.setStream(stream);
-    p_decoder = &decoder;
-    p_output = &output_adapter;
-    p_client = &client;
-    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
   }
 
   SnapClient(WiFiClient &client, AudioStream &stream, StreamingDecoder &decoder,
-             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER)
+      : SnapClient((Client &)client, stream, decoder, bufferSize) {
     is_wifi = true;
-    static DecoderFromStreaming decoder_adapter(decoder, bufferSize);
-    static AdapterAudioStreamToAudioOutput output_adapter;
-    p_decoder = &decoder_adapter;
-    output_adapter.setStream(stream);
-    p_output = &output_adapter;
-    p_client = &client;
-    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
   }
 
-  SnapClient(WiFiClient &client, AudioOutput &output, AudioDecoder &decoder) {
+  SnapClient(WiFiClient &client, AudioOutput &output, AudioDecoder &decoder)
+      : SnapClient((Client &)client, output, decoder) {
     is_wifi = true;
-    p_decoder = &decoder;
-    p_output = &output;
-    p_client = &client;
-    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
- }
+  }
 
   SnapClient(WiFiClient &client, AudioOutput &output, StreamingDecoder &decoder,
-             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER)
+      : SnapClient((Client &)client, output, decoder, bufferSize) {
     is_wifi = true;
-    p_decoder = new DecoderFromStreaming(decoder, bufferSize);
-    p_output = &output;
-    p_client = &client;
   }
-
 
   /// Destructor
-  ~SnapClient() {
-    end();
-  }
+  ~SnapClient() { end(); }
 
   /// Defines an alternative commnuication client (default is WiFiClient)
   void setClient(Client &client) { p_client = &client; }
 
   /// @brief Defines the Snapcast Server IP address
-  /// @param address 
+  /// @param address
   void setServerIP(IPAddress ipAddress) { this->server_ip = ipAddress; }
 
   /// Defines the time synchronization logic
-  void setSnapTimeSync(SnapTimeSync &timeSync){
-    p_time_sync = &timeSync;
-  }
+  void setSnapTimeSync(SnapTimeSync &timeSync) { p_time_sync = &timeSync; }
 
   /// Starts the processing
   bool begin(SnapTimeSync &timeSync) {
@@ -137,7 +114,7 @@ public:
   /// Starts the processing
   bool begin() {
 #if defined(ESP32)
-    if (is_wifi){
+    if (is_wifi) {
       if (WiFi.status() != WL_CONNECTED) {
         ESP_LOGE(TAG, "WiFi not connected");
         return false;
@@ -191,19 +168,15 @@ public:
   }
 
   /// Provides the actual processor
-  SnapProcessor& snapProcessor(){
-    return *p_snapprocessor;
-  }
+  SnapProcessor &snapProcessor() { return *p_snapprocessor; }
 
   /// Defines the Snap output implementation to be used
-  void setSnapOutput(SnapOutput &out){
-    p_snapprocessor->setSnapOutput(out);
-  }
+  void setSnapOutput(SnapOutput &out) { p_snapprocessor->setSnapOutput(out); }
 
   /// Call from Arduino Loop - to receive and process the audio data
   bool doLoop() { return p_snapprocessor->doLoop(); }
 
-protected:
+ protected:
   const char *TAG = "SnapClient";
   SnapTime &snap_time = SnapTime::instance();
   SnapProcessor default_processor;
@@ -238,7 +211,8 @@ protected:
               server_ip[2], server_ip[3]);
       server_port = MDNS.port(0);
 
-      ESP_LOGI(TAG, "MDNS: SNAPCAST ip: %s, port: %d", str_address, server_port);
+      ESP_LOGI(TAG, "MDNS: SNAPCAST ip: %s, port: %d", str_address,
+               server_port);
 
     } else {
       ESP_LOGE(TAG, "SNAPCAST server not found");
@@ -262,7 +236,6 @@ protected:
 #endif
   }
 
-
   void setupMACAddress() {
 #ifdef ESP32
     const char *adr = strdup(WiFi.macAddress().c_str());
@@ -273,4 +246,4 @@ protected:
   }
 };
 
-}
+}  // namespace snap_arduino
