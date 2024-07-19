@@ -2,3 +2,5 @@
 build/
 miniaudio.h
 arduino-snapclient.code-workspace
+_deps/
+CMakeFiles/

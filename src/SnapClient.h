@@ -8,7 +8,6 @@
 #include "SnapConfig.h"
 #include "api/SnapCommon.h"
 #include "api/SnapLogger.h"
-//#include <WiFi.h>
 #include "Client.h"
 
 
@@ -17,6 +16,10 @@
 #endif
 #if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)
 #include <ESPmDNS.h>
+#endif
+
+#ifdef ESP32
+#include <WiFi.h>
 #endif
 
 #include "api/SnapOutput.h"
@@ -68,6 +71,46 @@ public:
     p_client = &client;
   }
 
+//
+  SnapClient(WiFiClient &client, AudioStream &stream, AudioDecoder &decoder) {
+    is_wifi = true;
+    static AdapterAudioStreamToAudioOutput output_adapter;
+    output_adapter.setStream(stream);
+    p_decoder = &decoder;
+    p_output = &output_adapter;
+    p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+  }
+
+  SnapClient(WiFiClient &client, AudioStream &stream, StreamingDecoder &decoder,
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
+    is_wifi = true;
+    static DecoderFromStreaming decoder_adapter(decoder, bufferSize);
+    static AdapterAudioStreamToAudioOutput output_adapter;
+    p_decoder = &decoder_adapter;
+    output_adapter.setStream(stream);
+    p_output = &output_adapter;
+    p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+  }
+
+  SnapClient(WiFiClient &client, AudioOutput &output, AudioDecoder &decoder) {
+    is_wifi = true;
+    p_decoder = &decoder;
+    p_output = &output;
+    p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+ }
+
+  SnapClient(WiFiClient &client, AudioOutput &output, StreamingDecoder &decoder,
+             int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
+    is_wifi = true;
+    p_decoder = new DecoderFromStreaming(decoder, bufferSize);
+    p_output = &output;
+    p_client = &client;
+  }
+
+
   /// Destructor
   ~SnapClient() {
     end();
@@ -94,13 +137,15 @@ public:
   /// Starts the processing
   bool begin() {
 #if defined(ESP32)
-    if (WiFi.status() != WL_CONNECTED) {
-      ESP_LOGE(TAG, "WiFi not connected");
-      return false;
+    if (is_wifi){
+      if (WiFi.status() != WL_CONNECTED) {
+        ESP_LOGE(TAG, "WiFi not connected");
+        return false;
+      }
+      // use maximum speed
+      WiFi.setSleep(false);
+      ESP_LOGI(TAG, "Connected to AP");
     }
-    // use maximum speed
-    WiFi.setSleep(false);
-    ESP_LOGI(TAG, "Connected to AP");
 #endif
 
     // Get MAC address for WiFi station
@@ -170,6 +215,7 @@ protected:
   SnapTimeSync *p_time_sync = &time_sync_default;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
+  bool is_wifi = false;
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)

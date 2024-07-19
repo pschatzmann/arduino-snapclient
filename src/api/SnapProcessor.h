@@ -288,12 +288,12 @@ protected:
     if (p_client->connected()) return true;
     p_client->stop(); // for Ethernet.h 
     p_client->setTimeout(CONFIG_CLIENT_TIMEOUT_SEC);
-    if (!p_client->connect(server_ip, server_port)) {
+    if (p_client->connect(server_ip, server_port)<=0) {
       char str_address[50];
       sprintf(str_address, "%d.%d.%d.%d:%d", server_ip[0], server_ip[1],
             server_ip[2], server_ip[3], server_port);
 
-      ESP_LOGE(TAG, "Socket connect to %s failed errno=%d", str_address, errno);
+      ESP_LOGE(TAG, "Socket connect to %s failed (errno = %d)", str_address, errno);
       delay(4000);
       return false;
     }
