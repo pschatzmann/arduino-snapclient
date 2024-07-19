@@ -171,7 +171,11 @@ class SnapClient {
   SnapTimeSync *p_time_sync = &time_sync_default;
   IPAddress server_ip;
   int server_port = CONFIG_SNAPCAST_SERVER_PORT;
+#ifdef ESP32
+  bool is_wifi = true;
+#else
   bool is_wifi = false;
+#endif
 
   void setupMDNS() {
 #if CONFIG_SNAPCLIENT_USE_MDNS && defined(ESP32)
