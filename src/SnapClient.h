@@ -176,6 +176,12 @@ class SnapClient {
   /// Call from Arduino Loop - to receive and process the audio data
   bool doLoop() { return p_snapprocessor->doLoop(); }
 
+  /// ESP32: WiFiClient: prevent/activate automatic login to Wifi
+  void setWiFi(bool flag){ is_wifi = flag;}
+
+  /// check if we use the WiFiClient
+  bool isWiFi() {return is_wifi;}
+
  protected:
   const char *TAG = "SnapClient";
   SnapTime &snap_time = SnapTime::instance();
