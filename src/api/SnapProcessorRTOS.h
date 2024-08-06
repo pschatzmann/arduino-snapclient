@@ -1,6 +1,6 @@
 #pragma once
 #include "SnapOutput.h"
-#include "Concurrency/Concurrency.h"
+#include "AudioLibs/Concurrency.h"
 
 namespace snap_arduino {
 
