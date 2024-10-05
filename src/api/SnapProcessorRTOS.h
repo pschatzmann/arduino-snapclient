@@ -1,6 +1,10 @@
 #pragma once
 #include "SnapOutput.h"
-#include "AudioLibs/Concurrency.h"
+#if defined(AUDIOTOOLS_MAJOR_VERSION) 
+#  include "AudioTools/AudioLibs/Concurrency.h"
+#else
+#  include "AudioLibs/Concurrency.h"
+#endif
 
 namespace snap_arduino {
 

@@ -5,8 +5,8 @@
  */
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioLibs/AudioBoardStream.h" // install https://github.com/pschatzmann/arduino-audio-driver
-#include "AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
+#include "AudioTools/AudioLibs/AudioBoardStream.h" // install https://github.com/pschatzmann/arduino-audio-driver
+#include "AudioTools/AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
 
 #define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
 

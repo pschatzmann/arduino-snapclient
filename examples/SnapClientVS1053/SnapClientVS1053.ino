@@ -8,7 +8,7 @@
  */
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioLibs/VS1053Stream.h"
+#include "AudioTools/AudioLibs/VS1053Stream.h"
 
 
 VS1053Stream out; // final output

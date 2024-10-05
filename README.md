@@ -27,7 +27,7 @@ Here is an example Arduino sketch that uses the Wifi as communication API, the W
 ```C++
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
+#include "AudioTools/AudioCodecs/CodecOpus.h" // https://github.com/pschatzmann/arduino-libopus
 //#include "api/SnapProcessorRTOS.h" // install https://github.com/pschatzmann/arduino-freertos-addons
 
 OpusAudioDecoder codec;

@@ -1,6 +1,6 @@
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioCodecs/CodecOpus.h"
+#include "AudioTools/AudioCodecs/CodecOpus.h"
 
 OpusAudioDecoder opus;
 NullStream out;

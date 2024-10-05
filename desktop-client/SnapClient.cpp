@@ -5,11 +5,11 @@
  */
 #include "AudioTools.h"
 #include "SnapClient.h"
-#include "AudioLibs/MiniAudioStream.h"
-//#include "AudioCodecs/CodecOpus.h"
-//#include "AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
-#include "AudioCodecs/CodecVorbis.h" //https://github.com/pschatzmann/arduino-libvorbis-idec
-#include "AudioLibs/StdioStream.h"
+#include "AudioTools/AudioLibs/MiniAudioStream.h"
+//#include "AudioTools/AudioCodecs/CodecOpus.h"
+//#include "AudioTools/AudioCodecs/CodecFLAC.h"   // https://github.com/pschatzmann/arduino-libflac.git
+#include "AudioTools/AudioCodecs/CodecVorbis.h" //https://github.com/pschatzmann/arduino-libvorbis-idec
+#include "AudioTools/AudioLibs/StdioStream.h"
 
 //CsvOutput<int16_t> out;
 //StdioStream out;
