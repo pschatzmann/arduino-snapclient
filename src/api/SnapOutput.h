@@ -228,7 +228,7 @@ class SnapOutput : public AudioInfoSupport {
   }
 
   void audioEnd() {
-    ESP_LOGD(TAG, "start");
+    ESP_LOGD(TAG, "audioEnd");
     if (out == nullptr) return;
     out->end();
   }
