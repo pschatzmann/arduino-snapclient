@@ -123,6 +123,7 @@ class SnapOutput : public AudioInfoSupport {
   // writes the audio data to the decoder
   size_t audioWrite(const void *src, size_t size) {
     ESP_LOGD(TAG, "%zu", size);
+    time_last_write = millis();
     size_t result = decoder_stream.write((const uint8_t *)src, size);
 
     return result;
@@ -160,6 +161,15 @@ class SnapOutput : public AudioInfoSupport {
     return result;
   }
 
+  uint64_t getLastWriteTime() {
+    return time_last_write;
+  }
+
+  /// checks if the audio is still playing
+  bool isActive(uint16_t timeout=1000){
+    return (time_last_write + timeout) >= millis();
+  }
+
  protected:
   const char *TAG = "SnapOutput";
   AudioOutput *out = nullptr;
@@ -175,6 +185,7 @@ class SnapOutput : public AudioInfoSupport {
   SnapTimeSync *p_snap_time_sync = nullptr;
   bool is_sync_started = false;
   bool is_audio_begin_called = false;
+  uint64_t time_last_write = 0;
 
   /// setup of all audio objects
   bool audioBegin() {
