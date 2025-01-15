@@ -91,6 +91,12 @@ class SnapOutput : public AudioInfoSupport {
     resample.setOutput(output);
     vol_stream.setStream(resample);  // adjust volume
     decoder_stream.setStream(&vol_stream);  // decode to pcm
+
+    // synchronized audio information
+    AudioInfo info = output.audioInfo();
+    resample.begin(info, info);
+    vol_stream.setAudioInfo(info);
+    decoder_stream.setAudioInfo(info);
   }
 
   AudioOutput &getOutput() { return *out; }
@@ -122,9 +128,12 @@ class SnapOutput : public AudioInfoSupport {
 
   // writes the audio data to the decoder
   size_t audioWrite(const void *src, size_t size) {
-    ESP_LOGD(TAG, "%zu", size);
+    ESP_LOGI(TAG, "audioWrite: %zu", size);
     time_last_write = millis();
     size_t result = decoder_stream.write((const uint8_t *)src, size);
+    if (result != size){
+      ESP_LOGW(TAG, "Could not write all data %zu -> %zu", size, result);
+    }
 
     return result;
   }
@@ -197,6 +206,9 @@ class SnapOutput : public AudioInfoSupport {
       ESP_LOGI(TAG, "p_snap_time_sync is null");
       return false;
     }
+
+    // determine default audio info from output 
+    audio_info = out->audioInfo();
 
     // open volume control: allow amplification
     auto vol_cfg = vol_stream.defaultConfig();
