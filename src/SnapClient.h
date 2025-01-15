@@ -44,6 +44,15 @@ class SnapClient {
     server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
   }
 
+  SnapClient(Client &client, Print &stream, AudioDecoder &decoder) {
+    static AdapterPrintToAudioOutput output_adapter;
+    output_adapter.setStream(stream);
+    p_decoder = &decoder;
+    p_output = &output_adapter;
+    p_client = &client;
+    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);
+  }
+
   SnapClient(Client &client, AudioStream &stream, StreamingDecoder &decoder,
              int bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {
     static DecoderFromStreaming decoder_adapter(decoder, bufferSize);
