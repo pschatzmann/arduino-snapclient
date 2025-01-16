@@ -85,6 +85,11 @@ public:
       return processLoopStep();
    }
 
+  /// Usually not used!
+  virtual bool doLoop1() { 
+    return false;
+   }
+
   /// Defines the output class
   void setOutput(AudioOutput &output) { p_snap_output->setOutput(output); }
 
