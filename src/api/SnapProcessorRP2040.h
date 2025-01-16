@@ -32,9 +32,15 @@ class SnapProcessorRP2040 : public SnapProcessor {
     ESP_LOGW(TAG, "begin: %d", buffer_count * 1024);
     // regular begin logic
     bool result = SnapProcessor::begin();
-    // allocate buffer, so that we could use psram
-    size_queue.resize(RTOS_MAX_QUEUE_ENTRY_COUNT);
+    
+    // allocate buffer
+    buffer.setBlockingRead(true);
+    buffer.setBlockingWrite(true);
     buffer.resize(buffer_count * 1024);
+
+    // we need to read back the buffer with the written sizes
+    size_queue.resize(RTOS_MAX_QUEUE_ENTRY_COUNT);
+
     is_active = false;
     return result;
   }
