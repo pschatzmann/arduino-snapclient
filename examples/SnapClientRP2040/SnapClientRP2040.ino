@@ -10,8 +10,6 @@
 #include "SnapClient.h"
 #include "api/SnapProcessorRP2040.h" 
 
-//#define ARDUINO_LOOP_STACK_SIZE (10 * 1024)
-
 I2SStream out;
 OpusAudioDecoder opus;
 WiFiClient wifi;

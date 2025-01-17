@@ -32,7 +32,7 @@ class SnapProcessorRP2040 : public SnapProcessor {
     ESP_LOGW(TAG, "begin: %d", buffer_count * 1024);
     // regular begin logic
     bool result = SnapProcessor::begin();
-    
+
     // allocate buffer
     buffer.setBlockingRead(true);
     buffer.setBlockingWrite(true);
@@ -113,9 +113,9 @@ class SnapProcessorRP2040 : public SnapProcessor {
       return 0;
     }
 
-    // if (!p_snap_output->synchronizePlayback()) {
-    //   return size;
-    // }
+    if (!p_snap_output->synchronizePlayback()) {
+      return size;
+    }
 
     if (!size_queue.writeArray(&size, 1)) {
       ESP_LOGW(TAG, "size_queue full");
