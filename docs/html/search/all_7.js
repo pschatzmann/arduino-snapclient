@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['playbackfactor_11',['playbackFactor',['../class_snap_output.html#a6f02241f9435b0062580626d1894a573',1,'SnapOutput']]]
+  ['playbackfactor_17',['playbackFactor',['../classsnap__arduino_1_1_snap_output.html#a6f02241f9435b0062580626d1894a573',1,'snap_arduino::SnapOutput']]],
+  ['processext_18',['processExt',['../classsnap__arduino_1_1_snap_processor.html#a9ace7c86de0ecc5afd903ec1bddbcc70',1,'snap_arduino::SnapProcessor::processExt()'],['../classsnap__arduino_1_1_snap_processor_buffered.html#a9ace7c86de0ecc5afd903ec1bddbcc70',1,'snap_arduino::SnapProcessorBuffered::processExt()']]]
 ];

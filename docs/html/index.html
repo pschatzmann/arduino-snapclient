@@ -73,12 +73,14 @@ Snapcast Audio Streaming Client for Arduino</h2>
 Feature list</h2>
 <ul>
 <li>Header only C++ implementation</li>
-<li>PCM, Opus, FLAC and Ogg decoding is supported</li>
+<li>PCM, Opus decoding is supported</li>
 <li>Auto connect to snapcast server on network</li>
 <li>The functionality has been tested on an ESP32</li>
 <li>Memory efficient implementation, so that PSRAM is not needed</li>
 <li>Use any output device or DSP chain suppored by the <a href="https://github.com/pschatzmann/arduino-audio-tools">Audio Tools</a></li>
+<li>Flexible design so that you can choose from different processor implementations and synchronizers.</li>
 </ul>
+<p>The disadvantage of these goals is, that you need to fine tune the solution to have it working as you want.</p>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Description</h2>
 <p>I have rewritten the <a href="https://github.com/jorgenkraghjakobsen/snapclient">snapclient</a> from Jørgen Kragh Jakobsen to an Arduino Library and integrated my AudioTools project to be used to define the output devices.</p>
@@ -88,11 +90,13 @@ Example Arduino Sketch</h2>
 <div class="fragment"><div class="line"> {C++}</div>
 <div class="line">#include &quot;AudioTools.h&quot;</div>
 <div class="line">#include &quot;SnapClient.h&quot;</div>
+<div class="line">#include &quot;AudioTools/AudioCodecs/CodecOpus.h&quot; // https://github.com/pschatzmann/arduino-libopus</div>
+<div class="line">//#include &quot;api/SnapProcessorRTOS.h&quot; // install https://github.com/pschatzmann/arduino-freertos-addons</div>
 <div class="line"> </div>
-<div class="line">WAVDecoder pcm;</div>
+<div class="line">OpusAudioDecoder codec;</div>
 <div class="line">WiFiClient wifi;</div>
 <div class="line">I2SStream out;</div>
-<div class="line">SnapClient client(wifi, out, pcm);</div>
+<div class="line">SnapClient client(wifi, out, codec);</div>
 <div class="line"> </div>
 <div class="line">void setup() {</div>
 <div class="line">  Serial.begin(115200);</div>
@@ -114,7 +118,15 @@ Example Arduino Sketch</h2>
 <div class="line">  config.pin_bck = 14;</div>
 <div class="line">  config.pin_ws = 15;</div>
 <div class="line">  config.pin_data = 22;</div>
+<div class="line">  // cfg.buffer_size = 512;</div>
+<div class="line">  // cfg.buffer_count = 40;</div>
 <div class="line">  out.begin(cfg);</div>
+<div class="line"> </div>
+<div class="line">  // Use FreeRTOS</div>
+<div class="line">  //client.setSnapProcessor(rtos);</div>
+<div class="line"> </div>
+<div class="line">  // Define CONFIG_SNAPCAST_SERVER_HOST in SnapConfig.h or here</div>
+<div class="line">  // client.setServerIP(IPAddress(192,168,1,33));</div>
 <div class="line"> </div>
 <div class="line">  // start snap client</div>
 <div class="line">  client.begin();</div>
@@ -123,7 +135,7 @@ Example Arduino Sketch</h2>
 <div class="line">void loop() {</div>
 <div class="line">  client.doLoop();</div>
 <div class="line">}</div>
-</div><!-- fragment --><p> Change the snapserver.conf to define <code>codec = pcm</code> and restart the snapserver with <code>sudo service snapserver restart</code>. You can test now your sketch e.g. with <code>ffmpeg -i <a href="http://stream.srg-ssr.ch/m/rsj/mp3_128">http://stream.srg-ssr.ch/m/rsj/mp3_128</a> -f s16le -ar 48000 /tmp/snapfifo</code></p>
+</div><!-- fragment --><p> Change the snapserver.conf to define <code>codec = opus</code> and restart the snapserver with <code>sudo service snapserver restart</code>. You can test now your sketch e.g. with <code>ffmpeg -i <a href="http://stream.srg-ssr.ch/m/rsj/mp3_128">http://stream.srg-ssr.ch/m/rsj/mp3_128</a> -f s16le -ar 48000 /tmp/snapfifo</code></p>
 <p>For further information on codecs please check the information in the Wiki!</p>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Documentation</h2>
