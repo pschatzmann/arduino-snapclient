@@ -119,6 +119,24 @@ public:
     is_fast_loop = flag;
   }
 
+  /// Defines the host name (default CONFIG_SNAPCAST_CLIENT_NAME)
+  void setHostName(const char* name){
+    hostname = name;
+  }
+
+  const char* hostName(){
+    return hostname;
+  }
+
+  /// Defines the client name (default "libsnapcast")
+  void setClientName(const char* name){
+    client_name = name;
+  }
+
+  const char* clientName(){
+    return client_name;
+  }
+
 protected:
   const char *TAG = "SnapProcessor";
   //  WiFiClient default_client;
@@ -150,6 +168,8 @@ protected:
   bool is_fast_loop = false;
   enum loop_status_enum { LoopStart, LoopStep, LoopEnd };
   loop_status_enum loop_status = LoopStart;
+  const char* hostname = CONFIG_SNAPCAST_CLIENT_NAME;
+  const char* client_name = "libsnapcast";
 
   bool processLoopStepFast() {
     switch (loop_status) {
@@ -318,9 +338,9 @@ protected:
     // setup hello_message
     SnapMessageHallo hello_message;
     hello_message.mac = mac_address;
-    hello_message.hostname = CONFIG_SNAPCAST_CLIENT_NAME;
+    hello_message.hostname = hostname;
     hello_message.version = "0.0.2";
-    hello_message.client_name = "libsnapcast";
+    hello_message.client_name = client_name;
     hello_message.os = "arduino";
     hello_message.arch = "xtensa";
     hello_message.instance = 1;
