@@ -1,10 +1,5 @@
 #pragma once
-#include "AudioConfig.h"
-#if defined(AUDIOTOOLS_MAJOR_VERSION) 
-#  include "AudioTools/CoreAudio/AudioBasic/Collections/Vector.h"
-#else
-#  include "AudioBasic/Collections/Vector.h"
-#endif
+#include "AudioTools/CoreAudio/AudioBasic/Collections/Vector.h"
 #include <stdint.h>
 #include <sys/time.h>
 
