@@ -70,117 +70,126 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;AudioBasic/Collections/Vector.h&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;AudioConfig.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;sys/time.h&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_snap_time.html">   16</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_time.html">SnapTime</a> {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_snap_time.html">SnapTime</a> &amp;instance() {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_snap_time.html">SnapTime</a> <span class="keyword">self</span>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">self</span>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">   24</a></span>&#160;  timeval <a class="code" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>() {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    timeval result;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">int</span> rc = gettimeofday(&amp;result, NULL);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span> (rc) {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      uint32_t ms = millis();</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      result.tv_sec = ms / 1000;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;      result.tv_usec = (ms - (result.tv_sec * 1000)) * 1000;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    }</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">   36</a></span>&#160;  uint32_t <a class="code" href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>() {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">return</span> toMillis(server_time) - server_ms + millis() -</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;           <a class="code" href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">timeDifferenceClientServerMs</a>();</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;AudioConfig.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#if defined(AUDIOTOOLS_MAJOR_VERSION) </span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#  include &quot;AudioTools/CoreAudio/AudioBasic/Collections/Vector.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#  include &quot;AudioBasic/Collections/Vector.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;sys/time.h&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesnap__arduino.html">snap_arduino</a> {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_time.html">   22</a></span>&#160;<span class="keyword">class </span><a class="code" href="classsnap__arduino_1_1_snap_time.html">SnapTime</a> {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">static</span> <a class="code" href="classsnap__arduino_1_1_snap_time.html">SnapTime</a> &amp;instance() {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">static</span> <a class="code" href="classsnap__arduino_1_1_snap_time.html">SnapTime</a> <span class="keyword">self</span>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">self</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">   30</a></span>&#160;  timeval <a class="code" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>() {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    timeval result;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">int</span> rc = gettimeofday(&amp;result, NULL);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">if</span> (rc) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      uint32_t ms = millis();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      result.tv_sec = ms / 1000;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      result.tv_usec = (ms - (result.tv_sec * 1000)) * 1000;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  }</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  uint32_t localMillis() { <span class="keywordflow">return</span> toMillis(<a class="code" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>()); }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">   44</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">timeDifferenceClientServerMs</a>() {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">int</span> result = time_diff;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    assert(result == time_diff);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  uint32_t toMillis(timeval tv) { <span class="keywordflow">return</span> toMillis(tv.tv_sec, tv.tv_usec); }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">inline</span> uint32_t toMillis(uint32_t sec, uint32_t usec) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">return</span> sec * 1000 + (usec / 1000);</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">   42</a></span>&#160;  uint32_t <a class="code" href="classsnap__arduino_1_1_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">serverMillis</a>() {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">return</span> toMillis(server_time) - server_ms + millis() -</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;           <a class="code" href="classsnap__arduino_1_1_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">timeDifferenceClientServerMs</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  uint32_t localMillis() { <span class="keywordflow">return</span> toMillis(<a class="code" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>()); }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">   50</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="classsnap__arduino_1_1_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">timeDifferenceClientServerMs</a>() {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">int</span> result = time_diff;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    assert(result == time_diff);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordtype">bool</span> printLocalTime(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg) {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> timeval val = <a class="code" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>();</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">auto</span> *tm_result = gmtime(&amp;val.tv_sec);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">char</span> str[80];</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    strftime(str, 80, <span class="stringliteral">&quot;%d-%m-%Y %H-%M-%S&quot;</span>, tm_result);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;%s: Time is %s&quot;</span>, msg, str);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  uint32_t toMillis(timeval tv) { <span class="keywordflow">return</span> toMillis(tv.tv_sec, tv.tv_usec); }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keyword">inline</span> uint32_t toMillis(uint32_t sec, uint32_t usec) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">return</span> sec * 1000 + (usec / 1000);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keywordtype">bool</span> printLocalTime(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg) {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">const</span> timeval val = <a class="code" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">auto</span> *tm_result = gmtime(&amp;val.tv_sec);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="class_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">   67</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">setTimeDifferenceClientServerMs</a>(uint32_t diff) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    time_diff = diff;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    time_update_count++;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">char</span> str[80];</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    strftime(str, 80, <span class="stringliteral">&quot;%d-%m-%Y %H-%M-%S&quot;</span>, tm_result);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;%s: Time is %s&quot;</span>, msg, str);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="comment">// updates the time difference between the local and server time</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordtype">void</span> updateServerTime(timeval &amp;server) {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    server_ms = millis();</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    server_time = server;</div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">   73</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">setTimeDifferenceClientServerMs</a>(uint32_t diff) {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    time_diff = diff;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    time_update_count++;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="comment">// Calculat the difference between 2 timeval</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  timeval timeDifference(timeval t1, timeval t2) {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    timeval result;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    timersub(&amp;t1, &amp;t2, &amp;result);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="comment">// Calculat the difference between 2 timeval -&gt; result in ms</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  uint32_t timeDifferenceMs(timeval t1, timeval t2) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    timeval result;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    timersub(&amp;t1, &amp;t2, &amp;result);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">return</span> toMillis(result);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">void</span> setupSNTPTime() {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *ntpServer = CONFIG_SNTP_SERVER;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">long</span> gmtOffset_sec = 1 * 60 * 60;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> daylightOffset_sec = 1 * 60 * 60;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> retry = 0; retry &lt; 5; retry++) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      tm <a class="code" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      <span class="keywordflow">if</span> (!getLocalTime(&amp;<a class="code" href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>)) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      SnapTime::instance().printLocalTime(<span class="stringliteral">&quot;SNTP&quot;</span>);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      has_sntp_time = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapTime&quot;</span>;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  uint32_t time_diff = 0;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  uint32_t server_ms = 0;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  uint32_t local_ms;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  uint32_t time_update_count = 0;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  timeval server_time;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">bool</span> has_sntp_time = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;};</div>
-<div class="ttc" id="aclass_snap_time_html"><div class="ttname"><a href="class_snap_time.html">SnapTime</a></div><div class="ttdoc">The the sys/time functions are used to represent the server time. The local time will be measured wit...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:16</div></div>
-<div class="ttc" id="aclass_snap_time_html_a0371cbc995b3b2f546215d4ebfc11ade"><div class="ttname"><a href="class_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">SnapTime::time</a></div><div class="ttdeci">timeval time()</div><div class="ttdoc">Provides the actual time as timeval.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:24</div></div>
-<div class="ttc" id="aclass_snap_time_html_a058d57baeeb43619ca44ee9342b6c70c"><div class="ttname"><a href="class_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">SnapTime::timeDifferenceClientServerMs</a></div><div class="ttdeci">int timeDifferenceClientServerMs()</div><div class="ttdoc">Provides the avg latecy in milliseconds.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:44</div></div>
-<div class="ttc" id="aclass_snap_time_html_a2d46ea8f99a7fe6583f6d72a5f9c9afa"><div class="ttname"><a href="class_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">SnapTime::serverMillis</a></div><div class="ttdeci">uint32_t serverMillis()</div><div class="ttdoc">Provides the current server time in ms.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:36</div></div>
-<div class="ttc" id="aclass_snap_time_html_a3e98d81c157bfc9c1b4ef65d3bc6dade"><div class="ttname"><a href="class_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">SnapTime::setTimeDifferenceClientServerMs</a></div><div class="ttdeci">void setTimeDifferenceClientServerMs(uint32_t diff)</div><div class="ttdoc">Record the last time difference between client and server.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:67</div></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="comment">// updates the time difference between the local and server time</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordtype">void</span> updateServerTime(timeval &amp;server) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    server_ms = millis();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    server_time = server;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="comment">// Calculat the difference between 2 timeval</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  timeval timeDifference(timeval t1, timeval t2) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    timeval result;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    timersub(&amp;t1, &amp;t2, &amp;result);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="comment">// Calculat the difference between 2 timeval -&gt; result in ms</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  uint32_t timeDifferenceMs(timeval t1, timeval t2) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    timeval result;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    timersub(&amp;t1, &amp;t2, &amp;result);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">return</span> toMillis(result);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  }</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordtype">void</span> setupSNTPTime() {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *ntpServer = CONFIG_SNTP_SERVER;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">long</span> gmtOffset_sec = 1 * 60 * 60;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> daylightOffset_sec = 1 * 60 * 60;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> retry = 0; retry &lt; 5; retry++) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      tm <a class="code" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <span class="keywordflow">if</span> (!getLocalTime(&amp;<a class="code" href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">time</a>)) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      SnapTime::instance().printLocalTime(<span class="stringliteral">&quot;SNTP&quot;</span>);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      has_sntp_time = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapTime&quot;</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  uint32_t time_diff = 0;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  uint32_t server_ms = 0;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  uint32_t local_ms;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  uint32_t time_update_count = 0;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  timeval server_time;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keywordtype">bool</span> has_sntp_time = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}</div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html">snap_arduino::SnapTime</a></div><div class="ttdoc">The the sys/time functions are used to represent the server time. The local time will be measured wit...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:22</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html_a0371cbc995b3b2f546215d4ebfc11ade"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html#a0371cbc995b3b2f546215d4ebfc11ade">snap_arduino::SnapTime::time</a></div><div class="ttdeci">timeval time()</div><div class="ttdoc">Provides the actual time as timeval.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:30</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html_a058d57baeeb43619ca44ee9342b6c70c"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html#a058d57baeeb43619ca44ee9342b6c70c">snap_arduino::SnapTime::timeDifferenceClientServerMs</a></div><div class="ttdeci">int timeDifferenceClientServerMs()</div><div class="ttdoc">Provides the avg latecy in milliseconds.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:50</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html_a2d46ea8f99a7fe6583f6d72a5f9c9afa"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html#a2d46ea8f99a7fe6583f6d72a5f9c9afa">snap_arduino::SnapTime::serverMillis</a></div><div class="ttdeci">uint32_t serverMillis()</div><div class="ttdoc">Provides the current server time in ms.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:42</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html_a3e98d81c157bfc9c1b4ef65d3bc6dade"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html#a3e98d81c157bfc9c1b4ef65d3bc6dade">snap_arduino::SnapTime::setTimeDifferenceClientServerMs</a></div><div class="ttdeci">void setTimeDifferenceClientServerMs(uint32_t diff)</div><div class="ttdoc">Record the last time difference between client and server.</div><div class="ttdef"><b>Definition:</b> SnapTime.h:73</div></div>
+<div class="ttc" id="anamespacesnap__arduino_html"><div class="ttname"><a href="namespacesnap__arduino.html">snap_arduino</a></div><div class="ttdef"><b>Definition:</b> SnapCommon.h:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

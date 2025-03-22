@@ -75,44 +75,48 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;iomanip&gt;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">enum</span> codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG=<span class="stringliteral">&quot;COMMON&quot;</span>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="struct_snap_audio_header.html">   19</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  int32_t sec = 0;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  int32_t usec = 0;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keywordtype">size_t</span> size = 0;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  codec_type codec = NO_CODEC;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  uint64_t operator-(<a class="code" href="struct_snap_audio_header.html">SnapAudioHeader</a> &amp;h1) {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordflow">return</span> (sec - h1.sec) * 1000000 + usec - h1.usec;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  }</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="struct_snap_time_points.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_snap_time_points.html">SnapTimePoints</a> {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  uint32_t local_ms = millis();</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  uint32_t server_ms;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <a class="code" href="struct_snap_time_points.html">SnapTimePoints</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <a class="code" href="struct_snap_time_points.html">SnapTimePoints</a>(uint32_t serverMs){</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    server_ms = serverMs;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> checkHeap() {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#if CONFIG_CHECK_HEAP &amp;&amp; defined(ESP32)</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  heap_caps_check_integrity_all(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> logHeap() {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  ESP_LOGD(TAG, <span class="stringliteral">&quot;Free Heap: %d / Free Heap PSRAM %d&quot;</span>, ESP.getFreeHeap(),</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;           ESP.getFreePsram());</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="ttc" id="astruct_snap_audio_header_html"><div class="ttname"><a href="struct_snap_audio_header.html">SnapAudioHeader</a></div><div class="ttdoc">Information about the next bucket.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:19</div></div>
-<div class="ttc" id="astruct_snap_time_points_html"><div class="ttname"><a href="struct_snap_time_points.html">SnapTimePoints</a></div><div class="ttdoc">Recording of local_ms and server_ms.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:31</div></div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="namespacesnap__arduino.html">   10</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesnap__arduino.html">snap_arduino</a> {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">enum</span> codec_type { NO_CODEC, PCM, FLAC, OGG, OPUS };</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG=<span class="stringliteral">&quot;COMMON&quot;</span>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="structsnap__arduino_1_1_snap_audio_header.html">   21</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structsnap__arduino_1_1_snap_audio_header.html">SnapAudioHeader</a> {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  int32_t sec = 0;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  int32_t usec = 0;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keywordtype">size_t</span> size = 0;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  codec_type codec = NO_CODEC;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  uint64_t operator-(<a class="code" href="structsnap__arduino_1_1_snap_audio_header.html">SnapAudioHeader</a> &amp;h1) {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">return</span> (sec - h1.sec) * 1000000 + usec - h1.usec;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  }</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structsnap__arduino_1_1_snap_time_points.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structsnap__arduino_1_1_snap_time_points.html">SnapTimePoints</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  uint32_t local_ms = millis();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  uint32_t server_ms;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <a class="code" href="structsnap__arduino_1_1_snap_time_points.html">SnapTimePoints</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <a class="code" href="structsnap__arduino_1_1_snap_time_points.html">SnapTimePoints</a>(uint32_t serverMs){</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    server_ms = serverMs;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> checkHeap() {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#if CONFIG_CHECK_HEAP &amp;&amp; defined(ESP32)</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  heap_caps_check_integrity_all(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> logHeap() {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  ESP_LOGD(TAG, <span class="stringliteral">&quot;Free Heap: %d / Free Heap PSRAM %d&quot;</span>, ESP.getFreeHeap(),</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;           ESP.getFreePsram());</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="ttc" id="anamespacesnap__arduino_html"><div class="ttname"><a href="namespacesnap__arduino.html">snap_arduino</a></div><div class="ttdef"><b>Definition:</b> SnapCommon.h:10</div></div>
+<div class="ttc" id="astructsnap__arduino_1_1_snap_audio_header_html"><div class="ttname"><a href="structsnap__arduino_1_1_snap_audio_header.html">snap_arduino::SnapAudioHeader</a></div><div class="ttdoc">Information about the next bucket.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:21</div></div>
+<div class="ttc" id="astructsnap__arduino_1_1_snap_time_points_html"><div class="ttname"><a href="structsnap__arduino_1_1_snap_time_points.html">snap_arduino::SnapTimePoints</a></div><div class="ttdoc">Recording of local_ms and server_ms.</div><div class="ttdef"><b>Definition:</b> SnapCommon.h:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

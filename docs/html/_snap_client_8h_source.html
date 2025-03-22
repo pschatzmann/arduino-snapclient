@@ -71,230 +71,252 @@ $(function() {
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;AudioTools.h&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;SnapConfig.h&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;api/SnapCommon.h&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;api/SnapLogger.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">//#include &lt;WiFi.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;Client.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#if CONFIG_NVS_FLASH</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;nvs_flash.h&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_USE_MDNS &amp;&amp; defined(ESP32)</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;ESPmDNS.h&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;api/SnapOutput.h&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;api/SnapProcessor.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_snap_client.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_client.html">SnapClient</a> {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <a class="code" href="class_snap_client.html">SnapClient</a>(Client &amp;client, AudioStream &amp;stream, AudioDecoder &amp;decoder) {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">static</span> AdapterAudioStreamToAudioOutput output_adapter;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    output_adapter.setStream(stream);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    p_decoder = &amp;decoder;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    p_output = &amp;output_adapter;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    p_client = &amp;client;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <a class="code" href="class_snap_client.html">SnapClient</a>(Client &amp;client, AudioStream &amp;stream, StreamingDecoder &amp;decoder,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;             <span class="keywordtype">int</span> bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">static</span> DecoderFromStreaming decoder_adapter(decoder, bufferSize);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">static</span> AdapterAudioStreamToAudioOutput output_adapter;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    p_decoder = &amp;decoder_adapter;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    output_adapter.setStream(stream);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    p_output = &amp;output_adapter;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    p_client = &amp;client;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="class_snap_client.html">SnapClient</a>(Client &amp;client, AudioOutput &amp;output, AudioDecoder &amp;decoder) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    p_decoder = &amp;decoder;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    p_output = &amp;output;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    p_client = &amp;client;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <a class="code" href="class_snap_client.html">SnapClient</a>(Client &amp;client, AudioOutput &amp;output, StreamingDecoder &amp;decoder,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;             <span class="keywordtype">int</span> bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    p_decoder = <span class="keyword">new</span> DecoderFromStreaming(decoder, bufferSize);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    p_output = &amp;output;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Client.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;SnapConfig.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;api/SnapCommon.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;api/SnapLogger.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#if CONFIG_NVS_FLASH</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;nvs_flash.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_USE_MDNS &amp;&amp; defined(ESP32)</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;ESPmDNS.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;WiFi.h&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;api/SnapOutput.h&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;api/SnapProcessor.h&quot;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesnap__arduino.html">snap_arduino</a> {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html">   36</a></span>&#160;<span class="keyword">class </span><a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a> {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a>(Client &amp;client, AudioStream &amp;stream, AudioDecoder &amp;decoder) {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">static</span> AdapterAudioStreamToAudioOutput output_adapter;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    output_adapter.setStream(stream);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    p_decoder = &amp;decoder;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    p_output = &amp;output_adapter;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    p_client = &amp;client;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a>(Client &amp;client, Print &amp;stream, AudioDecoder &amp;decoder) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">static</span> AdapterPrintToAudioOutput output_adapter;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    output_adapter.setStream(stream);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    p_decoder = &amp;decoder;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    p_output = &amp;output_adapter;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    p_client = &amp;client;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a>(Client &amp;client, AudioStream &amp;stream, StreamingDecoder &amp;decoder,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;             <span class="keywordtype">int</span> bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">static</span> DecoderFromStreaming decoder_adapter(decoder, bufferSize);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">static</span> AdapterAudioStreamToAudioOutput output_adapter;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    p_decoder = &amp;decoder_adapter;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    output_adapter.setStream(stream);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    p_output = &amp;output_adapter;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    p_client = &amp;client;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="class_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">   67</a></span>&#160;  <a class="code" href="class_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">~SnapClient</a>() {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_snap_client.html#a081b5c662ecee58405a543518f699d31">end</a>();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  }</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">   72</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a>(Client &amp;client) { p_client = &amp;client; }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a>(Client &amp;client, AudioOutput &amp;output, AudioDecoder &amp;decoder) {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    p_decoder = &amp;decoder;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    p_output = &amp;output;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    p_client = &amp;client;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    server_ip.fromString(CONFIG_SNAPCAST_SERVER_HOST);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="class_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">   76</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">setServerIP</a>(IPAddress ipAddress) { this-&gt;address = ipAddress; }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="class_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">   79</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(<a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync){</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    p_time_sync = &amp;timeSync;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="class_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">   84</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">begin</a>(<a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="class_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(timeSync);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">begin</a>();</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="class_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">   90</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">begin</a>() {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#if defined(ESP32)</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (WiFi.status() != WL_CONNECTED) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;WiFi not connected&quot;</span>);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="comment">// use maximum speed</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    WiFi.setSleep(<span class="keyword">false</span>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;Connected to AP&quot;</span>);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="comment">// Get MAC address for WiFi station</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    setupMACAddress();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    setupNVS();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    setupMDNS();</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    setupPSRAM();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_SNTP_ENABLE</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    SnapTime::instance().setupSNTPTime();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html">SnapClient</a>(Client &amp;client, AudioOutput &amp;output, StreamingDecoder &amp;decoder,</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;             <span class="keywordtype">int</span> bufferSize = CONFIG_STREAMIN_DECODER_BUFFER) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    p_decoder = <span class="keyword">new</span> DecoderFromStreaming(decoder, bufferSize);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    p_output = &amp;output;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    p_client = &amp;client;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">   82</a></span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">~SnapClient</a>() { <a class="code" href="classsnap__arduino_1_1_snap_client.html#a081b5c662ecee58405a543518f699d31">end</a>(); }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">   85</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a>(Client &amp;client) { p_client = &amp;client; }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">   89</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">setServerIP</a>(IPAddress ipAddress) { this-&gt;server_ip = ipAddress; }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">   92</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(<a class="code" href="classsnap__arduino_1_1_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync) { p_time_sync = &amp;timeSync; }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">   95</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">begin</a>(<a class="code" href="classsnap__arduino_1_1_snap_time_sync.html">SnapTimeSync</a> &amp;timeSync) {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="classsnap__arduino_1_1_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(timeSync);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">begin</a>();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">  101</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">begin</a>() {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#if defined(ESP32)</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">if</span> (is_wifi) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="keywordflow">if</span> (WiFi.status() != WL_CONNECTED) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        ESP_LOGE(TAG, <span class="stringliteral">&quot;WiFi not connected&quot;</span>);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <span class="comment">// use maximum speed</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      WiFi.setSleep(<span class="keyword">false</span>);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;Connected to AP&quot;</span>);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    p_snapprocessor-&gt;setServerIP(address);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a>(*p_output);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    p_snapprocessor-&gt;snapOutput().<a class="code" href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(*p_time_sync);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#a6f9488e045147706a13387c0c6a634ea">setDecoder</a>(*p_decoder);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a>(*p_client);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="comment">// start tasks</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">return</span> p_snapprocessor-&gt;begin();</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  }</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="class_snap_client.html#a081b5c662ecee58405a543518f699d31">  125</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a081b5c662ecee58405a543518f699d31">end</a>(<span class="keywordtype">void</span>) { p_snapprocessor-&gt;end(); }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="class_snap_client.html#a92937495d01c777a843b576f7fd02145">  128</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="class_snap_client.html#a92937495d01c777a843b576f7fd02145">volume</a>(<span class="keywordtype">void</span>) { <span class="keywordflow">return</span> p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#a92937495d01c777a843b576f7fd02145">volume</a>(); }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="class_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">  131</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(<span class="keywordtype">float</span> fact) { p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(fact); }</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="class_snap_client.html#a26a56ec17a4183c08447e33c80591209">  134</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a26a56ec17a4183c08447e33c80591209">setStartTask</a>(<span class="keywordtype">bool</span> flag) { p_snapprocessor-&gt;setStartTask(flag); }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="comment">// Get MAC address for WiFi station</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    setupMACAddress();</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    setupNVS();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    setupMDNS();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_SNTP_ENABLE</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    SnapTime::instance().setupSNTPTime();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    p_snapprocessor-&gt;setServerIP(server_ip);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    p_snapprocessor-&gt;setServerPort(server_port);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#aa0d3775308edf58cac6e7f763edbb96a">setOutput</a>(*p_output);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    p_snapprocessor-&gt;snapOutput().<a class="code" href="classsnap__arduino_1_1_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">setSnapTimeSync</a>(*p_time_sync);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#a6f9488e045147706a13387c0c6a634ea">setDecoder</a>(*p_decoder);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#aa4dbb35cfcc65d0c880983d78edd8ac3">setClient</a>(*p_client);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="comment">// start tasks</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordflow">return</span> p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#a50f45551c10ca30a0bc7f447e70188b1">begin</a>();</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  }</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="class_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">  137</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">setStartOutput</a>(<span class="keywordtype">bool</span> start) { p_snapprocessor-&gt;setStartOutput(start); }</div>
+<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a081b5c662ecee58405a543518f699d31">  137</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a081b5c662ecee58405a543518f699d31">end</a>(<span class="keywordtype">void</span>) { p_snapprocessor-&gt;end(); }</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="class_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">  140</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">setSnapProcessor</a>(<a class="code" href="class_snap_processor.html">SnapProcessor</a> &amp;processor) {</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    p_snapprocessor = &amp;processor;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  }</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="class_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">  145</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">setSnapOutput</a>(<a class="code" href="class_snap_output.html">SnapOutput</a> &amp;out){</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#a5d9c21ad999d25919c01753e38a86bda">setSnapOutput</a>(out);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="class_snap_client.html#a4ee9280c3692bb64624dbc933acae273">  150</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_client.html#a4ee9280c3692bb64624dbc933acae273">doLoop</a>() { p_snapprocessor-&gt;<a class="code" href="class_snap_processor.html#ae0d28a9842dd1a20e72bdf59f8892fb8">doLoop</a>(); }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapClient&quot;</span>;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <a class="code" href="class_snap_time.html">SnapTime</a> &amp;snap_time = SnapTime::instance();</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="class_snap_processor.html">SnapProcessor</a> default_processor;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <a class="code" href="class_snap_processor.html">SnapProcessor</a> *p_snapprocessor = &amp;default_processor;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  AudioOutput *p_output = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  AudioDecoder *p_decoder = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  Client *p_client = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <a class="code" href="class_snap_time_sync.html">SnapTimeSync</a> *p_time_sync = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  IPAddress address;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  <span class="keywordtype">void</span> setupMDNS() {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_USE_MDNS &amp;&amp; defined(ESP32)</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">if</span> (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      LOGE(TAG, <span class="stringliteral">&quot;Error starting mDNS&quot;</span>);</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a92937495d01c777a843b576f7fd02145">  140</a></span>&#160;  <span class="keywordtype">float</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a92937495d01c777a843b576f7fd02145">volume</a>(<span class="keywordtype">void</span>) { <span class="keywordflow">return</span> p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#a92937495d01c777a843b576f7fd02145">volume</a>(); }</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">  143</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(<span class="keywordtype">float</span> fact) { p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#a7ffb49aa46d01ea1f30e374e0573cc83">setVolumeFactor</a>(fact); }</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a26a56ec17a4183c08447e33c80591209">  146</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a26a56ec17a4183c08447e33c80591209">setStartTask</a>(<span class="keywordtype">bool</span> flag) { p_snapprocessor-&gt;setStartTask(flag); }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">  149</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">setStartOutput</a>(<span class="keywordtype">bool</span> start) { p_snapprocessor-&gt;setStartOutput(start); }</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">  152</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">setSnapProcessor</a>(<a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a> &amp;processor) {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    p_snapprocessor = &amp;processor;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  }</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#ae35f4b0efe5efba6e49a900b9feb00f7">  157</a></span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a> &amp;<a class="code" href="classsnap__arduino_1_1_snap_client.html#ae35f4b0efe5efba6e49a900b9feb00f7">snapProcessor</a>() { <span class="keywordflow">return</span> *p_snapprocessor; }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">  160</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">setSnapOutput</a>(<a class="code" href="classsnap__arduino_1_1_snap_output.html">SnapOutput</a> &amp;out) { p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#a5d9c21ad999d25919c01753e38a86bda">setSnapOutput</a>(out); }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#abdd99e468f667b748b0c9bfd395163d7">  163</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#abdd99e468f667b748b0c9bfd395163d7">doLoop</a>() { <span class="keywordflow">return</span> p_snapprocessor-&gt;<a class="code" href="classsnap__arduino_1_1_snap_processor.html#abdd99e468f667b748b0c9bfd395163d7">doLoop</a>(); }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#aa5b1356ff52a71650594024a2faf532d">  166</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#aa5b1356ff52a71650594024a2faf532d">setWiFi</a>(<span class="keywordtype">bool</span> flag){ is_wifi = flag;}</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_client.html#a2f71e236c6bfd49b51b2b883116244d8">  169</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classsnap__arduino_1_1_snap_client.html#a2f71e236c6bfd49b51b2b883116244d8">isWiFi</a>() {<span class="keywordflow">return</span> is_wifi;}</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="comment">// we just take the first address</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">int</span> nrOfServices = MDNS.queryService(<span class="stringliteral">&quot;snapcast&quot;</span>, <span class="stringliteral">&quot;tcp&quot;</span>);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordflow">if</span> (nrOfServices &gt; 0) {</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      IPAddress server_ip = MDNS.IP(0);</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;      <span class="keywordtype">char</span> str_address[20] = {0};</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      sprintf(str_address, <span class="stringliteral">&quot;%d.%d.%d.%d&quot;</span>, server_ip[0], server_ip[1],</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;              server_ip[2], server_ip[3]);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <span class="keywordtype">int</span> server_port = MDNS.port(0);</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;      <span class="comment">// update addres information</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;      p_snapprocessor-&gt;setServerIP(server_ip);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      p_snapprocessor-&gt;setServerPort(server_port);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;SNAPCAST ip: %s, port: %d&quot;</span>, str_address, server_port);</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;SNAPCAST server not found&quot;</span>);</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    }</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapClient&quot;</span>;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_time.html">SnapTime</a> &amp;snap_time = SnapTime::instance();</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a> default_processor;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a> *p_snapprocessor = &amp;default_processor;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  AudioOutput *p_output = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  AudioDecoder *p_decoder = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  Client *p_client = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_time_sync_dynamic.html">SnapTimeSyncDynamic</a> time_sync_default;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_time_sync.html">SnapTimeSync</a> *p_time_sync = &amp;time_sync_default;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  IPAddress server_ip;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  <span class="keywordtype">int</span> server_port = CONFIG_SNAPCAST_SERVER_PORT;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keywordtype">bool</span> is_wifi = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="keywordtype">bool</span> is_wifi = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    MDNS.end();</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    checkHeap();</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  }</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="keywordtype">void</span> setupNVS() {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="preprocessor">#if CONFIG_NVS_FLASH &amp;&amp; defined(ESP32)</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    esp_err_t ret = nvs_flash_init();</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordflow">if</span> (ret == ESP_ERR_NVS_NO_FREE_PAGES ||</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      ESP_ERROR_CHECK(nvs_flash_erase());</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      ret = nvs_flash_init();</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    }</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    checkHeap();</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    ESP_ERROR_CHECK(ret);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="keywordtype">void</span> setupMDNS() {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#if CONFIG_SNAPCLIENT_USE_MDNS &amp;&amp; defined(ESP32)</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;start&quot;</span>);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordflow">if</span> (!MDNS.begin(CONFIG_SNAPCAST_CLIENT_NAME)) {</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      LOGE(TAG, <span class="stringliteral">&quot;Error starting mDNS&quot;</span>);</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">// we just take the first address</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">int</span> nrOfServices = MDNS.queryService(<span class="stringliteral">&quot;snapcast&quot;</span>, <span class="stringliteral">&quot;tcp&quot;</span>);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordflow">if</span> (nrOfServices &gt; 0) {</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="preprocessor">#if ESP_ARDUINO_VERSION &gt;= ESP_ARDUINO_VERSION_VAL(3, 0, 0)</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      server_ip = MDNS.address(0);</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      server_ip = MDNS.IP(0);</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  }</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  <span class="keywordtype">void</span> setupPSRAM() {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="preprocessor">#if CONFIG_USE_PSRAM &amp;&amp; defined(ESP32)</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordflow">if</span> (ESP.getPsramSize() &gt; 0) {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      heap_caps_malloc_extmem_enable(CONFIG_PSRAM_LIMIT);</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      ESP_LOGD(TAG, <span class="stringliteral">&quot;PSRAM for allocations &gt; %d bytes&quot;</span>, CONFIG_PSRAM_LIMIT);</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;No PSRAM available or PSRAM not activated&quot;</span>);</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    }</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  }</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keywordtype">void</span> setupMACAddress() {</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *adr = strdup(WiFi.macAddress().c_str());</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    p_snapprocessor-&gt;setMacAddress(adr);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;mac: %s&quot;</span>, adr);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    checkHeap();</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  }</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;};</div>
-<div class="ttc" id="aclass_snap_client_html"><div class="ttname"><a href="class_snap_client.html">SnapClient</a></div><div class="ttdoc">Snap Client for ESP32 Arduino.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:32</div></div>
-<div class="ttc" id="aclass_snap_client_html_a081b5c662ecee58405a543518f699d31"><div class="ttname"><a href="class_snap_client.html#a081b5c662ecee58405a543518f699d31">SnapClient::end</a></div><div class="ttdeci">void end(void)</div><div class="ttdoc">ends the processing and releases the resources</div><div class="ttdef"><b>Definition:</b> SnapClient.h:125</div></div>
-<div class="ttc" id="aclass_snap_client_html_a25ac7501d9bf855ea1bd07feb77e9070"><div class="ttname"><a href="class_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">SnapClient::setServerIP</a></div><div class="ttdeci">void setServerIP(IPAddress ipAddress)</div><div class="ttdoc">Defines the Snapcast Server IP address.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:76</div></div>
-<div class="ttc" id="aclass_snap_client_html_a26a56ec17a4183c08447e33c80591209"><div class="ttname"><a href="class_snap_client.html#a26a56ec17a4183c08447e33c80591209">SnapClient::setStartTask</a></div><div class="ttdeci">void setStartTask(bool flag)</div><div class="ttdoc">For testing to deactivate the starting of the http task.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:134</div></div>
-<div class="ttc" id="aclass_snap_client_html_a33755d7beaca179dfbdb2c7ef7e1943f"><div class="ttname"><a href="class_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">SnapClient::~SnapClient</a></div><div class="ttdeci">~SnapClient()</div><div class="ttdoc">Destructor.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:67</div></div>
-<div class="ttc" id="aclass_snap_client_html_a4ee9280c3692bb64624dbc933acae273"><div class="ttname"><a href="class_snap_client.html#a4ee9280c3692bb64624dbc933acae273">SnapClient::doLoop</a></div><div class="ttdeci">void doLoop()</div><div class="ttdoc">Call from Arduino Loop - to receive and process the audio data.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:150</div></div>
-<div class="ttc" id="aclass_snap_client_html_a5d9c21ad999d25919c01753e38a86bda"><div class="ttname"><a href="class_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">SnapClient::setSnapOutput</a></div><div class="ttdeci">void setSnapOutput(SnapOutput &amp;out)</div><div class="ttdoc">Defines the Snap output implementation to be used.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:145</div></div>
-<div class="ttc" id="aclass_snap_client_html_a601fb7cf1fc15db50c71a826f084f934"><div class="ttname"><a href="class_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">SnapClient::begin</a></div><div class="ttdeci">bool begin()</div><div class="ttdoc">Starts the processing.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:90</div></div>
-<div class="ttc" id="aclass_snap_client_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="class_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapClient::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:131</div></div>
-<div class="ttc" id="aclass_snap_client_html_a92937495d01c777a843b576f7fd02145"><div class="ttname"><a href="class_snap_client.html#a92937495d01c777a843b576f7fd02145">SnapClient::volume</a></div><div class="ttdeci">float volume(void)</div><div class="ttdoc">Provides the actual volume (in the range of 0.0 to 1.0)</div><div class="ttdef"><b>Definition:</b> SnapClient.h:128</div></div>
-<div class="ttc" id="aclass_snap_client_html_aa4dbb35cfcc65d0c880983d78edd8ac3"><div class="ttname"><a href="class_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">SnapClient::setClient</a></div><div class="ttdeci">void setClient(Client &amp;client)</div><div class="ttdoc">Defines an alternative commnuication client (default is WiFiClient)</div><div class="ttdef"><b>Definition:</b> SnapClient.h:72</div></div>
-<div class="ttc" id="aclass_snap_client_html_aa5fb69c578b675cd8239d80832eaf45f"><div class="ttname"><a href="class_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">SnapClient::setSnapProcessor</a></div><div class="ttdeci">void setSnapProcessor(SnapProcessor &amp;processor)</div><div class="ttdoc">Defines an alternative Processor.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:140</div></div>
-<div class="ttc" id="aclass_snap_client_html_abc2c0a4c4160fe59696af412649e43eb"><div class="ttname"><a href="class_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">SnapClient::begin</a></div><div class="ttdeci">bool begin(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Starts the processing.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:84</div></div>
-<div class="ttc" id="aclass_snap_client_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="class_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapClient::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:79</div></div>
-<div class="ttc" id="aclass_snap_client_html_adfe1e9bc7608e178934c91e42ff1033f"><div class="ttname"><a href="class_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">SnapClient::setStartOutput</a></div><div class="ttdeci">void setStartOutput(bool start)</div><div class="ttdoc">For Testing: Used to prevent the starting of the output task.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:137</div></div>
-<div class="ttc" id="aclass_snap_output_html"><div class="ttname"><a href="class_snap_output.html">SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:26</div></div>
-<div class="ttc" id="aclass_snap_output_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="class_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">SnapOutput::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:120</div></div>
-<div class="ttc" id="aclass_snap_processor_html"><div class="ttname"><a href="class_snap_processor.html">SnapProcessor</a></div><div class="ttdoc">Snap Processor implementation which does not rely on FreeRTOS.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:19</div></div>
-<div class="ttc" id="aclass_snap_processor_html_a5d9c21ad999d25919c01753e38a86bda"><div class="ttname"><a href="class_snap_processor.html#a5d9c21ad999d25919c01753e38a86bda">SnapProcessor::setSnapOutput</a></div><div class="ttdeci">void setSnapOutput(SnapOutput &amp;out)</div><div class="ttdoc">Defines the SnapOutput implementation.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:85</div></div>
-<div class="ttc" id="aclass_snap_processor_html_a6f9488e045147706a13387c0c6a634ea"><div class="ttname"><a href="class_snap_processor.html#a6f9488e045147706a13387c0c6a634ea">SnapProcessor::setDecoder</a></div><div class="ttdeci">void setDecoder(AudioDecoder &amp;dec)</div><div class="ttdoc">Defines the decoder class.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:76</div></div>
-<div class="ttc" id="aclass_snap_processor_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="class_snap_processor.html#a7ffb49aa46d01ea1f30e374e0573cc83">SnapProcessor::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:82</div></div>
-<div class="ttc" id="aclass_snap_processor_html_a92937495d01c777a843b576f7fd02145"><div class="ttname"><a href="class_snap_processor.html#a92937495d01c777a843b576f7fd02145">SnapProcessor::volume</a></div><div class="ttdeci">float volume(void)</div><div class="ttdoc">Provides the volume (in the range of 0.0 to 1.0)</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:79</div></div>
-<div class="ttc" id="aclass_snap_processor_html_aa0d3775308edf58cac6e7f763edbb96a"><div class="ttname"><a href="class_snap_processor.html#aa0d3775308edf58cac6e7f763edbb96a">SnapProcessor::setOutput</a></div><div class="ttdeci">void setOutput(AudioOutput &amp;output)</div><div class="ttdoc">Defines the output class.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:73</div></div>
-<div class="ttc" id="aclass_snap_processor_html_aa4dbb35cfcc65d0c880983d78edd8ac3"><div class="ttname"><a href="class_snap_processor.html#aa4dbb35cfcc65d0c880983d78edd8ac3">SnapProcessor::setClient</a></div><div class="ttdeci">void setClient(Client &amp;client)</div><div class="ttdoc">Defines an alternative client to the WiFiClient.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:90</div></div>
-<div class="ttc" id="aclass_snap_processor_html_ae0d28a9842dd1a20e72bdf59f8892fb8"><div class="ttname"><a href="class_snap_processor.html#ae0d28a9842dd1a20e72bdf59f8892fb8">SnapProcessor::doLoop</a></div><div class="ttdeci">virtual void doLoop()</div><div class="ttdoc">Call via SnapClient in Arduino Loop!</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:70</div></div>
-<div class="ttc" id="aclass_snap_time_html"><div class="ttname"><a href="class_snap_time.html">SnapTime</a></div><div class="ttdoc">The the sys/time functions are used to represent the server time. The local time will be measured wit...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:16</div></div>
-<div class="ttc" id="aclass_snap_time_sync_html"><div class="ttname"><a href="class_snap_time_sync.html">SnapTimeSync</a></div><div class="ttdoc">Abstract (Common) Time Synchronization Logic which consists of the startup synchronization and the lo...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:15</div></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="keywordtype">char</span> str_address[20] = {0};</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      sprintf(str_address, <span class="stringliteral">&quot;%d.%d.%d.%d&quot;</span>, server_ip[0], server_ip[1],</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;              server_ip[2], server_ip[3]);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      server_port = MDNS.port(0);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;MDNS: SNAPCAST ip: %s, port: %d&quot;</span>, str_address,</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;               server_port);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;SNAPCAST server not found&quot;</span>);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    }</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    MDNS.end();</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    checkHeap();</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  }</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keywordtype">void</span> setupNVS() {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="preprocessor">#if CONFIG_NVS_FLASH &amp;&amp; defined(ESP32)</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    esp_err_t ret = nvs_flash_init();</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordflow">if</span> (ret == ESP_ERR_NVS_NO_FREE_PAGES ||</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      ESP_ERROR_CHECK(nvs_flash_erase());</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      ret = nvs_flash_init();</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    checkHeap();</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    ESP_ERROR_CHECK(ret);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  }</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <span class="keywordtype">void</span> setupMACAddress() {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="preprocessor">#ifdef ESP32</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *adr = strdup(WiFi.macAddress().c_str());</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    p_snapprocessor-&gt;setMacAddress(adr);</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;mac: %s&quot;</span>, adr);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    checkHeap();</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;};</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;}  <span class="comment">// namespace snap_arduino</span></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html">snap_arduino::SnapClient</a></div><div class="ttdoc">Snap Client for ESP32 Arduino.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:36</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a081b5c662ecee58405a543518f699d31"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a081b5c662ecee58405a543518f699d31">snap_arduino::SnapClient::end</a></div><div class="ttdeci">void end(void)</div><div class="ttdoc">ends the processing and releases the resources</div><div class="ttdef"><b>Definition:</b> SnapClient.h:137</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a25ac7501d9bf855ea1bd07feb77e9070"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a25ac7501d9bf855ea1bd07feb77e9070">snap_arduino::SnapClient::setServerIP</a></div><div class="ttdeci">void setServerIP(IPAddress ipAddress)</div><div class="ttdoc">Defines the Snapcast Server IP address.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:89</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a26a56ec17a4183c08447e33c80591209"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a26a56ec17a4183c08447e33c80591209">snap_arduino::SnapClient::setStartTask</a></div><div class="ttdeci">void setStartTask(bool flag)</div><div class="ttdoc">For testing to deactivate the starting of the http task.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:146</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a2f71e236c6bfd49b51b2b883116244d8"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a2f71e236c6bfd49b51b2b883116244d8">snap_arduino::SnapClient::isWiFi</a></div><div class="ttdeci">bool isWiFi()</div><div class="ttdoc">check if we use the ESP32 WiFi for checking the link status</div><div class="ttdef"><b>Definition:</b> SnapClient.h:169</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a33755d7beaca179dfbdb2c7ef7e1943f"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a33755d7beaca179dfbdb2c7ef7e1943f">snap_arduino::SnapClient::~SnapClient</a></div><div class="ttdeci">~SnapClient()</div><div class="ttdoc">Destructor.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:82</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a5d9c21ad999d25919c01753e38a86bda"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a5d9c21ad999d25919c01753e38a86bda">snap_arduino::SnapClient::setSnapOutput</a></div><div class="ttdeci">void setSnapOutput(SnapOutput &amp;out)</div><div class="ttdoc">Defines the Snap output implementation to be used.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:160</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a601fb7cf1fc15db50c71a826f084f934"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a601fb7cf1fc15db50c71a826f084f934">snap_arduino::SnapClient::begin</a></div><div class="ttdeci">bool begin()</div><div class="ttdoc">Starts the processing.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:101</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a7ffb49aa46d01ea1f30e374e0573cc83">snap_arduino::SnapClient::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:143</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_a92937495d01c777a843b576f7fd02145"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#a92937495d01c777a843b576f7fd02145">snap_arduino::SnapClient::volume</a></div><div class="ttdeci">float volume(void)</div><div class="ttdoc">Provides the actual volume (in the range of 0.0 to 1.0)</div><div class="ttdef"><b>Definition:</b> SnapClient.h:140</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_aa4dbb35cfcc65d0c880983d78edd8ac3"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#aa4dbb35cfcc65d0c880983d78edd8ac3">snap_arduino::SnapClient::setClient</a></div><div class="ttdeci">void setClient(Client &amp;client)</div><div class="ttdoc">Defines an alternative commnuication client (default is WiFiClient)</div><div class="ttdef"><b>Definition:</b> SnapClient.h:85</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_aa5b1356ff52a71650594024a2faf532d"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#aa5b1356ff52a71650594024a2faf532d">snap_arduino::SnapClient::setWiFi</a></div><div class="ttdeci">void setWiFi(bool flag)</div><div class="ttdoc">ESP32: WiFiClient: prevent/activate WiFi link status check.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:166</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_aa5fb69c578b675cd8239d80832eaf45f"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#aa5fb69c578b675cd8239d80832eaf45f">snap_arduino::SnapClient::setSnapProcessor</a></div><div class="ttdeci">void setSnapProcessor(SnapProcessor &amp;processor)</div><div class="ttdoc">Defines an alternative Processor.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:152</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_abc2c0a4c4160fe59696af412649e43eb"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#abc2c0a4c4160fe59696af412649e43eb">snap_arduino::SnapClient::begin</a></div><div class="ttdeci">bool begin(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Starts the processing.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:95</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_abdd99e468f667b748b0c9bfd395163d7"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#abdd99e468f667b748b0c9bfd395163d7">snap_arduino::SnapClient::doLoop</a></div><div class="ttdeci">bool doLoop()</div><div class="ttdoc">Call from Arduino Loop - to receive and process the audio data.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:163</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#ad703cdbab7c0a7f312178595a1fb2f58">snap_arduino::SnapClient::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:92</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_adfe1e9bc7608e178934c91e42ff1033f"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#adfe1e9bc7608e178934c91e42ff1033f">snap_arduino::SnapClient::setStartOutput</a></div><div class="ttdeci">void setStartOutput(bool start)</div><div class="ttdoc">For Testing: Used to prevent the starting of the output task.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:149</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_client_html_ae35f4b0efe5efba6e49a900b9feb00f7"><div class="ttname"><a href="classsnap__arduino_1_1_snap_client.html#ae35f4b0efe5efba6e49a900b9feb00f7">snap_arduino::SnapClient::snapProcessor</a></div><div class="ttdeci">SnapProcessor &amp; snapProcessor()</div><div class="ttdoc">Provides the actual processor.</div><div class="ttdef"><b>Definition:</b> SnapClient.h:157</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_output_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_output.html">snap_arduino::SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:27</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_output_html_ad703cdbab7c0a7f312178595a1fb2f58"><div class="ttname"><a href="classsnap__arduino_1_1_snap_output.html#ad703cdbab7c0a7f312178595a1fb2f58">snap_arduino::SnapOutput::setSnapTimeSync</a></div><div class="ttdeci">void setSnapTimeSync(SnapTimeSync &amp;timeSync)</div><div class="ttdoc">Defines the time synchronization logic.</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:123</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html">snap_arduino::SnapProcessor</a></div><div class="ttdoc">Snap Processor implementation which does not rely on FreeRTOS.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:21</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a50f45551c10ca30a0bc7f447e70188b1"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a50f45551c10ca30a0bc7f447e70188b1">snap_arduino::SnapProcessor::begin</a></div><div class="ttdeci">virtual bool begin()</div><div class="ttdoc">Sets up the output and the client.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:36</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a5d9c21ad999d25919c01753e38a86bda"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a5d9c21ad999d25919c01753e38a86bda">snap_arduino::SnapProcessor::setSnapOutput</a></div><div class="ttdeci">void setSnapOutput(SnapOutput &amp;out)</div><div class="ttdoc">Defines the SnapOutput implementation.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:106</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a6f9488e045147706a13387c0c6a634ea"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a6f9488e045147706a13387c0c6a634ea">snap_arduino::SnapProcessor::setDecoder</a></div><div class="ttdeci">void setDecoder(AudioDecoder &amp;dec)</div><div class="ttdoc">Defines the decoder class.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:97</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a7ffb49aa46d01ea1f30e374e0573cc83"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a7ffb49aa46d01ea1f30e374e0573cc83">snap_arduino::SnapProcessor::setVolumeFactor</a></div><div class="ttdeci">void setVolumeFactor(float fact)</div><div class="ttdoc">Adjust volume by factor e.g. 1.5.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:103</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a92937495d01c777a843b576f7fd02145"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a92937495d01c777a843b576f7fd02145">snap_arduino::SnapProcessor::volume</a></div><div class="ttdeci">float volume(void)</div><div class="ttdoc">Provides the volume (in the range of 0.0 to 1.0)</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:100</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_aa0d3775308edf58cac6e7f763edbb96a"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#aa0d3775308edf58cac6e7f763edbb96a">snap_arduino::SnapProcessor::setOutput</a></div><div class="ttdeci">void setOutput(AudioOutput &amp;output)</div><div class="ttdoc">Defines the output class.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:94</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_aa4dbb35cfcc65d0c880983d78edd8ac3"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#aa4dbb35cfcc65d0c880983d78edd8ac3">snap_arduino::SnapProcessor::setClient</a></div><div class="ttdeci">void setClient(Client &amp;client)</div><div class="ttdoc">Defines an alternative client to the WiFiClient.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:111</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_abdd99e468f667b748b0c9bfd395163d7"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#abdd99e468f667b748b0c9bfd395163d7">snap_arduino::SnapProcessor::doLoop</a></div><div class="ttdeci">bool doLoop()</div><div class="ttdoc">Call via SnapClient in Arduino Loop!</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:81</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time.html">snap_arduino::SnapTime</a></div><div class="ttdoc">The the sys/time functions are used to represent the server time. The local time will be measured wit...</div><div class="ttdef"><b>Definition:</b> SnapTime.h:22</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_sync_dynamic_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time_sync_dynamic.html">snap_arduino::SnapTimeSyncDynamic</a></div><div class="ttdoc">Dynamically adjusts the effective playback sample rate based on the differences of the local and serv...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:91</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_time_sync_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_time_sync.html">snap_arduino::SnapTimeSync</a></div><div class="ttdoc">Abstract (Common) Time Synchronization Logic which consists of the startup synchronization and the lo...</div><div class="ttdef"><b>Definition:</b> SnapTimeSync.h:17</div></div>
+<div class="ttc" id="anamespacesnap__arduino_html"><div class="ttname"><a href="namespacesnap__arduino.html">snap_arduino</a></div><div class="ttdef"><b>Definition:</b> SnapCommon.h:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

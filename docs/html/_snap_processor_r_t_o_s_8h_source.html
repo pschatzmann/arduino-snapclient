@@ -71,117 +71,138 @@ $(function() {
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;SnapOutput.h&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;freertos-all.h&quot;</span>  <span class="comment">// https://github.com/pschatzmann/arduino-freertos-addons</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html">    9</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> : <span class="keyword">public</span> <a class="code" href="class_snap_processor.html">SnapProcessor</a> {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">   12</a></span>&#160;  <a class="code" href="class_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">SnapProcessorRTOS</a>(<a class="code" href="class_snap_output.html">SnapOutput</a> &amp;output, <span class="keywordtype">int</span> buffer_size,</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                    <span class="keywordtype">int</span> activationAtPercent = 75)</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;      : <a class="code" href="class_snap_processor.html">SnapProcessor</a>(output) {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    init_rtos(buffer_size, activationAtPercent);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  }</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">   18</a></span>&#160;  <a class="code" href="class_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">SnapProcessorRTOS</a>(<span class="keywordtype">int</span> buffer_size, <span class="keywordtype">int</span> activationAtPercent = 75)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;      : <a class="code" href="class_snap_processor.html">SnapProcessor</a>() {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    init_rtos(buffer_size, activationAtPercent);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keywordtype">bool</span> begin()<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">bool</span> result = SnapProcessor::begin();</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    size_queue.Flush();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    buffer.reset();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  }</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keywordtype">void</span> end(<span class="keywordtype">void</span>)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    task.Suspend();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    task_started = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    size_queue.Flush();</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    buffer.reset();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    SnapProcessor::end();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapProcessorRTOS&quot;</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">const</span> uint16_t TASK_STACK_SIZE = 10 * 1024;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  cpp_freertos::Task task{<span class="stringliteral">&quot;output&quot;</span>, TASK_STACK_SIZE, 1, <a class="code" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>};</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  cpp_freertos::Queue size_queue{200, <span class="keyword">sizeof</span>(size_t)};</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  audio_tools::SynchronizedBufferRTOS&lt;uint8_t&gt; buffer{0};</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">bool</span> task_started = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">int</span> active_percent;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *<span class="keyword">self</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">void</span> init_rtos(<span class="keywordtype">int</span> buffer_size, <span class="keywordtype">int</span> activationAtPercent) {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">self</span> = <span class="keyword">this</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    active_percent = activationAtPercent;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    buffer.resize(buffer_size);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    task.Start(1);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    task.Suspend();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">   57</a></span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="class_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">writeAudio</a>(<span class="keyword">const</span> uint8_t *data, <span class="keywordtype">size_t</span> size)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;%zu&quot;</span>, size);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">if</span> (!p_snap_output-&gt;isStarted() || size == 0) {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;not started&quot;</span>);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">if</span> (!p_snap_output-&gt;<a class="code" href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>()) {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="keywordflow">return</span> size;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#if defined(AUDIOTOOLS_MAJOR_VERSION) </span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#  include &quot;AudioTools/AudioLibs/Concurrency.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#  include &quot;AudioLibs/Concurrency.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesnap__arduino.html">snap_arduino</a> {</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html">   19</a></span>&#160;<span class="keyword">class </span><a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> : <span class="keyword">public</span> <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a> {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">   22</a></span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">SnapProcessorRTOS</a>(<a class="code" href="classsnap__arduino_1_1_snap_output.html">SnapOutput</a> &amp;output, <span class="keywordtype">int</span> buffer_size,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                    <span class="keywordtype">int</span> activationAtPercent = 75)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      : <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a>(output) {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2ac99dcb18f12f765b2da0f7f77cd17b">init_rtos</a>(buffer_size, activationAtPercent);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  }</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">   28</a></span>&#160;  <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">SnapProcessorRTOS</a>(<span class="keywordtype">int</span> buffer_size, <span class="keywordtype">int</span> activationAtPercent = 75)</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      : <a class="code" href="classsnap__arduino_1_1_snap_processor.html">SnapProcessor</a>() {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2ac99dcb18f12f765b2da0f7f77cd17b">init_rtos</a>(buffer_size, activationAtPercent);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  }</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#acba365cc28eb702040c382646cfb0a7a">   33</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#acba365cc28eb702040c382646cfb0a7a">begin</a>()<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// regular begin logic</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">bool</span> result = <a class="code" href="classsnap__arduino_1_1_snap_processor.html#a50f45551c10ca30a0bc7f447e70188b1">SnapProcessor::begin</a>();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// allocate buffer, so that we could use psram</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    size_queue.resize(RTOS_MAX_QUEUE_ENTRY_COUNT);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    size_queue.setWriteMaxWait(5);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    buffer.resize(buffer_size);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">void</span> end(<span class="keywordtype">void</span>)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    task.suspend();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    task_started = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    size_queue.clear();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    buffer.reset();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    SnapProcessor::end();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *TAG = <span class="stringliteral">&quot;SnapProcessorRTOS&quot;</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  audio_tools::Task task{<span class="stringliteral">&quot;output&quot;</span>, RTOS_STACK_SIZE, RTOS_TASK_PRIORITY, 1};</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  audio_tools::QueueRTOS&lt;size_t&gt; size_queue{0};</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  audio_tools::BufferRTOS&lt;uint8_t&gt; buffer{0}; <span class="comment">// size defined in constructor</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordtype">bool</span> task_started = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordtype">int</span> active_percent;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordtype">int</span> buffer_size;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">static</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *<span class="keyword">self</span>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2ac99dcb18f12f765b2da0f7f77cd17b">   62</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2ac99dcb18f12f765b2da0f7f77cd17b">init_rtos</a>(<span class="keywordtype">int</span> bufferSize, <span class="keywordtype">int</span> activationAtPercent) {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">self</span> = <span class="keyword">this</span>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    active_percent = activationAtPercent;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    buffer_size = bufferSize;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  }</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">if</span> (!size_queue.Enqueue(&amp;size, 5)) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;size_queue full&quot;</span>);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">size_t</span> size_written = buffer.writeArray(data, size);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">if</span> (size_written != size) {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;buffer-overflow&quot;</span>);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;buffer %d - %d vs limit %d&quot;</span>, size, buffer.available(),</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;             <a class="code" href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>());</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span> (!task_started &amp;&amp; buffer.available() &gt; <a class="code" href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>()) {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;===&gt; starting output task&quot;</span>);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      task_started = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      task.Resume();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> size_written;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  }</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">   88</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>() {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(active_percent) / 100.0 * buffer.size();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">   93</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">copy</a>() {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">size_t</span> size = 0;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">if</span> (size_queue.Dequeue(&amp;size)) {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      uint8_t data[size];</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="keywordtype">int</span> read = buffer.readArray(data, size);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      assert(read == size);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="keywordtype">int</span> written = p_snap_output-&gt;audioWrite(data, size);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      <span class="keywordflow">if</span> (written != size) {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        ESP_LOGW(TAG, <span class="stringliteral">&quot;write %d of %d&quot;</span>, written, size);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    delay(1);</div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">   69</a></span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">writeAudio</a>(<span class="keyword">const</span> uint8_t *data, <span class="keywordtype">size_t</span> size)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">if</span> (size &gt; buffer.size()){</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;The buffer is too small. Use a multiple of %d&quot;</span>, size);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      stop();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    ESP_LOGI(TAG, <span class="stringliteral">&quot;size: %zu / buffer %d&quot;</span>, size, buffer.available());</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">if</span> (!p_snap_output-&gt;isStarted() || size == 0) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;not started&quot;</span>);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">if</span> (!p_snap_output-&gt;<a class="code" href="classsnap__arduino_1_1_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">synchronizePlayback</a>()) {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">return</span> size;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">if</span> (!size_queue.enqueue(size)) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      ESP_LOGW(TAG, <span class="stringliteral">&quot;size_queue full&quot;</span>);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">size_t</span> size_written = buffer.writeArray(data, size);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (size_written != size) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      ESP_LOGE(TAG, <span class="stringliteral">&quot;buffer-overflow&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    ESP_LOGD(TAG, <span class="stringliteral">&quot;buffer %d - %d vs limit %d&quot;</span>, size, buffer.available(),</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;             <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>());</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">if</span> (!task_started &amp;&amp; buffer.available() &gt; <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>()) {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      ESP_LOGI(TAG, <span class="stringliteral">&quot;===&gt; starting output task&quot;</span>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      task_started = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      task.begin(<a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> size_written;</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">  108</a></span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>() {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">self</span> != <span class="keyword">nullptr</span>) <span class="keyword">self</span>-&gt;copy();</div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">  108</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">bufferTaskActivationLimit</a>() {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(active_percent) / 100.0 * buffer.size();</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;};</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<a class="code" href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *SnapProcessorRTOS::self = <span class="keyword">nullptr</span>;</div>
-<div class="ttc" id="aclass_snap_output_html"><div class="ttname"><a href="class_snap_output.html">SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:26</div></div>
-<div class="ttc" id="aclass_snap_output_html_aac98818fc690c70b6413fc52fc6b82f7"><div class="ttname"><a href="class_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">SnapOutput::synchronizePlayback</a></div><div class="ttdeci">bool synchronizePlayback()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:209</div></div>
-<div class="ttc" id="aclass_snap_processor_html"><div class="ttname"><a href="class_snap_processor.html">SnapProcessor</a></div><div class="ttdoc">Snap Processor implementation which does not rely on FreeRTOS.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:19</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a></div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:9</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_a2725cad0984c9c469b19fd065371fe69"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">SnapProcessorRTOS::task_copy</a></div><div class="ttdeci">static void task_copy()</div><div class="ttdoc">static method for rtos task: make sure we constantly output audio</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:108</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_a6a6f5078ba7dd396a62217562f934312"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">SnapProcessorRTOS::SnapProcessorRTOS</a></div><div class="ttdeci">SnapProcessorRTOS(SnapOutput &amp;output, int buffer_size, int activationAtPercent=75)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:12</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_a8cbdf6515e63a9997a9245cf7bc2929c"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">SnapProcessorRTOS::bufferTaskActivationLimit</a></div><div class="ttdeci">int bufferTaskActivationLimit()</div><div class="ttdoc">Determines the buffer fill limit at which we start to process the data.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:88</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_a99a5d30c01881c1c3ce653efc8ca0a96"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">SnapProcessorRTOS::SnapProcessorRTOS</a></div><div class="ttdeci">SnapProcessorRTOS(int buffer_size, int activationAtPercent=75)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:18</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_aaa6c087511a52e64fc9ad92820c7c0a8"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">SnapProcessorRTOS::copy</a></div><div class="ttdeci">void copy()</div><div class="ttdoc">Copy the buffered data to the output.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:93</div></div>
-<div class="ttc" id="aclass_snap_processor_r_t_o_s_html_af26d304c20113d4184aa61703aef6bc7"><div class="ttname"><a href="class_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">SnapProcessorRTOS::writeAudio</a></div><div class="ttdeci">size_t writeAudio(const uint8_t *data, size_t size) override</div><div class="ttdoc">Writes the encoded audio data to a queue.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:57</div></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">  113</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">copy</a>() {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">size_t</span> size = 0;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordflow">if</span> (size_queue.dequeue(size)) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      uint8_t data[size];</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <span class="keywordtype">int</span> read = buffer.readArray(data, size);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      assert(read == size);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      <span class="keywordtype">int</span> written = p_snap_output-&gt;audioWrite(data, size);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <span class="keywordflow">if</span> (written != size) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        ESP_LOGW(TAG, <span class="stringliteral">&quot;write %d of %d&quot;</span>, written, size);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    delay(1);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">  128</a></span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">task_copy</a>() {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">self</span> != <span class="keyword">nullptr</span>) <span class="keyword">self</span>-&gt;copy();</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;};</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<a class="code" href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html">SnapProcessorRTOS</a> *SnapProcessorRTOS::self = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;}</div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_output_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_output.html">snap_arduino::SnapOutput</a></div><div class="ttdoc">Simple Output Class which uses the AudioTools to build an output chain with volume control and a resa...</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:27</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_output_html_aac98818fc690c70b6413fc52fc6b82f7"><div class="ttname"><a href="classsnap__arduino_1_1_snap_output.html#aac98818fc690c70b6413fc52fc6b82f7">snap_arduino::SnapOutput::synchronizePlayback</a></div><div class="ttdeci">bool synchronizePlayback()</div><div class="ttdef"><b>Definition:</b> SnapOutput.h:143</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html">snap_arduino::SnapProcessor</a></div><div class="ttdoc">Snap Processor implementation which does not rely on FreeRTOS.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:21</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_html_a50f45551c10ca30a0bc7f447e70188b1"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor.html#a50f45551c10ca30a0bc7f447e70188b1">snap_arduino::SnapProcessor::begin</a></div><div class="ttdeci">virtual bool begin()</div><div class="ttdoc">Sets up the output and the client.</div><div class="ttdef"><b>Definition:</b> SnapProcessor.h:36</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html">snap_arduino::SnapProcessorRTOS</a></div><div class="ttdoc">Processor for which the encoded output is buffered in a queue in order to prevent any buffer underrun...</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:19</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_a2725cad0984c9c469b19fd065371fe69"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2725cad0984c9c469b19fd065371fe69">snap_arduino::SnapProcessorRTOS::task_copy</a></div><div class="ttdeci">static void task_copy()</div><div class="ttdoc">static method for rtos task: make sure we constantly output audio</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:128</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_a2ac99dcb18f12f765b2da0f7f77cd17b"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a2ac99dcb18f12f765b2da0f7f77cd17b">snap_arduino::SnapProcessorRTOS::init_rtos</a></div><div class="ttdeci">void init_rtos(int bufferSize, int activationAtPercent)</div><div class="ttdoc">store parameters provided by constructor</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:62</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_a6a6f5078ba7dd396a62217562f934312"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a6a6f5078ba7dd396a62217562f934312">snap_arduino::SnapProcessorRTOS::SnapProcessorRTOS</a></div><div class="ttdeci">SnapProcessorRTOS(SnapOutput &amp;output, int buffer_size, int activationAtPercent=75)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:22</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_a8cbdf6515e63a9997a9245cf7bc2929c"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a8cbdf6515e63a9997a9245cf7bc2929c">snap_arduino::SnapProcessorRTOS::bufferTaskActivationLimit</a></div><div class="ttdeci">int bufferTaskActivationLimit()</div><div class="ttdoc">Determines the buffer fill limit at which we start to process the data.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:108</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_a99a5d30c01881c1c3ce653efc8ca0a96"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#a99a5d30c01881c1c3ce653efc8ca0a96">snap_arduino::SnapProcessorRTOS::SnapProcessorRTOS</a></div><div class="ttdeci">SnapProcessorRTOS(int buffer_size, int activationAtPercent=75)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:28</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_aaa6c087511a52e64fc9ad92820c7c0a8"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#aaa6c087511a52e64fc9ad92820c7c0a8">snap_arduino::SnapProcessorRTOS::copy</a></div><div class="ttdeci">void copy()</div><div class="ttdoc">Copy the buffered data to the output.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:113</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_acba365cc28eb702040c382646cfb0a7a"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#acba365cc28eb702040c382646cfb0a7a">snap_arduino::SnapProcessorRTOS::begin</a></div><div class="ttdeci">bool begin() override</div><div class="ttdoc">Sets up the output and the client.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:33</div></div>
+<div class="ttc" id="aclasssnap__arduino_1_1_snap_processor_r_t_o_s_html_af26d304c20113d4184aa61703aef6bc7"><div class="ttname"><a href="classsnap__arduino_1_1_snap_processor_r_t_o_s.html#af26d304c20113d4184aa61703aef6bc7">snap_arduino::SnapProcessorRTOS::writeAudio</a></div><div class="ttdeci">size_t writeAudio(const uint8_t *data, size_t size) override</div><div class="ttdoc">Writes the encoded audio data to a queue.</div><div class="ttdef"><b>Definition:</b> SnapProcessorRTOS.h:69</div></div>
+<div class="ttc" id="anamespacesnap__arduino_html"><div class="ttname"><a href="namespacesnap__arduino.html">snap_arduino</a></div><div class="ttdef"><b>Definition:</b> SnapCommon.h:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
